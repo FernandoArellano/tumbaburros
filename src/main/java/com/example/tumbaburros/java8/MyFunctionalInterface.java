@@ -12,4 +12,8 @@ public interface MyFunctionalInterface {
     static void test3(){
         System.out.println("Static method must be implemented as well");
     }
+
+    public static void main(String[] args) {
+        System.out.println("MAin in interface");
+    }
 }
