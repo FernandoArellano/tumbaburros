@@ -71,5 +71,19 @@ public class QuesColExercises {
 
         // Write a Java 8 program to get the sum of all numbers present in a list.
         System.out.println(numeros.stream().mapToInt(Integer::intValue).sum());
+
+        //reduce
+        int total = numeros.stream().reduce(0, (subtotal, next) -> subtotal + next, Integer::sum);
+        System.out.println("suma:" + total);
+
+        Employee e1 = new Employee("Fer",30,1000);
+        Employee e2 = new Employee("Fer2",40,1000);
+        Employee e3 = new Employee("Fer2",35,1000);
+
+        List<Employee> employees = new ArrayList<>(); employees.add(e1);employees.add(e2);employees.add(e3);
+
+        int promedio = employees.stream().reduce(0,(average,employee)-> average!=0 ?(average+employee.getAge())/2: employee.getAge(),Integer::sum);
+        System.out.println(promedio);
+
     }
 }
