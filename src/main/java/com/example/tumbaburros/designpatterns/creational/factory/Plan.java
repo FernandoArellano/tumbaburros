@@ -1,4 +1,4 @@
-package com.example.tumbaburros.designpatterns.factory;
+package com.example.tumbaburros.designpatterns.creational.factory;
 
 public abstract class Plan {
 

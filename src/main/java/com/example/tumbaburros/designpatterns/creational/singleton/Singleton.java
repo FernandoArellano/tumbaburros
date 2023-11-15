@@ -1,4 +1,4 @@
-package com.example.tumbaburros.designpatterns.singleton;
+package com.example.tumbaburros.designpatterns.creational.singleton;
 
 public class Singleton {
 

@@ -1,4 +1,4 @@
-package com.example.tumbaburros.designpatterns.prototype;
+package com.example.tumbaburros.designpatterns.structural.prototype;
 
 public class EmployeeRecord implements Prototype{
 

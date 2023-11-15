@@ -1,4 +1,4 @@
-package com.example.tumbaburros.designpatterns.prototype;
+package com.example.tumbaburros.designpatterns.structural.prototype;
 
 import java.io.BufferedReader;
 import java.io.IOException;
