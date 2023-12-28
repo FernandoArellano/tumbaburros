@@ -1,5 +1,9 @@
 package com.example.tumbaburros.java11;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+
 public class StringMethods {
 
     public static void main(String[] args) {
@@ -28,6 +32,15 @@ public class StringMethods {
         //stripTrailing remove spaces from right
         //stripleading removes spaces from left
 
+        //Arrays.asList
+        List<String> list = Arrays.asList("Fer","Ana","Abc");
+        list.stream().forEach(System.out::println);
 
+        System.out.println("----------------------");
+        //Predicate.not
+        list.stream().filter(Predicate.not(s-> s.startsWith("A"))).forEach(System.out::println);
+
+
+        System.out.println("----------------------");
     }
 }

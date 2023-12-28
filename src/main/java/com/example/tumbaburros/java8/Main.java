@@ -225,6 +225,75 @@ public class Main {
         System.out.println(set);
     }
 
+    public static void squareToAll(){
+        List<Integer> list = Arrays.asList(1,2,3,4,5);
+        List<Integer> squares = list.stream().map(i->i*i).collect(Collectors.toList());
+        System.out.println(squares);
+    }
+
+    public static void multiples3(){
+        List<Integer> list = Arrays.asList(30,333,1,5,8,9,156,132);
+        list.stream().filter(i->i%3==0).forEach(i-> System.out.print(i+"-"));
+    }
+
+    public static void sortedByLength(){
+        List<String>list = Arrays.asList("a","bb","ccc","#ferrr");
+        list.stream().sorted(Comparator.comparing(String::length).reversed()).forEach(System.out::println);
+    }
+
+    public static void sumAll(){
+        List<Integer> list = Arrays.asList(30,333,1,5,8,9,156,132);
+        int value = list.stream().reduce(1, (acumulator, i) -> acumulator+i).intValue();
+        System.out.println(value);
+
+    }
+
+    public static void allMatch(){
+        List<Integer> list = Arrays.asList(30,333,1,5,8,9,156,132);
+        boolean result = list.stream().allMatch(i-> i%3==0);
+        if(result){
+            System.out.println("All are dividers of 3");
+        } else{
+            System.out.println("Not all");
+        }
+    }
+
+    public static void anyMatch(){
+        List<Integer> list = Arrays.asList(30,333,1,5,8,9,156,132);
+        boolean result = list.stream().anyMatch(i->i%3==0);
+        if(result){
+            System.out.println("One is divider of 3");
+        } else{
+            System.out.println("None");
+        }
+    }
+
+    public static void concat(){
+        Stream<Integer> stream = Stream.of(1,2,3);
+        Stream<Integer> stream2 = Stream.of(5,6,7);
+
+        int value = Stream.concat(stream, stream2).reduce(0, (sub,i) -> sub+i).intValue();
+        System.out.println(value);
+    }
+
+    public static void timesA(){
+        List<String> list = Arrays.asList("Anita","America","Angelica","Fer","Chachil");
+        long count = list.stream().filter(s-> s.startsWith("An")).count();
+        System.out.println(count);
+    }
+
+    public static void flatMap(){
+        Stream<String> stream1 = Stream.of("Fer", "Are", "Sal");
+        Stream<Stream<String>> stream2 = Stream.of(stream1);
+        Stream<Stream<String>> stream3 = Stream.of(stream1);
+
+        List<Stream<String>> list = stream2.collect(Collectors.toList());
+        System.out.println(list);
+        line();
+        List<String> list2 = stream3.flatMap(Function.identity()).collect(Collectors.toList());
+        System.out.println(list2);
+    }
+
     public static void main(String[] args) {
         remove();line();
         separate();line();
@@ -246,5 +315,14 @@ public class Main {
         sumFirst10();line();
         startWithNumber();line();
         findDuplicates();line();
+        squareToAll();line();
+        multiples3();line();
+        sortedByLength();line();
+        sumAll();line();
+        allMatch();line();
+        anyMatch();line();
+        concat();line();
+        timesA();line();
+        flatMap();line();
     }
 }
