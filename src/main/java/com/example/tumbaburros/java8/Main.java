@@ -1,8 +1,12 @@
 package com.example.tumbaburros.java8;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -324,5 +328,218 @@ public class Main {
         concat();line();
         timesA();line();
         flatMap();line();
+        forEach(Arrays.asList("Fer", "Arellano","Raton")); line();
+        listForEach(Arrays.asList("Gato","Perro","Gremblin")); line();
+        testPredicate(); line();
+        testSupplier(); line();
+        testFunction(); line();
+        testConsumer(); line();
+        testParallel(); line();
+        removeIf(); line();
+        optional(null); line();
+        optional("Ferrrr"); line();
+        anyMatch();line();
+        reduce1();line();
+        reduce2();line();
+        reduce3();line();
+        dropWhile1();line();
+        dropWhile2();line();
+        takeWhile();line();
+        asDoubleStream();line();
+        anyMatch2();line();
+        average();line();
+        toUpper();line();
+        sumOddEven();line();
+        max();line();
+        takeWhile1();line();
+        incrementing();line();
+        removeBlanks();line();
+        joining();line();
+    }
+
+    public static void forEach(List<String> list){
+        list.stream().forEach(System.out::println);
+    }
+
+    public static void listForEach(List<String> list){
+        list.forEach(System.out::println);
+    }
+
+    public static void testPredicate(){
+        Predicate<String> p = s->s.length()>10;
+        System.out.println(p.test("Arellano"));
+    }
+
+    public static void testSupplier(){
+        Supplier<Integer> s = ()->new Random().nextInt(5);
+        System.out.println(s.get());
+    }
+
+    public static void testFunction(){
+        Function<String,String> f = (s) -> s.toUpperCase();
+        System.out.println(f.apply("fernando"));
+    }
+
+    public static void testConsumer(){
+        Consumer<String> c = (s)->{
+            System.out.println(s);
+        } ;
+        c.accept("Consumer Test");
+    }
+
+    public static void testParallel(){
+        List<Integer> list = new ArrayList<>();
+        for(int i=0; i<100; i++){
+            list.add(i);
+        }
+
+        list.parallelStream().filter(i->i>90).forEach(System.out::println);
+    }
+
+    public static void removeIf(){
+        List<Integer> list = new ArrayList<>();
+        for(int i=0; i<40; i++){
+            list.add(i);
+        }
+        System.out.println(list);
+
+        list.removeIf(i->i%2==0);
+
+        System.out.println(list);
+    }
+
+    public static void optional(String s){
+        Optional<String> optional = Optional.ofNullable(s);
+        System.out.println(optional.orElseGet(()->"Not specified"));
+    }
+
+    public static void reduce1(){
+        List<String> words = Arrays.asList("GFG", "Geeks", "for",
+                "GeeksQuiz", "GeeksforGeeks", "fer");
+
+        Optional<String> optional = words.stream().reduce((word1, word2)-> word1.length()>word2.length()?word1:word2);
+        if(optional.isPresent()){
+            System.out.println(optional.get());
+        }
+    }
+
+    public static void reduce2(){
+        List<Integer> list = Arrays.asList(3,4,6,7,1,9,22);
+
+        Integer optional = list.stream().reduce(0, (num1,num2) -> num1+num2);
+        System.out.println(optional);
+    }
+
+    public static void reduce3(){
+        List<String> words = Arrays.asList("GFG", "Geeks", "for",
+                "GeeksQuiz", "GeeksforGeeks");
+
+        Optional<String> optional = words.stream().reduce((word1, word2) -> word1 + "-" + word2);
+        System.out.println(optional.get());
+    }
+
+    public static void dropWhile1(){
+        System.out.println("Drop While 1");
+        // create a stream of numbers from 1 to 10
+        Stream<Integer> stream
+                = Stream.of(4, 4, 4, 5, 6, 7, 8, 9, 10, 3, 3, 4);
+
+        // apply dropWhile to drop all the numbers
+        // matches passed predicate
+        List<Integer> list
+                = stream.dropWhile(number -> (number / 4 == 1))
+                .collect(Collectors.toList());
+
+        // print list
+        System.out.println(list);
+    }
+
+    public static void takeWhile1(){
+        System.out.println("Take While 1");
+        // create a stream of numbers from 1 to 10
+        Stream<Integer> stream
+                = Stream.of(4, 4, 4, 5, 6, 7, 8, 9, 10,3,3,4);
+
+        // apply dropWhile to drop all the numbers
+        // matches passed predicate
+        List<Integer> list
+                = stream.takeWhile(number -> (number / 4 == 1))
+                .collect(Collectors.toList());
+
+        // print list
+        System.out.println(list);
+    }
+
+    //ignore while it is true right after a false will keep them all
+    public static void dropWhile2(){
+        Stream<String> stream = Stream.of("aman", "amar", "suraj", "suvam", "Zahafuj");
+        //Stream<String> stream = Stream.of("aman", "amar", "suraj", "suvam", "Zahafuj");
+
+        List<String> list = stream.dropWhile(name -> (name.charAt(0) == 'a')).collect(Collectors.toList());
+        System.out.println(list);
+    }
+
+    //mientras se cumpla la condicion se almacena, si desde el primero no se cumplio no se almacena ninguna
+    public static void takeWhile(){
+        Stream<String> stream = Stream.of("aman", "amar", "auraj", "suvam", "Zahafuj");
+        List<String> list= stream.takeWhile(name -> (name.charAt(0) == 'a')).collect(Collectors.toList());
+        System.out.println(list);
+    }
+
+    public static void asDoubleStream(){
+        IntStream stream = IntStream.range(0,10);
+        DoubleStream doubleStream = stream.asDoubleStream();
+        doubleStream.forEach(System.out::println);
+    }
+
+    public static void anyMatch2(){
+        List<String> list = Arrays.asList("Fer","Are","Coca","Pepsi","Quesadilla");
+        System.out.println(list.stream().anyMatch(s->s.equals("Quesadilla")));
+    }
+
+    public static void average(){
+        List<Integer> list = new ArrayList<>(){{
+            add(33);add(23);add(22);
+        }};
+
+        list.stream().mapToInt(i->i).average().ifPresent(System.out::println);
+    }
+
+    public static void toUpper(){
+        List<String> list = Arrays.asList("Fer","Are","Coca","Pepsi","Quesadilla");
+        list.stream().map(s->s.toUpperCase()).forEach(System.out::println);
+    }
+
+    public static void sumOddEven(){
+        List<Integer> list = new ArrayList<>(){{
+            add(33);add(23);add(22);
+        }};
+
+        int oddSum = list.stream().filter(i->i%2!=0).mapToInt(Integer::intValue).sum();
+        int evenSum = list.stream().filter(i->i%2==0).mapToInt(i->i).sum();
+        System.out.println(oddSum);
+        System.out.println(evenSum);
+    }
+
+    public static void incrementing(){
+        System.out.println("Incrementing");
+
+        //Immutable list
+        List<Integer> list = List.of(1,2,3,444,555,666,777777,2,3);
+        Optional<Integer> value = list.stream().reduce((num1,num2)->num1>num2?num1:num2);
+        System.out.println(value);
+    }
+
+    public static void removeBlanks(){
+        List<String> list = List.of("Fernando", "\n", "  ", " Ana ");
+        list = list.stream().filter(Predicate.not(String::isBlank)).collect(Collectors.toList());
+        System.out.println(list);
+    }
+
+    //Collectors.joining()
+    public static void joining(){
+        List<String> list = List.of("Fer", "Arellano", "Rattt", "Treees");
+        String value = list.stream().map(String::toUpperCase).collect(Collectors.joining(","));
+        System.out.println(value);
     }
 }

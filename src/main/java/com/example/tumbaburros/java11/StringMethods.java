@@ -3,6 +3,7 @@ package com.example.tumbaburros.java11;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class StringMethods {
 
@@ -42,5 +43,25 @@ public class StringMethods {
 
 
         System.out.println("----------------------");
+
+        //isBlank
+        String s1 = "         ";
+        String s2 = "        d     ";
+        System.out.println(s1.isBlank());
+        System.out.println(s2.isBlank());
+
+        //Lines
+        String s3 = "ffff\n" +
+                "fff\n" +
+                "fff";
+        Stream<String> stream= s3.lines();
+        stream.forEach(System.out::println);
+
+        //strip
+        System.out.println("No strip:" + s2 +".");
+        System.out.println("Strip:" + s2.strip()+".");
+
+        //Repeat
+        System.out.println("Fer".repeat(3));
     }
 }
