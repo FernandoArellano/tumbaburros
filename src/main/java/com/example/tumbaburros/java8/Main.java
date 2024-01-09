@@ -247,7 +247,7 @@ public class Main {
 
     public static void sumAll(){
         List<Integer> list = Arrays.asList(30,333,1,5,8,9,156,132);
-        int value = list.stream().reduce(1, (acumulator, i) -> acumulator+i).intValue();
+        int value = list.stream().reduce(0, (acumulator, i) -> acumulator+i).intValue();
         System.out.println(value);
 
     }
@@ -298,64 +298,7 @@ public class Main {
         System.out.println(list2);
     }
 
-    public static void main(String[] args) {
-        remove();line();
-        separate();line();
-        duplicates();line();
-        ocurrencesString();line();
-        ocurrencesList();line();
-        reverseList();line();
-        max();line();
-        min();line();
-        mergeArrays();line();
-        max3();line();
-        min3();line();
-        sumDigits();line();
-        secondLarger();line();
-        sortedByLengthOrder();line();
-        commonElementsIn2Array();line();
-        reverseWord();line();
-        sumArray();line();
-        sumFirst10();line();
-        startWithNumber();line();
-        findDuplicates();line();
-        squareToAll();line();
-        multiples3();line();
-        sortedByLength();line();
-        sumAll();line();
-        allMatch();line();
-        anyMatch();line();
-        concat();line();
-        timesA();line();
-        flatMap();line();
-        forEach(Arrays.asList("Fer", "Arellano","Raton")); line();
-        listForEach(Arrays.asList("Gato","Perro","Gremblin")); line();
-        testPredicate(); line();
-        testSupplier(); line();
-        testFunction(); line();
-        testConsumer(); line();
-        testParallel(); line();
-        removeIf(); line();
-        optional(null); line();
-        optional("Ferrrr"); line();
-        anyMatch();line();
-        reduce1();line();
-        reduce2();line();
-        reduce3();line();
-        dropWhile1();line();
-        dropWhile2();line();
-        takeWhile();line();
-        asDoubleStream();line();
-        anyMatch2();line();
-        average();line();
-        toUpper();line();
-        sumOddEven();line();
-        max();line();
-        takeWhile1();line();
-        incrementing();line();
-        removeBlanks();line();
-        joining();line();
-    }
+
 
     public static void forEach(List<String> list){
         list.stream().forEach(System.out::println);
@@ -472,6 +415,7 @@ public class Main {
 
     //ignore while it is true right after a false will keep them all
     public static void dropWhile2(){
+        System.out.println("Drop while 2");
         Stream<String> stream = Stream.of("aman", "amar", "suraj", "suvam", "Zahafuj");
         //Stream<String> stream = Stream.of("aman", "amar", "suraj", "suvam", "Zahafuj");
 
@@ -541,5 +485,97 @@ public class Main {
         List<String> list = List.of("Fer", "Arellano", "Rattt", "Treees");
         String value = list.stream().map(String::toUpperCase).collect(Collectors.joining(","));
         System.out.println(value);
+    }
+
+    public static void factorialReduce(){
+        System.out.println("Factorial reduce");
+        int value = IntStream.range(1,6).reduce(1,(acum, i) -> {
+            return acum*i;
+        } );
+        System.out.println(value);
+    }
+
+    public static void oddsReduce(){
+        System.out.println("Odds Reduce");
+        int value = IntStream.range(1,10).filter(i->i%2!=0).reduce(0, (partialResult, i) -> i+partialResult);
+        System.out.println(value);
+    }
+
+    public static void generateReduce(){
+        System.out.println("GenerateReduce");
+        List<Integer> list = Stream.generate(new Random()::nextInt).limit(5).collect(Collectors.toList());
+        System.out.println(list);
+    }
+
+    public static void generateSmallRandom(){
+        System.out.println("generateSmallRandom");
+        List<Integer> list = Stream.generate(()->{
+            Random random = new Random();
+            return random.nextInt(10);
+        }).limit(3).collect(Collectors.toList());
+        System.out.println(list);
+    }
+
+    public static void main(String[] args) {
+        remove();line();
+        separate();line();
+        duplicates();line();
+        ocurrencesString();line();
+        ocurrencesList();line();
+        reverseList();line();
+        max();line();
+        min();line();
+        mergeArrays();line();
+        max3();line();
+        min3();line();
+        sumDigits();line();
+        secondLarger();line();
+        sortedByLengthOrder();line();
+        commonElementsIn2Array();line();
+        reverseWord();line();
+        sumArray();line();
+        sumFirst10();line();
+        startWithNumber();line();
+        findDuplicates();line();
+        squareToAll();line();
+        multiples3();line();
+        sortedByLength();line();
+        sumAll();line();
+        allMatch();line();
+        anyMatch();line();
+        concat();line();
+        timesA();line();
+        flatMap();line();
+        forEach(Arrays.asList("Fer", "Arellano","Raton")); line();
+        listForEach(Arrays.asList("Gato","Perro","Gremblin")); line();
+        testPredicate(); line();
+        testSupplier(); line();
+        testFunction(); line();
+        testConsumer(); line();
+        testParallel(); line();
+        removeIf(); line();
+        optional(null); line();
+        optional("Ferrrr"); line();
+        anyMatch();line();
+        reduce1();line();
+        reduce2();line();
+        reduce3();line();
+        dropWhile1();line();
+        dropWhile2();line();
+        takeWhile();line();
+        asDoubleStream();line();
+        anyMatch2();line();
+        average();line();
+        toUpper();line();
+        sumOddEven();line();
+        max();line();
+        takeWhile1();line();
+        incrementing();line();
+        removeBlanks();line();
+        joining();line();
+        factorialReduce();line();
+        oddsReduce();line();
+        generateReduce();line();
+        generateSmallRandom();line();
     }
 }
