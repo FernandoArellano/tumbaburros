@@ -54,6 +54,15 @@ public class Main {
         //difference between string literal and new string because in case of new, interning doesn't happen automatically until you call the intern()
         //string literal automatically calls intern() ex: String s= "Fer";
 
-        
+
+        //compare to parameter less then -1, parameter bigger then 1
+        String a = "a";
+        String b = "b";
+        System.out.println(a.compareTo(b));
+        System.out.println(b.compareTo(a));
+
+        //String join
+        String link="Un link a poner guiones";
+        System.out.println(String.join("-",link.split(" ")));
     }
 }
