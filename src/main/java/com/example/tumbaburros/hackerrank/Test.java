@@ -91,7 +91,9 @@ public class Test {
         System.out.println(zero.divide(divider,6,RoundingMode.HALF_UP));
     }
 
-    //Given five positive integers, find the minimum and maximum values that can be calculated by summing exactly four of the five integers. Then print the respective minimum and maximum values as a single line of two space-separated long integers.
+    //Given five positive integers, find the minimum and maximum values that can be calculated by
+    // summing exactly four of the five integers. Then print the respective minimum and maximum
+    // values as a single line of two space-separated long integers.
     public static void miniMaxSum(List<Integer> arr) {
         // Write your code here
         arr = arr.stream().sorted(Comparator.naturalOrder()).collect(Collectors.toList());
@@ -114,7 +116,9 @@ public class Test {
 
     }
 
-    //new methods
+    //Given a time in -hour AM/PM format, convert it to military (24-hour) time.
+    //Note: - 12:00:00AM on a 12-hour clock is 00:00:00 on a 24-hour clock.
+    //- 12:00:00PM on a 12-hour clock is 12:00:00 on a 24-hour clock.
     public static void timeConversion(String s) throws ParseException {
         //new
         String time = LocalTime.parse("06:00 PM", DateTimeFormatter.ofPattern("hh:mm a", Locale.US))
@@ -132,6 +136,7 @@ public class Test {
 
     }
 
+    //find medium element
     public static int findMedian(List<Integer> arr) {
         // Write your code here
         if((arr.size()%2)==0){
@@ -143,6 +148,7 @@ public class Test {
         return arr.get(arr.size()/2);
     }
 
+    //Given an array of integers, where all elements but one occur twice, find the unique element.
     public static int lonelyinteger(List<Integer> a) {
         System.out.println("Lonely");
         // Write your code here
@@ -173,6 +179,8 @@ public class Test {
         return -1;
     }
 
+    //Given a square matrix, calculate the absolute difference between the sums of its diagonals.
+
     public static int diagonalDifference(List<List<Integer>> list){
         System.out.println("Diagonal Difference");
         int leftDiagonal=0;
@@ -195,6 +203,17 @@ public class Test {
         return Math.abs(leftDiagonal-rightDiagonal);
     }
 
+    //Comparison Sorting
+    //Quicksort usually has a running time of n x log(n), but is there an algorithm that can sort even faster? In general,
+    // this is not possible. Most sorting algorithms are comparison sorts, i.e. they sort a list just by comparing t
+    // he elements to one another. A comparison sort algorithm cannot beat n x log(n) (worst-case) running time, since
+    // represents the minimum number of comparisons needed to know where to place each element. For more details,
+    // you can see these notes (PDF).
+    //Alternative Sorting
+    //Another sorting method, the counting sort, does not require comparison. Instead, you create an integer
+    // array whose index range covers the entire range of values in your array to sort. Each time a value occurs
+    // in the original array, you increment the counter at that index. At the end, run through your counting array,
+    // printing the value of each non-zero valued index that number of times.
     public static List<Integer> countingSort(List<Integer> arr) {
         // Write your code here
         int[] frequencyArray = new int[100];
@@ -224,6 +243,126 @@ public class Test {
             }
         }
         return maxSum;
+    }
+
+
+    //Given an array of  distinct integers, transform the array into a zig zag sequence by permuting the array elements.
+    // A sequence will be called a zig zag sequence if the first  elements in the sequence are in increasing order
+    // and the last  elements are in decreasing order, where . You need to find the lexicographically smallest zig
+    // zag sequence of the given array.
+    //al ordenar la primera mitad ya esta
+    //despues al intercambiar el ultimo con el medio la posicion media y final ya estan
+    //ya solo invertir las posiciones medio+1 a tamaño del arreglo menos 2 (el ultimo elemento ya estara donde debe)
+    public static void findZigZagSequence(int [] a, int n){
+        System.out.println("FindZigZag");
+        Arrays.sort(a);
+        int mid = (n)/2;
+        int temp = a[mid];
+        a[mid] = a[n - 1];
+        a[n - 1] = temp;
+
+        int st = mid + 1;
+        int ed = n - 2;
+        while(st <= ed){
+            temp = a[st];
+            a[st] = a[ed];
+            a[ed] = temp;
+            st = st + 1;
+            ed = ed - 1;
+        }
+        for(int i = 0; i < n; i++){
+            if(i > 0) System.out.print(" ");
+            System.out.print(a[i]);
+        }
+        System.out.println();
+    }
+
+    public static void findZigZagSequence2(int a[], int n){
+        System.out.println("finsZigzag2");
+
+        Arrays.sort(a);
+        int mid = (n/2)-1;
+        List<Integer> result = new LinkedList<>();
+        for(int i=0; i<=mid;i++){
+            result.add(a[i]);
+        }
+
+        for(int i=n-1; i>mid;i--){
+            result.add(a[i]);
+        }
+        System.out.println(result);
+    }
+
+    //player 1 starts
+    //player 2 can match if even towera player 2 will win
+    //player 1 will win if odd
+    //height =1 player 1 will not have available move
+    public static int towerBreakers(int n, int m) {
+        // Write your code here
+        if(m==1 || n%2==0){
+            return 2;
+        }
+        return 1;
+    }
+
+    private static List<Character> vocabularyUpperList;
+    private static List<Character> vocabularyList;
+
+    static{
+        String vocabulary = "abcdefghijklmnopqrstuvwxyz";
+        vocabularyList = vocabulary.chars().mapToObj(c->new Character((char)c)).collect(Collectors.toList());
+        vocabularyUpperList = vocabulary.toUpperCase().chars().mapToObj(c->new Character((char)c)).collect(Collectors.toList());
+    }
+
+    public static List<Character> getVocabularyList(boolean isUppercase){
+
+        if(isUppercase){
+            return vocabularyUpperList;
+        }
+        return vocabularyList;
+    }
+
+    //ulius Caesar protected his confidential information by encrypting it using a cipher.
+    // Caesar's cipher shifts each letter by a number of letters. If the shift takes you past
+    // the end of the alphabet, just rotate back to the front of the alphabet. In the case of a
+    // rotation by 3, w, x, y and z would map to z, a, b and c.
+
+    //tener cuidado con el index0 y el size del abecedario
+    public static String caesarCipher(String s, int k) {
+        // Write your code here
+
+        StringBuilder sb = new StringBuilder();
+
+        int size = getVocabularyList(true).size();
+        List<Character> vocabularyList=null;
+
+        for(int i=0; i<s.length();i++){
+            char c = s.charAt(i);
+            int index=-1;
+            if(Character.isLetter(c)){
+                if(Character.isUpperCase(c)){
+                    vocabularyList = getVocabularyList(true);
+                } else {
+                    vocabularyList = getVocabularyList(false);
+                }
+
+                index= vocabularyList.indexOf(c);
+
+                index = index+k;
+
+                if(index>vocabularyList.size()-1){
+                     index = index%vocabularyList.size();
+                }
+            }
+
+            if(index>=0){
+                sb.append(vocabularyList.get(index));
+            } else{
+                sb.append(c);
+            }
+
+        }
+        return sb.toString();
     }
 
 
@@ -258,6 +397,13 @@ public class Test {
         matrixList.add(Arrays.asList(62, 98, 114, 108));
         System.out.println(flippingMatrix(matrixList));
 
+        findZigZagSequence(new int[]{1,3,5,7,9,2,4,6,8,10}, 10);
+        findZigZagSequence2(new int[]{1,3,5,7,9,2,4,6,8,10}, 10);
 
+        System.out.println(towerBreakers(3,1));
+        System.out.println(towerBreakers(13,11));
+        System.out.println(towerBreakers(30,11));
+
+        System.out.println(caesarCipher("Hello_World!", 4));
     }
 }
