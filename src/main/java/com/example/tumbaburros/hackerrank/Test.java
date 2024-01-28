@@ -365,6 +365,37 @@ public class Test {
         return sb.toString();
     }
 
+    //remove letter to make a palindrome
+    //return index number of the removed character
+    //return -1 if already a palindrome or no palindrome available
+    //eficiencia, comparar todos uno por 1 en lugar mejora comparando inicio y fin en su lugar
+
+    public static int palindromeIndex(String s) {
+        // Write your code here
+        if(s.length()>100005 || s==null || s.equals(new StringBuilder(s).reverse().toString()))
+            return -1;
+
+        int size = s.length();
+
+        for(int i=0;i<size/2;i++){
+                if(s.charAt(i) != s.charAt(size-1-i)){
+                    StringBuilder sb = new StringBuilder(s);
+                    sb.replace(i,i+1,"");
+                    if(sb.toString().equals(sb.reverse().toString())){
+                        return i;
+                    } else{
+                        sb = new StringBuilder(s);
+                        sb.replace(size-1-i,size-1-i+1,"");
+                        if(sb.toString().equals(sb.reverse().toString())){
+                            return size-1-i;
+                        }
+                    }
+                }
+        }
+
+        return -1;
+    }
+
 
     public static void main(String[] args) throws ParseException {
        // ranks();
@@ -405,5 +436,8 @@ public class Test {
         System.out.println(towerBreakers(30,11));
 
         System.out.println(caesarCipher("Hello_World!", 4));
+
+        System.out.println(palindromeIndex("aabaa"));
+        System.out.println(palindromeIndex("aaabcaaa"));
     }
 }
