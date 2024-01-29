@@ -518,6 +518,32 @@ public class Test {
         }
     }
 
+    //2,1,5,3,4
+    //2,5,1,3,4
+    public static void minimumBribes3(List<Integer> q) {
+        // Write your code here
+        if(q.size()>=1 && q.size()<=100000){
+            int bribe=0;
+            for(int i=0;i<q.size();i++){
+                int val = q.get(i);
+                int counter=0;
+                for(int j=q.size()-1; j>i;j--){
+                    if(val>q.get(j)){
+                        counter++;
+                        if(counter>2){
+                            System.out.println("Too chaotic");
+                            return;
+                        }
+                    }
+
+                }
+                bribe = bribe+counter;
+
+            }
+            System.out.println(bribe);
+        }
+    }
+
 
 
 
@@ -572,5 +598,8 @@ public class Test {
 
         minimumBribes2(Arrays.asList(2,5,1,3,4));
         minimumBribes2(Arrays.asList(2,1,5,3,4));
+
+        minimumBribes3(Arrays.asList(2,5,1,3,4));
+        minimumBribes3(Arrays.asList(2,1,5,3,4));
     }
 }
