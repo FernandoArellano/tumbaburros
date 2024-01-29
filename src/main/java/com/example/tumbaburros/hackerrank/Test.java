@@ -396,6 +396,74 @@ public class Test {
         return -1;
     }
 
+    //Given a square grid of characters in the range ascii[a-z], rearrange elements of each row alphabetically,
+    // ascending. Determine if the columns are also in ascending alphabetical order, top to bottom. Return YES
+    // if they are or NO if they are not
+    //bidemencional declarar primer[] controla tamaño segundo horizontal
+    //bidimencional insertar [0][2] llena hacia derecha [2][0] llena hacia abajo
+    //[][] primero controla y segundo controla x
+    public static String gridChallenge(List<String> grid) {
+        System.out.println("Grid Challenge");
+        // Write your code here
+        if(grid.size()>=1 && grid.size()<=100){
+            int max = grid.stream().max(Comparator.comparing(String::length)).get().length();
+            char[][] matrix = new char[grid.size()][max];
+            int x=0;
+            int y=0;
+            for(String s: grid){
+                char[] c = s.toCharArray();
+                Arrays.sort(c);
+                for(char cc:c){
+                    matrix[x][y] = cc;
+                    y++;
+                }
+                x++;
+                y=0;
+            }
+
+            for(int i=0; i<max;i++){
+                for(int j=1; j<grid.size();j++){
+                    char temp='a';
+                    if(matrix[j-1][i]>matrix[j][i]){
+                        return "NO";
+                    }
+                }
+            }
+            return "YES";
+        }
+
+        return "NO";
+    }
+
+
+    //We define super digit of an integer  using the following rules:
+    //Given an integer, we need to find the super digit of the integer.
+    //If  has only  digit, then its super digit is .
+    //Otherwise, the super digit of  is equal to the super digit of the sum of the digits of .
+    // si se trata de append numeros y sumas 1 por uno lo mismo, equivale a mejor el numero resultante de
+    //la primer copia por el numero de copias, no agregar los caracteres!
+    public static int superDigit(String n, int k) {
+        // Write your code here
+        long l=n.length()*k;
+        int c=0;
+        while(l>1l)
+        {
+            long so=0l;
+            for(int x=0;x<n.length();x++)
+            {
+                so=so+Long.parseLong(""+n.charAt(x));
+            }
+            if(c==0)
+            {
+                so=so*k;
+                c++;
+            }
+            n=Long.toString(so);
+            l=n.length();
+        }
+        return Integer.parseInt(n);
+    }
+
 
     public static void main(String[] args) throws ParseException {
        // ranks();
@@ -439,5 +507,8 @@ public class Test {
 
         System.out.println(palindromeIndex("aabaa"));
         System.out.println(palindromeIndex("aaabcaaa"));
+
+        System.out.println(gridChallenge(Arrays.asList("zzz", "hjk", "mpq", "rtv")));
+        System.out.println(superDigit("148",3));
     }
 }
