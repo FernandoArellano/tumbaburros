@@ -494,6 +494,30 @@ public class Test {
         }
     }
 
+    //2,1,5,3,4
+    public static void minimumBribes2(List<Integer> q) {
+        // Write your code here
+        if(q.size()>=1 && q.size()<=100000){
+            BigInteger bigInteger = new BigInteger(String.valueOf("0"));
+
+            for(int i=0;i<q.size();i++){
+                int index = q.indexOf(q.get(i));
+                int value = q.get(index);
+                List<Integer> set = q.stream().filter(val->q.indexOf(val)>=index).sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+                long count = Collections.binarySearch(set,value);
+
+
+                if(count>2l){
+                    System.out.println("Too chaotic");
+                    return;
+                } else {
+                    bigInteger =bigInteger.add(new BigInteger(String.valueOf(count)));
+                }
+            }
+            System.out.println(bigInteger.longValue());
+        }
+    }
+
 
 
 
@@ -544,5 +568,9 @@ public class Test {
         System.out.println(superDigit("148",3));
         minimumBribes(Arrays.asList(2,5,1,3,4));
         minimumBribes(Arrays.asList(2,1,5,3,4));
+
+
+        minimumBribes2(Arrays.asList(2,5,1,3,4));
+        minimumBribes2(Arrays.asList(2,1,5,3,4));
     }
 }
