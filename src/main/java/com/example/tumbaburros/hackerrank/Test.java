@@ -518,29 +518,37 @@ public class Test {
         }
     }
 
-    //2,1,5,3,4
     //2,5,1,3,4
+    //2,1,5,3,4
     public static void minimumBribes3(List<Integer> q) {
         // Write your code here
+
+
         if(q.size()>=1 && q.size()<=100000){
-            int bribe=0;
+            int[] array = new int[q.size()];
             for(int i=0;i<q.size();i++){
-                int val = q.get(i);
-                int counter=0;
-                for(int j=q.size()-1; j>i;j--){
-                    if(val>q.get(j)){
-                        counter++;
-                        if(counter>2){
-                            System.out.println("Too chaotic");
-                            return;
-                        }
-                    }
-
-                }
-                bribe = bribe+counter;
-
+                array[i] = q.get(i);
             }
-            System.out.println(bribe);
+         int bride =0;
+            for(int i=array.length-1; i>=0;i--){
+                if(i+1 !=array[i]){
+                    if(i-1>=0 && i+1==array[i-1]){
+                        bride++;
+                        int temp= array[i-1];
+                        array[i-1] = array[i];
+                        array[i] = temp;
+                    } else if(i-2>=0 && i+1==array[i-2]){
+                        bride=bride+2;
+                        array[i-2] = array[i-1];
+                        array[i-1] = array[i];
+                        array[i] = array[i-2];
+                    } else{
+                        System.out.println("Too chaotic");
+                        return;
+                    }
+                }
+            }
+            System.out.println(bride);
         }
     }
 
