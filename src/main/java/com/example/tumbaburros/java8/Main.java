@@ -516,7 +516,33 @@ public class Main {
         System.out.println(list);
     }
 
+    //separate letter, number and whitespaces
+    public static void separateLettersNumbersWhitespaces(){
+        System.out.println("separateLettersNumbersWhitespaces");
+        String word = "243413ASDFAFQEq22341asfdadf1435  ffda dgq1r gagf";
+
+        List<Character> letterList = word.chars().mapToObj(c -> (char)c).filter(c->Character.isLetter(c)).collect(Collectors.toList());
+        List<Character> digitList = word.chars().mapToObj(c-> (char)c).filter(c->Character.isDigit(c)).collect(Collectors.toList());
+        long whitespaceList = word.chars().mapToObj(c-> (char)c).filter(c->Character.isWhitespace(c)).collect(Collectors.counting());
+
+        System.out.println("Letters: "+letterList);
+        System.out.println("Numbers: "+digitList);
+        System.out.println("Whitespaces: "+whitespaceList);
+    }
+
+    public int max10(){
+        System.out.println("Max10");
+        List<Integer> list = new ArrayList<>(){{
+            add(1);add(2);add(3);add(4);add(5);add(6);
+        }
+        };
+        Optional<Integer> optional = list.stream().max(Comparator.naturalOrder());
+        optional.ifPresent(System.out::println);
+        return optional.get();
+    }
+
     public static void main(String[] args) {
+        Main main = new Main();
         remove();line();
         separate();line();
         duplicates();line();
@@ -577,5 +603,7 @@ public class Main {
         oddsReduce();line();
         generateReduce();line();
         generateSmallRandom();line();
+        separateLettersNumbersWhitespaces();line();
+        main.max10();line();
     }
 }
