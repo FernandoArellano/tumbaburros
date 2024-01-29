@@ -474,13 +474,27 @@ public class Test {
     //If person  bribes person , the queue will look like this: . Only  bribe is required. Print 1.
     //
     //Person  had to bribe  people to get to the current position. Print Too chaotic.
-
+//2,5,1,3,4
     public static void minimumBribes(List<Integer> q) {
         // Write your code here
         if(q.size()>=1 && q.size()<=100000){
-
+            BigInteger bigInteger = new BigInteger(String.valueOf("0"));
+            for(int i=0;i<q.size();i++){
+                int index = q.indexOf(q.get(i));
+                List<Integer> set = q.stream().filter(val->q.indexOf(val)>index).collect(Collectors.toList());
+                long count = set.stream().filter(val -> q.get(index)>val).count();
+                if(count>2l){
+                    System.out.println("Too chaotic");
+                    return;
+                } else {
+                    bigInteger =bigInteger.add(new BigInteger(String.valueOf(count)));
+                }
+            }
+            System.out.println(bigInteger.longValue());
         }
     }
+
+
 
 
     public static void main(String[] args) throws ParseException {
@@ -528,5 +542,7 @@ public class Test {
 
         System.out.println(gridChallenge(Arrays.asList("zzz", "hjk", "mpq", "rtv")));
         System.out.println(superDigit("148",3));
+        minimumBribes(Arrays.asList(2,5,1,3,4));
+        minimumBribes(Arrays.asList(2,1,5,3,4));
     }
 }
