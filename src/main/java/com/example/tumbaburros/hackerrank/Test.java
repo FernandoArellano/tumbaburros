@@ -520,6 +520,9 @@ public class Test {
 
     //2,5,1,3,4
     //2,1,5,3,4
+    //si esta a un lugar intercambia puestos
+    //recorre 1 posicion los otros 2
+    //y pon el q esta a 2 a su lugar
     public static void minimumBribes3(List<Integer> q) {
         // Write your code here
 
