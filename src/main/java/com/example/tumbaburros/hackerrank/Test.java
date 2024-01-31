@@ -1,5 +1,7 @@
 package com.example.tumbaburros.hackerrank;
 
+import com.fasterxml.jackson.core.JsonToken;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -10,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -555,6 +558,224 @@ public class Test {
         }
     }
 
+    //truck tour
+    //
+    //position % size will always return position from 0 to size
+    // 1%3=1;  2%3=2; 3%3=0 positions from 0 to size-1!
+    public static int truckTour(List<List<Integer>> petrolpumps) {
+        // Write your code here
+        final int size = petrolpumps.size();
+
+        for (int start = 0; start < size; start++) {
+            if (petrolpumps.get(start).get(0) < petrolpumps.get(start).get(1)) continue;
+
+            long tank = 0;
+            int position = start;
+            int pumpCount = 0;
+
+            while (true) {
+                if (pumpCount == size) return start; // all pumps has been visited
+                if (tank < 0) break;                 // not enough petrol to move further
+
+                tank += petrolpumps.get(position % size).get(0) - petrolpumps.get(position % size).get(1);
+
+                position++;
+                pumpCount++;
+            }
+        }
+        return -1;
+
+
+    }
+
+    //Merge two sorted linked lists
+    //merge 2 nodes, move pointer to be the next depending on value jump from node 1 to node 2
+    //merge two sorted linked list
+    static SinglyLinkedListNode mergeLists(SinglyLinkedListNode head1, SinglyLinkedListNode head2) {
+
+        SinglyLinkedListNode result= null;
+
+        if(head1==null){
+            return head2;
+        } else if(head2==null){
+            return head1;
+        }
+
+        if(head1.data<=head2.data){
+            result = head1;
+            result.next = mergeLists(head1.next,head2);
+        } else{
+            result = head2;
+            result.next = mergeLists(head1, head2.next);
+        }
+
+        return result;
+    }
+
+    //el scanner hay q tener cuidado y usar el nextint
+    //STDIN es usar el scanner para lo q se usa
+    public static void queueUsingTwoStacks(){
+        Scanner sc = new Scanner(System.in);
+
+        Deque<Integer> input = new ArrayDeque<>();
+        Deque<Integer> output = new ArrayDeque<>();
+
+        int q = sc.nextInt();
+        for (int i = 0; i < q; i++) {
+            int type = sc.nextInt();
+            if (type == 1) {
+                int x = sc.nextInt();
+                input.add(x);
+            } else if (type == 2) {
+                if(!input.isEmpty()){
+                    output.add(input.pop());
+                }
+            } else if (type == 3) {
+                if(!input.isEmpty()){
+                    System.out.println(input.peekFirst());
+                }
+            }
+        }
+
+        sc.close();
+    }
+
+    //A bracket is considered to be any one of the following characters: (, ), {, }, [, or ].
+    //Two brackets are considered to be a matched pair if the an opening bracket (i.e., (, [, or {) occurs to the left of a closing bracket (i.e., ), ], or }) of the exact same type. There are three types of matched pairs of brackets: [], {}, and ().
+    //A matching pair of brackets is not balanced if the set of brackets it encloses are not matched. For example, {[(])} is not balanced because the contents in between { and } are not balanced. The pair of square brackets encloses a single, unbalanced opening bracket, (, and the pair of parentheses encloses a single, unbalanced closing square bracket, ].
+    //By this logic, we say a sequence of brackets is balanced if the following conditions are met:
+    //It contains no unmatched brackets.
+    //The subset of brackets enclosed within the confines of a matched pair of brackets is also a matched pair of brackets.
+    //Given  strings of brackets, determine whether each sequence of brackets is balanced. If a string is balanced, return YES. Otherwise, return NO.
+    //para balance el stack asi va a mantener obteniendo {[(  agrega y remueve en orden ([{ asi confirmamos el ordenamiento
+    public static String isBalanced(String s) {
+
+        char[] array = s.toCharArray();
+        Stack<Character> stack = new Stack<>();
+
+
+        for(int i=0; i<array.length; i++){
+            char c = array[i];
+
+            switch(c){
+                case '(':
+                    stack.push(c);
+                    break;
+                case '[':
+                    stack.push(c);
+                    break;
+                case '{':
+                    stack.push(c);
+                    break;
+                case ')':
+                    if(stack.isEmpty() || stack.pop() != '('){
+                        return "NO";
+                    }
+                    break;
+                case ']':
+                    if(stack.isEmpty() || stack.pop() != '['){
+                        return "NO";
+                    }
+                    break;
+                case '}':
+                    if(stack.isEmpty() || stack.pop() != '{'){
+                        return "NO";
+                    }
+                    break;
+            }
+        }
+
+        if(stack.size()==0){
+            return "YES";
+        }
+
+        return "NO";
+    }
+
+
+    //si se busca una diferencia, se puede buscar si el numero - la diferencia buscada = numero q se necesita existe en la lista
+    //con una busqueda si se encuentra se consigue
+    public static int pairs(int k, List<Integer> arr) {
+        // Write your code here
+        arr= arr.stream().sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+        int count=0;
+
+        for(Integer i:arr){
+            if(Collections.binarySearch(arr,i-k)>=0){
+                count++;
+            }
+        }
+        return count;
+    }
+
+    //stack helps to keep track of last operations
+    //cuidado con los index al hacer substring y charat
+    public static void simpleTextEditor(){
+        Scanner scan = new Scanner(System.in);
+        Stack<String> stack = new Stack<>();
+        int operations = scan.nextInt();
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<operations;i++){
+            int type = scan.nextInt();
+
+            switch (type){
+                case 1:
+                    stack.push(sb.toString());
+                    String toAppend = scan.next();
+                    sb.append(toAppend);
+                    break;
+                case 2:
+                    stack.push(sb.toString());
+                    int toRemove = scan.nextInt();
+                    toRemove = sb.length()-toRemove;
+                    sb = new StringBuilder(sb.substring(0,toRemove));
+                    break;
+                case 3:
+                    int toPrint= scan.nextInt()-1;
+                    if(sb.length()>toPrint){
+                        System.out.println(sb.toString().charAt(toPrint));
+                    }
+                    break;
+                case 4:
+                    if(!stack.isEmpty()){
+                        sb= new StringBuilder(stack.pop());
+                    }
+
+                    break;
+            }
+        }
+    }
+
+    //PriorityQueue good performance, from smaller to top all the time
+    //poll retrieves and remove the tiniest element always
+    public static int cookies(int k, List<Integer> A) {
+        // Write your code here
+        int count=0;
+
+        PriorityQueue<Integer> priorityQueue = new PriorityQueue<>();
+        for(Integer i:A){
+            priorityQueue.add(i);
+        }
+        if(priorityQueue.peek()>=k){
+            return 0;
+        }
+
+        while(priorityQueue.size()>1 && k>count && priorityQueue.peek()<k){
+            int value = priorityQueue.poll()+(priorityQueue.poll()*2);
+            count++;
+            priorityQueue.add(value);
+
+        }
+        if (priorityQueue.size() == 0)
+            return -1;
+
+        if (priorityQueue.peek().intValue() >= k)
+            return count;
+        else
+            return -1;
+    }
+
+
 
 
 
@@ -612,5 +833,46 @@ public class Test {
 
         minimumBribes3(Arrays.asList(2,5,1,3,4));
         minimumBribes3(Arrays.asList(2,1,5,3,4));
+
+
+        List<List<Integer>> pumpes = new LinkedList<>();
+        pumpes.add(new LinkedList<>(){{add(1);add(5);}});
+        pumpes.add(new LinkedList<>(){{add(10);add(3);}});
+        pumpes.add(new LinkedList<>(){{add(3);add(4);}});
+
+        System.out.println(truckTour(pumpes));
+
+        SinglyLinkedListNode headOne = new SinglyLinkedListNode();
+        headOne.data = 1;
+        SinglyLinkedListNode headOne2 = new SinglyLinkedListNode();
+        headOne2.data=3;
+        SinglyLinkedListNode headOne3 = new SinglyLinkedListNode();
+        headOne3.data =7;
+        headOne.next = headOne2;
+        headOne2.next = headOne3;
+
+
+        SinglyLinkedListNode headTwo = new SinglyLinkedListNode();
+        headTwo.data = 1;
+        SinglyLinkedListNode headTwo2 = new SinglyLinkedListNode();
+        headTwo2.data=2;
+        headTwo.next = headTwo2;
+
+        System.out.println(mergeLists(headOne, headTwo));
+
+       // queueUsingTwoStacks();
+
+        System.out.println(isBalanced("{[()]}"));
+        System.out.println(isBalanced("{[(])}"));
+        System.out.println(isBalanced("{{[[(())]]}}"));
+
+        System.out.println(pairs(3,Arrays.asList(5,3,6,8,99,1)));
+
+        //simpleTextEditor();
+
+        System.out.println(cookies(9,Arrays.asList(2,7,3,6,4,6)));
     }
+
+
+
 }
