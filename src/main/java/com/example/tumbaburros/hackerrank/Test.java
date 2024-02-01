@@ -923,6 +923,68 @@ public class Test {
         return res;
     }
 
+    public static void preOrder(Node root) {
+
+        Stack<Node> stack = new Stack<>();
+        while(root != null){
+            System.out.print(root.data);
+            if(root.right != null){
+                stack.push(root.right);
+            }
+            if(root.left!=null){
+                root= root.left;
+            } else if(stack.size()>0){
+                root = stack.pop();
+            } else {
+                root=null;
+            }
+            if(root != null){
+                System.out.print(" ");
+            }
+        }
+    }
+
+
+    public static void decode(String s, Node2 root){
+        Node2 current = root;
+        char[] array = s.toCharArray();
+        StringBuilder result = new StringBuilder();
+        for(int i=0; i<array.length;i++){
+                int type = Character.getNumericValue(array[i]);
+                if (type == 0) {
+                    current = current.left;
+                } else {
+                    current = current.right;
+                }
+
+                if (current.left == null && current.right == null) {
+                    result.append(current.data);
+                    current = root;
+                }
+        }
+        System.out.println(result.toString());
+    }
+
+
+    public static void noPrefix(List<String> words) {
+        // Write your code here
+
+        boolean good = true;
+        Trie trie = new Trie();
+        for (String word : words) {
+            good = trie.insert(word);
+            if (!good) {
+                System.out.println("BAD SET");
+                System.out.println(word);
+                break;
+            }
+        }
+
+        if (good) {
+            System.out.println("GOOD SET");
+        }
+    }
+
 
 
 
@@ -1025,6 +1087,45 @@ public class Test {
         searchList.add(new ArrayList<>(){{add(1);add(2);}});
         searchList.add(new ArrayList<>(){{add(1);add(3);}});
         System.out.println(searchFirstBreath(4,2, searchList, 1));
+
+        Node root = new Node();
+        root.data = 1;
+        Node right1 = new Node();
+        right1.data = 2;
+        root.right = right1;
+        Node right2 = new Node();
+        right2.data=5;
+        right1.right = right2;
+        Node left = new Node();
+        left.data = 3;
+        right2.left = left;
+        Node right3= new Node();
+        right3.data=4;
+        left.right = right3;
+        Node right4 = new Node();
+        right4.data =6;
+        right2.right= right4;
+
+        preOrder(root);
+
+
+        Node2 n1 = new Node2();
+        Node2 n2 = new Node2();
+        Node2 n3 = new Node2();
+        Node2 n4 = new Node2();
+        Node2 n5 = new Node2();
+        n1.left = n2;
+        n3.data = 'A';
+        n1.right = n3;
+        n4.data = 'B';
+        n2.left = n4;
+        n5.data = 'C';
+        n2.right = n5;
+
+        System.out.println();
+        decode("1001011", n1);
+
+        noPrefix(Arrays.asList("aab", "defgab", "abcde", "aabcde", "bbbbbbbbbb", "jabjjjad"));
     }
 
 
