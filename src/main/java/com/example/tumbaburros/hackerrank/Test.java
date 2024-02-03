@@ -94,6 +94,21 @@ public class Test {
         System.out.println(zero.divide(divider,6,RoundingMode.HALF_UP));
     }
 
+    //There is a collection of input strings and a collection of query strings. For each query string, determine how many times it occurs in the
+    // list of input strings. Return an array of the results.
+    //Example
+    //There are  instances of ',  of '' and  of ''. For each query, add an element to the return array, .
+    public static List<Integer> matchingStrings(List<String> strings, List<String> queries) {
+        // Write your code here
+        Map<String, Long> map = strings.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        List<Integer> result = new LinkedList<>();
+        for(String q:queries){
+            long value = map.getOrDefault(q,0L);
+            result.add((int)value);
+        }
+        return result;
+    }
+
     //Given five positive integers, find the minimum and maximum values that can be calculated by
     // summing exactly four of the five integers. Then print the respective minimum and maximum
     // values as a single line of two space-separated long integers.
@@ -124,7 +139,7 @@ public class Test {
     //- 12:00:00PM on a 12-hour clock is 12:00:00 on a 24-hour clock.
     public static void timeConversion(String s) throws ParseException {
         //new
-        String time = LocalTime.parse("06:00 PM", DateTimeFormatter.ofPattern("hh:mm a", Locale.US))
+        String time = LocalTime.parse(s, DateTimeFormatter.ofPattern("hh:mm:ssa", Locale.US))
                 .format(DateTimeFormatter.ofPattern("HH:mm:ss"));
         System.out.println(time);
 
@@ -1126,6 +1141,8 @@ public class Test {
         decode("1001011", n1);
 
         noPrefix(Arrays.asList("aab", "defgab", "abcde", "aabcde", "bbbbbbbbbb", "jabjjjad"));
+
+        System.out.println(matchingStrings(Arrays.asList("ab","ab","abc"),Arrays.asList("ab","abc","bc")));
     }
 
 
