@@ -94,6 +94,21 @@ public class Test {
         System.out.println(zero.divide(divider,6,RoundingMode.HALF_UP));
     }
 
+    //There is a collection of input strings and a collection of query strings. For each query string, determine how many times it occurs in the
+    // list of input strings. Return an array of the results.
+    //Example
+    //There are  instances of ',  of '' and  of ''. For each query, add an element to the return array, .
+    public static List<Integer> matchingStrings(List<String> strings, List<String> queries) {
+        // Write your code here
+        Map<String, Long> map = strings.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        List<Integer> result = new LinkedList<>();
+        for(String q:queries){
+            long value = map.getOrDefault(q,0L);
+            result.add((int)value);
+        }
+        return result;
+    }
+
     //Given five positive integers, find the minimum and maximum values that can be calculated by
     // summing exactly four of the five integers. Then print the respective minimum and maximum
     // values as a single line of two space-separated long integers.
@@ -124,7 +139,7 @@ public class Test {
     //- 12:00:00PM on a 12-hour clock is 12:00:00 on a 24-hour clock.
     public static void timeConversion(String s) throws ParseException {
         //new
-        String time = LocalTime.parse("06:00 PM", DateTimeFormatter.ofPattern("hh:mm a", Locale.US))
+        String time = LocalTime.parse(s, DateTimeFormatter.ofPattern("hh:mm:ssa", Locale.US))
                 .format(DateTimeFormatter.ofPattern("HH:mm:ss"));
         System.out.println(time);
 
@@ -194,11 +209,11 @@ public class Test {
             for(int y=0; y<size;y++){
                 if(x==y){
                     List<Integer> xList = list.get(x);
-                    leftDiagonal += Math.abs(xList.get(y));
+                    leftDiagonal += xList.get(y);
                 }
                 if(x+y+1 == size){
                     List<Integer> xList = list.get(x);
-                    rightDiagonal += Math.abs(xList.get(y));
+                    rightDiagonal += xList.get(y);
                 }
             }
         }
@@ -232,6 +247,49 @@ public class Test {
         return IntStream.of(frequencyArray).boxed().collect(Collectors.toList());
     }
 
+    //Sherlock considers a string to be valid if all characters of the string appear the same number of times.
+    // It is also valid if he can remove just  character at  index in the string, and the remaining characters will occur the same number of times.
+    // Given a string , determine if it is valid. If so, return YES, otherwise return NO.
+    //Example
+    // abc
+    //This is a valid string because frequencies are a=1 b=1 c=1.
+    public static String isValid(String s) {
+        Map<String, Long> map = Stream.of(s.split("")).collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
+        Set<Long> set = map.values().stream().collect(Collectors.toSet());
+
+        if(set.size()>2){
+            return "NO";
+        } else if(set.size()==1){
+            return "YES";
+        } else {
+            Set<String> keySet = map.keySet();
+            if(keySet.size()!=2){
+                return "NO";
+            }
+            Iterator<Long> iterator = set.iterator();
+            long a = iterator.next();
+            long b = iterator.next();
+
+            int counta=0;
+            int countb=0;
+            for(Map.Entry<String,Long> entry: map.entrySet()){
+                if(entry.getValue() == a){
+                    counta++;
+                } else if(entry.getValue() == b){
+                    countb++;
+                }
+            }
+            if(counta == 1 || countb == 1){
+                return "YES";
+            }
+            if(Math.min(counta,countb) > 1){
+                return "NO";
+            }
+        }
+
+        return "YES";
+    }
+
     public static int flippingMatrix(List<List<Integer>> matrix) {
         System.out.println("Flipping matrix");
 
@@ -246,6 +304,23 @@ public class Test {
             }
         }
         return maxSum;
+    }
+
+//here is a large pile of socks that must be paired by color. Given an array of integers representing the color of each sock,
+// determine how many pairs of socks with matching colors there are.
+//Example
+//N=7
+//ARR= [1,2,1,2,1,3,2]
+//There is one pair of color  and one of color . There are three odd socks left, one of each color. The number of pairs is .
+    public static int sockMerchant(int n, List<Integer> ar) {
+        // Write your code here
+        int count=0;
+        Map<Integer, Long> map = ar.stream().collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
+        for(Map.Entry<Integer, Long> entry : map.entrySet()){
+            int val = (entry.getValue()).intValue()/2;
+            count+=val;
+        }
+        return count;
     }
 
 
@@ -368,6 +443,46 @@ public class Test {
         return sb.toString();
     }
 
+
+    //Declare a 2-dimensional array, , of  empty arrays. All arrays are zero indexed.
+    //Declare an integer, , and initialize it to .
+    //There are  types of queries, given as an array of strings for you to parse:
+    //Query: 1 x y
+    //Let .
+    //Append the integer  to .
+    //Query: 2 x y
+    //Let .
+    //Assign the value  to .
+    //Store the new value of  to an answers array.
+    public static List<Integer> dynamicArray(int n, List<List<Integer>> queries) {
+        // Write your code here
+        ArrayList<ArrayList<Integer>> seqs=new ArrayList<ArrayList<Integer>>();
+        ArrayList<Integer> temp= new ArrayList<Integer>();
+        int lastAns=0;
+
+        for(int i=0;i<n;i++)
+        {
+            seqs.add(new ArrayList<Integer>());
+        }
+
+        for(List<Integer> arr: queries)
+        {
+            int seq=(arr.get(1)^lastAns)%n;
+
+            int size=seqs.get(seq).size();
+
+            switch(arr.get(0))
+            {
+                case 1: seqs.get(seq).add(arr.get(2));
+                    break;
+
+                case 2: lastAns= seqs.get(seq).get(arr.get(2)%size);
+                    temp.add(lastAns);
+            }
+        }
+        return temp;
+    }
+
     //remove letter to make a palindrome
     //return index number of the removed character
     //return -1 if already a palindrome or no palindrome available
@@ -397,6 +512,29 @@ public class Test {
         }
 
         return -1;
+    }
+
+    public static String pangrams(String s) {
+        // Write your code here
+        String abc = "abcdefghijklmnopqrstuvwxyz";
+
+        s= Arrays.asList(s.toLowerCase().split(""))
+                .stream().distinct().collect(Collectors.joining()).replace(" ", "");
+
+        if(s.length()<abc.length()){
+            return "not pangram";
+        }
+
+        Map<Character, Long> map = abc.chars().mapToObj(c-> Character.valueOf((char)c)).collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
+        for(char c: s.toCharArray()){
+            map.remove(c);
+        }
+
+        if(map.size()>0){
+            return "not pangram";
+        } else {
+            return "pangram";
+        }
     }
 
     //Given a square grid of characters in the range ascii[a-z], rearrange elements of each row alphabetically,
@@ -436,6 +574,32 @@ public class Test {
         }
 
         return "NO";
+    }
+
+    //You will be given a list of integers, , and a single integer . You must create an array of length  from elements of  such
+    // that its unfairness is minimized. Call that array . Unfairness of an array is calculated as
+    //Where:
+    //- max denotes the largest integer in
+    //- min denotes the smallest integer in
+    public static int maxMin(int k, List<Integer> arr) {
+        // Write your code here
+        Collections.sort(arr);
+        int n = arr.size();
+        int startingIndex=0;
+        int res=-1;
+        while(startingIndex+k-1 < n){
+            int min = arr.get(startingIndex);
+            int max = arr.get(startingIndex+k -1);
+            if(res == -1){
+                res = max-min;
+            } else{
+                if(max-min < res){
+                    res = max - min;
+                }
+            }
+            startingIndex++;
+        }
+        return res;
     }
 
 
@@ -612,6 +776,52 @@ public class Test {
         return result;
     }
 
+
+    //There are two -element arrays of integers,  and . Permute them into some  and  such that the relation  holds for all  where .
+    //There will be  queries consisting of , , and . For each query, return YES if some permutation , satisfying the relation exists. Otherwise, return NO.
+    public static String twoArrays(int k, List<Integer> A, List<Integer> B) {
+        // Write your code here
+        Collections.sort(A);
+        Collections.sort(B);
+        int i=0;
+        int j=A.size()-1;
+        while(i<A.size() && j>0){
+            if(A.get(i)+B.get(j)<k){
+                return "NO";
+            }
+            i++;
+            j--;
+        }
+        return "YES";
+    }
+
+
+    //Two children, Lily and Ron, want to share a chocolate bar. Each of the squares has an integer on it.
+    //Lily decides to share a contiguous segment of the bar selected such that:
+    //The length of the segment matches Ron's birth month, and,
+    //The sum of the integers on the squares is equal to his birth day.
+    //Determine how many ways she can divide the chocolate.
+    public static int birthday(List<Integer> s, int d, int m) {
+        // Write your code here
+        int index=0;
+        int res=0;
+
+        while(index+m<=s.size()){
+            int acum=0;
+            for(int i=0; i<m;i++){
+                acum+=s.get(index+i);
+                if(acum>d){
+                    break;
+                }
+            }
+            if(acum==d){
+                res++;
+            }
+            index++;
+        }
+        return res;
+    }
+
     //el scanner hay q tener cuidado y usar el nextint
     //STDIN es usar el scanner para lo q se usa
     public static void queueUsingTwoStacks(){
@@ -706,6 +916,28 @@ public class Test {
             }
         }
         return count;
+    }
+
+    //Watson gives Sherlock an array of integers. His challenge is to find an element of the array such that the sum of all elements to the
+    // left is equal to the sum of all elements to the right.
+    //Example
+    //[5,6,8,11]
+    // 8 is between two subarrays that sum to 11.
+    public static String balancedSums(List<Integer> arr) {
+        // Write your code here
+        int sum = 0;
+        sum = arr.stream().reduce(0,(i1,i2)->i1+i2).intValue();
+
+        //curr is cimulated sum in the left
+        int curr = 0;
+        for(int j=0; j<arr.size(); j++){
+            //left part equals right part
+            if(curr == sum - arr.get(j)-curr){
+                return "YES";
+            }
+            curr += arr.get(j);
+        }
+        return "NO";
     }
 
     //stack helps to keep track of last operations
@@ -985,6 +1217,53 @@ public class Test {
         }
     }
 
+    public static long flippingBits(long n) {
+        // Write your code here
+        int[] array = new int[32];
+        int index =0;
+        long result =0;
+        while(n>0){
+            int lastDigit= (int)n%2;
+            n=n/2;
+            array[index] =lastDigit;
+            index++;
+        }
+
+        for(int i=0;i<32;i++){
+            System.out.print(array[i] +" ");
+        }
+
+        for(int i=0;i<32;i++){
+            array[i] = 1-array[i];
+            if(array[i]==1){
+                result = result +(1L<<i);
+            }
+        }
+
+        return result;
+    }
+
+    public static String decimalToBinary(long number){
+        String binary = "";
+        long rem =0;
+        while(number>0){
+            rem = number % 2;
+            binary = rem + binary;
+            number = number / 2;
+        }
+        return binary;
+    }
+
+    //A teacher asks the class to open their books to a page number. A student can either start turning pages from the front of the book
+    // or from the back of the book. They always turn pages one at a time. When they open the book, page  is always on the right side:
+    //When they flip page , they see pages  and . Each page except the last page will always be printed on both sides.
+    // The last page may only be printed on the front, given the length of the book. If the book is pages long, and a student wants to turn to page ,
+    // what is the minimum number of pages to turn? They can start at the beginning or the end of the book.
+    public static int pageCount(int n, int p) {
+        // Write your code here
+
+        return Math.min(p/2, (n/2)-(p/2));
+    }
     public static List<String> processLogs(List<String> logs, int threshold) {
         // Write your code here
         Map<String, Integer> map = new HashMap<>();
@@ -1227,6 +1506,30 @@ public class Test {
         decode("1001011", n1);
 
         noPrefix(Arrays.asList("aab", "defgab", "abcde", "aabcde", "bbbbbbbbbb", "jabjjjad"));
+
+        System.out.println(matchingStrings(Arrays.asList("ab","ab","abc"),Arrays.asList("ab","abc","bc")));
+
+        System.out.println(flippingBits(9L));
+
+        System.out.println(pangrams("We promptly judged antique ivory buckles for the next prize"));
+
+        System.out.println(birthday(Arrays.asList(2,2,1,3,2),4,2));
+
+        System.out.println(sockMerchant(7,Arrays.asList(1,2,1,2,1,3,2)));
+
+        System.out.println(maxMin(3, Arrays.asList(10,100,300,200,1000,20,30)));
+
+        List<List<Integer>> dynamicList= new ArrayList<>();
+        dynamicList.add(Arrays.asList(1,0,5));
+        dynamicList.add(Arrays.asList(1,1,7));
+        dynamicList.add(Arrays.asList(1,0,3));
+        dynamicList.add(Arrays.asList(2,1,0));
+        dynamicList.add(Arrays.asList(2,1,1));
+
+        System.out.println(dynamicArray(2,dynamicList));
+        System.out.println(balancedSums(Arrays.asList(2,0,0,0)));
+
+        System.out.println(isValid("aaaaabc"));
 
         List<String> logs = new LinkedList<>();
         logs.add("88 99 200");logs.add("88 99 300"); logs.add("99 32 100"); logs.add("12 12 15");
