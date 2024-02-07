@@ -71,6 +71,37 @@ public class Test {
         return positionResult;
     }
 
+    //Given the pointer to the head node of a linked list, change the next pointers of the nodes so that their order is reversed.
+    // The head pointer given may be null meaning that the initial list is empty.
+    // Example 1->2->3->NULL
+    // references the list
+    // 3->2->1->NULL
+    //Manipulate the  pointers of each node in place and return , now referencing the head of the list .
+    public static SinglyLinkedListNode reverse(SinglyLinkedListNode llist) {
+        // Write your code here
+        Stack<SinglyLinkedListNode> stack = new Stack<>();
+        while(llist != null){
+            stack.push(llist);
+            llist = llist.next;
+        }
+
+        SinglyLinkedListNode result = null;
+        SinglyLinkedListNode temp = null;
+        while(!stack.isEmpty()){
+            if(result == null && temp ==null){
+                result = stack.peek();
+                temp = stack.pop();
+            } else {
+                temp.next = stack.pop();
+                temp = temp.next;
+            }
+        }
+        if(temp != null && temp.next != null){
+            temp.next = null;
+        }
+        return result;
+    }
+
     //Big decimal, Scale, Rounding
     public static void plusMinus(List<Integer> arr){
         BigDecimal positive= new BigDecimal(0);
@@ -773,6 +804,34 @@ public class Test {
             result.next = mergeLists(head1, head2.next);
         }
 
+        return result;
+    }
+
+
+    //Two friends like to pool their money and go to the ice cream parlor. They always choose two distinct flavors and they spend all of their money.
+    //Given a list of prices for the flavors of ice cream, select the two that will cost all of the money they have.
+    //Example.
+    //m=6  cost[1,3,4,5,6]
+    //The two flavors that cost 1 and 5  meet the criteria. Using 1-based indexing, they are at indices 1 and 4.
+    public static List<Integer> icecreamParlor(int m, List<Integer> arr) {
+        // Write your code here
+        List<Integer>result = new LinkedList<>();
+        List<Integer> ordered = new ArrayList<>(arr);
+        Collections.sort(ordered);
+        for(int i=0; i<ordered.size();i++){
+            int value = ordered.get(i);
+            int index = Collections.binarySearch(ordered, m-value);
+            if(index>=0){
+                int index1 = (arr.indexOf(ordered.get(i)))+1;
+                int index2 = (arr.indexOf(ordered.get(index)))+1;
+                if(index1 == index2){
+                    index2++;
+                }
+                result.add(Math.min(index1,index2));
+                result.add(Math.max(index1,index2));
+                break;
+            }
+        }
         return result;
     }
 
@@ -1541,6 +1600,18 @@ public class Test {
         List<Integer> endIndexes = new LinkedList<>();
         endIndexes.add(3);
         System.out.println(numberOfItems("*|*|",startindexes,endIndexes));
+
+        SinglyLinkedListNode reverseheadOne = new SinglyLinkedListNode();
+        reverseheadOne.data = 1;
+        SinglyLinkedListNode reverseheadOne2 = new SinglyLinkedListNode();
+        reverseheadOne2.data=2;
+        SinglyLinkedListNode reverseheadOne3 = new SinglyLinkedListNode();
+        reverseheadOne3.data =3;
+        reverseheadOne.next = reverseheadOne2;
+        reverseheadOne2.next = reverseheadOne3;
+        System.out.println(reverse(reverseheadOne));
+
+        System.out.println(icecreamParlor(100, Arrays.asList(5,75,25)));
     }
 
 
