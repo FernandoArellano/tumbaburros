@@ -985,7 +985,108 @@ public class Test {
         }
     }
 
+    public static List<String> processLogs(List<String> logs, int threshold) {
+        // Write your code here
+        Map<String, Integer> map = new HashMap<>();
+        List<String> result = new ArrayList<>();
+        Set<String> set = new TreeSet<>();
+            for(int i=0; i<logs.size(); i++){
+                String log = logs.get(i);
+                String[] array = log.split(" ");
+                if(array.length==3){
+                    String index1 = array[0];
+                    String index2 = array[1];
+                    if(index1.equals(index2) && !set.contains(index1)){
+                        if(map.containsKey(index1)){
+                            int newValue = map.get(index1)+1;
+                            if(newValue>=threshold){
+                                set.add(index1);
+                            }
+                            map.put(index1, newValue);
+                        } else {
+                            map.put(index1,1);
+                        }
+                    } else {
+                        if(map.containsKey(index1)){
+                            if(!set.contains(index1)){
+                                int newValue = map.get(index1)+1;
+                                if(newValue>=threshold){
+                                    set.add(index1);
+                                }
+                                map.put(index1, newValue);
+                            }
+                        } else {
+                            map.put(index1,1);
+                        }
+                        if(map.containsKey(index2)){
+                            if(!set.contains(index2)){
+                                int newValue = map.get(index2)+1;
+                                if(newValue>=threshold){
+                                    set.add(index2);
+                                }
+                                map.put(index2, newValue);
+                            }
+                        } else {
+                            map.put(index2,1);
+                        }
+                    }
+                }
+            }
 
+        return new LinkedList<>(set);
+    }
+
+//            for(Map.Entry<String, Integer> entry: map.entrySet()){
+//                if(entry.getValue()>=threshold){
+//                    set.add(entry.getKey());
+//                }
+//            }
+
+
+    //item in containers
+
+    public static List<Integer> numberOfItems(String s, List<Integer> startIndices, List<Integer> endIndices) {
+
+        List<Integer> result = new LinkedList<>();
+
+        // Write your code here
+        for(int i=0; i< startIndices.size();i++){
+            int articles = 0;
+            Integer start = startIndices.get(i)-1;
+            Integer end = endIndices.get(i);
+            if(start<=end && start>=0){
+                 String word = s.substring(start, end);
+                 Stack<Character> stack = new Stack();
+                 char[] chars = word.toCharArray();
+                 for(char c: chars){
+                     stack.push(c);
+                 }
+
+                 boolean openCompartment = false;
+
+                 while(!stack.isEmpty() && stack.peek() != null){
+                     int tempArticles =0;
+                     Character eval = stack.pop();
+                     if(eval == '|'){
+                         if(openCompartment){
+                             articles+=tempArticles;
+                             openCompartment = false;
+                         } else{
+                             openCompartment = true;
+                         }
+                     }
+                     if(eval == '*'){
+                         if(openCompartment){
+                             tempArticles++;
+                         }
+                     }
+                 }
+            }
+
+            result.add(articles);
+        }
+        return result;
+    }
 
 
     public static void main(String[] args) throws ParseException {
@@ -1126,6 +1227,17 @@ public class Test {
         decode("1001011", n1);
 
         noPrefix(Arrays.asList("aab", "defgab", "abcde", "aabcde", "bbbbbbbbbb", "jabjjjad"));
+
+        List<String> logs = new LinkedList<>();
+        logs.add("88 99 200");logs.add("88 99 300"); logs.add("99 32 100"); logs.add("12 12 15");
+        System.out.println(processLogs(logs,2));
+
+        List<Integer> startindexes = new LinkedList<>();
+        startindexes.add(1);
+
+        List<Integer> endIndexes = new LinkedList<>();
+        endIndexes.add(3);
+        System.out.println(numberOfItems("*|*|",startindexes,endIndexes));
     }
 
 
