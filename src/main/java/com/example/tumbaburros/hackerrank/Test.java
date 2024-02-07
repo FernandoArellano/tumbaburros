@@ -1037,6 +1037,71 @@ public class Test {
         }
     }
 
+    //You are a waiter at a party. There is a pile of numbered plates. Create an empty  array. At each iteration, ,
+    // remove each plate from the top of the stack in order. Determine if the number on the plate is evenly divisible by the
+    // prime number. If it is, stack it in pile . Otherwise, stack it in stack . Store the values in  from top to bottom in . In the next iteration,
+    // do the same with the values in stack . Once the required number of iterations is complete, store the remaining values in  in ,
+    // again from top to bottom. Return the  array.
+    //al cambiar a la stack cambia el orden de a, pero no afecto segun?
+    public static List<Integer> waiter(List<Integer> number, int q) {
+        // Write your code here
+
+        Stack<Integer> stackA = new Stack<>();
+        Stack<Integer> stackB = new Stack<>();
+        List<Integer> answers = new LinkedList<>();
+
+        int index=0;
+        for(Integer i : number){
+            stackA.push(i);
+        }
+
+        Integer primeNumber = 2;
+        while(index < q){
+
+            Stack<Integer> nextA= new Stack<>();
+            while(!stackA.isEmpty()){
+                if(stackA.peek() % primeNumber == 0){
+                    stackB.push(stackA.pop());
+                } else {
+                    nextA.push(stackA.pop());
+                }
+
+            }
+
+            while(!stackB.isEmpty()){
+                answers.add(stackB.pop());
+            }
+            stackA = nextA;
+            primeNumber = nextPrime(primeNumber);
+            index++;
+        }
+
+
+
+        while(!stackA.isEmpty()){
+            answers.add(stackA.pop());
+        }
+
+        return answers;
+    }
+
+    static int nextPrime(int begin) {
+        for (int i = begin + 1;; i++) {
+            if (isPrime(i)) {
+                return i;
+            }
+        }
+    }
+
+    static boolean isPrime(int n) {
+        for (int i = 2; i * i <= n; i++) {
+            if (n % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     //PriorityQueue good performance, from smaller to top all the time
     //poll retrieves and remove the tiniest element always
     public static int cookies(int k, List<Integer> A) {
