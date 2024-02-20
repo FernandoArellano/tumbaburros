@@ -38,6 +38,7 @@ public class Colections {
         System.out.println(index);
 
         //reversed iterator insertion order
+        //forEachRemaining element in list
         LinkedList<Integer> linked = new LinkedList<>(); linked.add(1);linked.add(10);linked.add(3);
         linked.descendingIterator().forEachRemaining(System.out::println);
 
