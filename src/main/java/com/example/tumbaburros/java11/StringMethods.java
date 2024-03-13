@@ -2,6 +2,7 @@ package com.example.tumbaburros.java11;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -63,5 +64,14 @@ public class StringMethods {
 
         //Repeat
         System.out.println("Fer".repeat(3));
+
+        //Collection.toArray(IntFunction)
+        List<Integer> integers = List.of(1,2,3,4,5);
+        Integer[] integers1 = integers.toArray(Integer[]::new);
+        for(Integer i: integers1){
+            System.out.println(i);
+        }
+
+        Boolean[] booleans = new Boolean[]{true,false};
     }
 }

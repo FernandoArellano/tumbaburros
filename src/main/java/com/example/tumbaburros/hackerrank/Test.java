@@ -1491,6 +1491,96 @@ public class Test {
         return result;
     }
 
+    public static String gamingArray(List<Integer> arr) {
+        // Write your code here
+        int count = 0;
+        int bigger = 0;
+
+        for(Integer i : arr){
+            if(i > bigger){
+                bigger = i;
+                count++;
+            }
+        }
+
+        if (count % 2 == 0) {
+            return "ANDY";
+        }
+
+        return "BOB";
+    }
+
+    public static int[][] spiral(int rows, int columns) {
+
+        int counter = 0;
+        boolean columnsRightDirection = true;
+        boolean rowsDownDirection = true;
+        int rowIndex =0;
+        int columnIndex =0;
+        int invertRowCounter =0;
+        int invertColumnCounter=0;
+        boolean fillingColumns = true;
+
+        int[][] matrix = new int[rows][columns];
+
+        while(counter< rows*columns){
+            counter++;
+            matrix[rowIndex][columnIndex] = counter;
+
+            if(fillingColumns){
+                if(columnsRightDirection && (columnIndex+invertColumnCounter+1==columns)){
+                    columnsRightDirection = false;
+                    fillingColumns = false;
+
+                    if(rowsDownDirection){
+                        rowIndex++;
+                    } else {
+                        rowIndex--;
+                    }
+                } else if(columnsRightDirection){
+                    columnIndex++;
+                } else if(!columnsRightDirection && columnIndex-invertColumnCounter==0){
+                    columnsRightDirection=true;
+                    fillingColumns = false;
+                    invertColumnCounter++;
+                    if(rowsDownDirection){
+                        rowIndex++;
+                    } else {
+                        rowIndex--;
+                    }
+                } else if(!columnsRightDirection){
+                    columnIndex--;
+                }
+            } else {
+                if(rowsDownDirection && (rowIndex+invertRowCounter+1==rows)){
+                    rowsDownDirection = false;
+                    fillingColumns = true;
+                    invertRowCounter++;
+                    if(columnsRightDirection){
+                        columnIndex++;
+                    } else {
+                        columnIndex--;
+                    }
+                } else if(rowsDownDirection){
+                    rowIndex++;
+                } else if(!rowsDownDirection && rowIndex-invertRowCounter==0){
+                    rowsDownDirection=true;
+                    fillingColumns = true;
+
+                    if(columnsRightDirection){
+                        columnIndex++;
+                    } else {
+                        columnIndex--;
+                    }
+                } else if(!rowsDownDirection){
+                    rowIndex--;
+                }
+            }
+
+        }
+        return matrix;
+    }
+
 
     public static void main(String[] args) throws ParseException {
        // ranks();
@@ -1677,7 +1767,13 @@ public class Test {
         System.out.println(reverse(reverseheadOne));
 
         System.out.println(icecreamParlor(100, Arrays.asList(5,75,25)));
+
+        System.out.println(gamingArray(List.of(2,3,5,4,1)));
+
+        spiral(3,4);
     }
+
+
 
 
 
