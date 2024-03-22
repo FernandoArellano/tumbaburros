@@ -1581,6 +1581,30 @@ public class Test {
         return matrix;
     }
 
+    public static int superDigit2(String n, int k) {
+        // Write your code here
+        int result=Integer.parseInt(n);
+
+        while(n.length()>1){
+            result=0;
+            for(int i=0; i<n.length();i++){
+                result+= Integer.valueOf(n.charAt(i));
+            }
+            n=String.valueOf(result);
+        }
+        result = Integer.valueOf(n) * k;
+        n= String.valueOf(result);
+
+        while(n.length()>1){
+            result=0;
+            for(int i=0; i<n.length();i++){
+                result+= Integer.valueOf(n.charAt(i));
+            }
+            n=String.valueOf(result);
+        }
+        return result;
+    }
+
 
     public static void main(String[] args) throws ParseException {
        // ranks();
@@ -1771,6 +1795,8 @@ public class Test {
         System.out.println(gamingArray(List.of(2,3,5,4,1)));
 
         spiral(3,4);
+
+        System.out.println(superDigit2("9875",4));
     }
 
 

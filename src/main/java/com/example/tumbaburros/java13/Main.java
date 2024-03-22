@@ -5,7 +5,7 @@ public class Main {
     public static void textBlocks(){
         System.out.println("TextBlocks");
         String block1 = """
-                            Fer
+                         Fer
                             Are
                             Sal
                          """;
