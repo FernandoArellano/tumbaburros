@@ -1605,6 +1605,154 @@ public class Test {
         return result;
     }
 
+    public static int pylons(int k, List<Integer> arr) {
+        int next = -1;
+        int count = 0;
+        int prev = -1;
+        while(next<arr.size()-1){
+            int on = Math.min(next+k,arr.size()-1);
+            while(on>prev){
+                if(arr.get(on)==1){
+                    break;
+                }
+                on--;
+            }
+            if(on==prev){
+                return -1;
+            }
+            count++;
+            prev = on;
+            next = on + k-1;
+
+        }
+        return count;
+    }
+
+    public static List<List<Integer>> findDifference(int[] nums1, int[] nums2) {
+        List<Integer> n1 = Arrays.stream(nums1).boxed().distinct().toList();
+        List<Integer> n2 = Arrays.stream(nums2).boxed().distinct().toList();
+
+        List<Integer> result1= new ArrayList<>(n1);
+        result1.removeAll(n2);
+
+        List<Integer> result2 = new ArrayList<>(n2);
+        result2.removeAll(n1);
+
+        List<List<Integer>> list = new ArrayList<>();
+        list.add(result1);
+        list.add(result2);
+
+        return list;
+    }
+
+    public static boolean uniqueOccurrences(int[] arr) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int i:arr){
+            if(map.containsKey(i)){
+                map.put(i, (map.get(i))+1);
+            } else {
+                map.put(i, 1);
+            }
+        }
+
+        List<Integer> all = map.values().stream().toList();
+        if(all.size() == all.stream().distinct().collect(Collectors.toList()).size()){
+            return true;
+        } else{
+            return false;
+        }
+    }
+
+    /*
+        Two strings are considered close if you can attain one from the other using the following operations:
+
+        Operation 1: Swap any two existing characters.
+        For example, abcde -> aecdb
+        Operation 2: Transform every occurrence of one existing character into another existing character, and do the same with the other character.
+        For example, aacabb -> bbcbaa (all a's turn into b's, and all b's turn into a's)
+        You can use the operations on either string as many times as necessary.
+
+        Given two strings, word1 and word2, return true if word1 and word2 are close, and false otherwise.
+     */
+    public static boolean closeStrings(String word1, String word2) {
+
+        int[] array1 = new int[26];
+        int[] array2 = new int[26];
+
+        if(word1.length() != word2.length()){
+            return false;
+        }
+
+        for(int i=0; i<word2.length(); i++){
+            array1[word1.charAt(i)-'a'] +=1;
+            array2[word2.charAt(i)-'a'] +=1;
+        }
+
+        for(int i=0; i<array1.length;i++){
+            if(array1[i]==0 && array2[i]!=0 || array2[i]==0 && array1[i] !=0){
+                return false;
+            }
+        }
+
+        Arrays.sort(array1);
+        Arrays.sort(array2);
+
+        for(int i=0; i<array1.length;i++){
+            if(array1[i] != array2[i]){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*
+    Given a 0-indexed n x n integer matrix grid, return the number of pairs (ri, cj) such that row ri and column cj are equal.
+    A row and column pair is considered equal if they contain the same elements in the same order (i.e., an equal array).
+
+    System.out.println(equalPairs(new int[][]{{3,1,2,2},{1,4,4,4},{2,4,2,2},{2,5,2,2}}));
+     */
+    public static int equalPairs(int[][] grid) {
+
+        List<String> rowsList = new ArrayList<>();
+        List<String> columnsList = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        int counter =0;
+
+        for(int i=0; i<grid.length;i++){
+            for(int j=0; j< grid.length;j++) {
+                sb.append(grid[i][j]);
+                if(j< grid.length-1){
+                    sb.append(",");
+                }
+            }
+            rowsList.add(sb.toString());
+            sb = new StringBuilder();
+        }
+
+        for(int i=0; i<grid.length;i++){
+            for(int j=0; j< grid.length;j++) {
+                sb.append(grid[j][i]);
+                if(j< grid.length-1){
+                    sb.append(",");
+                }
+            }
+            columnsList.add(sb.toString());
+            sb = new StringBuilder();
+        }
+
+        for(String s: rowsList){
+            if(columnsList.contains(s)){
+                counter+=columnsList.stream().filter(c->s.equals(c)).count();
+            }
+        }
+
+
+        return counter;
+
+    }
+
+
+
 
     public static void main(String[] args) throws ParseException {
        // ranks();
@@ -1797,6 +1945,10 @@ public class Test {
         spiral(3,4);
 
         System.out.println(superDigit2("9875",4));
+
+        line();
+
+
     }
 
 
