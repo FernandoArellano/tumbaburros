@@ -1752,6 +1752,137 @@ public class Test {
     }
 
 
+    /*
+    You are given a string s, which contains stars *.
+    In one operation, you can:
+    Choose a star in s.
+    Remove the closest non-star character to its left, as well as remove the star itself.
+    Return the string after all stars have been removed.
+    Note:
+    The input will be generated such that the operation is always possible.
+    It can be shown that the resulting string will always be unique.
+
+     System.out.println(removeStars("erase*****"));
+     */
+    public static String removeStars(String s) {
+
+        if(!s.contains("*")){
+            return s;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        Stack<Character> stack = new Stack<>();
+
+        for(int i=0; i<s.length(); i++){
+            if(s.charAt(i)=='*'){
+                stack.pop();
+            } else {
+                stack.push(s.charAt(i));
+            }
+        }
+
+        for(int i=0; i<stack.size();i++){
+            sb.append(stack.get(i));
+        }
+        return sb.toString();
+    }
+
+    /*
+        We are given an array asteroids of integers representing asteroids in a row.
+        For each asteroid, the absolute value represents its size, and the sign represents its direction (positive meaning right, negative meaning left).
+        Each asteroid moves at the same speed.
+        Find out the state of the asteroids after all collisions. If two asteroids meet, the smaller one will explode.
+        If both are the same size, both will explode. Two asteroids moving in the same direction will never meet.
+         */
+    public static int[] asteroidCollision(int[] asteroids) {
+        Stack<Integer> stack = new Stack<>();
+        boolean positiveInt = false;
+        boolean positiveStack = false;
+
+        for(int asteroid: asteroids){
+            do{
+                if(stack.isEmpty()){
+                    stack.push(asteroid);
+                    break;
+                } else{
+                    positiveInt = Integer.signum(asteroid)>=0?true:false;
+                    positiveStack = Integer.signum(stack.peek())>=0?true:false;
+
+                    if(positiveInt == positiveStack){
+                        stack.push(asteroid);
+                        break;
+                    } else {
+                        if(Math.abs(stack.peek())==Math.abs(asteroid)){
+                            stack.pop();
+                            break;
+                        } else if(Math.abs(stack.peek())>Math.abs(asteroid)) {
+                            break;
+                        } else{
+                            stack.pop();
+                        }
+                    }
+
+                }
+            } while(true);
+
+        }
+
+        int[] result = new int[stack.size()];
+
+        for(int i= result.length-1; i>=0;i--){
+            result[i]= stack.pop();
+        }
+        return result;
+    }
+
+    /*
+    Given an encoded string, return its decoded string.
+    The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is being repeated exactly k times.
+    Note that k is guaranteed to be a positive integer.
+    You may assume that the input string is always valid; there are no extra white spaces, square brackets are well-formed, etc.
+    Furthermore, you may assume that the original data does not contain any digits and that digits are only for those repeat numbers, k.
+    For example, there will not be input like 3a or 2[4].
+    The test cases are generated so that the length of the output will never exceed 105.
+
+     System.out.println(decodeString("2[abc]3[cd]ef"));
+     abcabccdcdcdef
+     */
+    public static String decodeString(String s) {
+        Stack<Character> stack = new Stack<>();
+        StringBuilder result = new StringBuilder();
+        for(char c : s.toCharArray()){
+            if(c == ']'){
+                StringBuilder sb = new StringBuilder();
+
+                while(!stack.isEmpty() && stack.peek() != '['){
+                    sb.insert(0,stack.pop());
+                }
+                //remove [
+                stack.pop();
+
+                StringBuilder numberBuilder = new StringBuilder();
+                while(!stack.isEmpty() && Character.isDigit(stack.peek())){
+                    numberBuilder.insert(0,stack.pop());
+                }
+
+                result.append(sb.toString().repeat(Integer.valueOf(numberBuilder.toString())));
+
+                for(Character character: result.toString().toCharArray()){
+                    stack.push(character);
+                }
+                result = new StringBuilder();
+            } else {
+                stack.push(c);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while(!stack.isEmpty()){
+            sb.insert(0, stack.pop());
+        }
+        result.append(sb);
+        return  result.toString();
+    }
 
 
     public static void main(String[] args) throws ParseException {
