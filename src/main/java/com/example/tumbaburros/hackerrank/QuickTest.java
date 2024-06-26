@@ -7,52 +7,52 @@ import java.util.stream.Collectors;
 public class QuickTest {
 
     /*
-    Given an encoded string, return its decoded string.
-    The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is being repeated exactly k times.
-    Note that k is guaranteed to be a positive integer.
-    You may assume that the input string is always valid; there are no extra white spaces, square brackets are well-formed, etc.
-    Furthermore, you may assume that the original data does not contain any digits and that digits are only for those repeat numbers, k.
-    For example, there will not be input like 3a or 2[4].
-    The test cases are generated so that the length of the output will never exceed 105.
+    Given the head of a singly linked list, reverse the list, and return the reversed list.
+
+    ListNode a = new ListNode(1);
+    ListNode b = new ListNode(2);
+    ListNode c = new ListNode(3);
+    ListNode d = new ListNode(4);
+    ListNode e = new ListNode(5);
+    a.next = b;
+    b.next = c;
+    c.next = d;
+    d.next = e;
+
+    ListNode result = reverseList(a);
      */
-    public static String decodeString(String s) {
-        Stack<Character> stack = new Stack<>();
-        StringBuilder result = new StringBuilder();
-        for(char c : s.toCharArray()){
-            if(c == ']'){
-                StringBuilder sb = new StringBuilder();
-
-                while(!stack.isEmpty() && stack.peek() != '['){
-                        sb.insert(0,stack.pop());
-                }
-                //remove [
-                stack.pop();
-
-                StringBuilder numberBuilder = new StringBuilder();
-                while(!stack.isEmpty() && Character.isDigit(stack.peek())){
-                        numberBuilder.insert(0,stack.pop());
-                }
-
-                result.append(sb.toString().repeat(Integer.valueOf(numberBuilder.toString())));
-
-                for(Character character: result.toString().toCharArray()){
-                    stack.push(character);
-                }
-                result = new StringBuilder();
-            } else {
-                stack.push(c);
-            }
+    public static ListNode reverseList(ListNode head) {
+        ListNode curr=head;
+        ListNode prev=null;
+        ListNode next=null;
+        while(curr!=null){
+            next = curr.next;
+            curr.next=prev;
+            prev=curr;
+            curr=next;
         }
-
-        StringBuilder sb = new StringBuilder();
-        while(!stack.isEmpty()){
-            sb.insert(0, stack.pop());
-        }
-        result.append(sb);
-        return  result.toString();
+        return prev;
     }
 
+    static class ListNode {
+      int val;
+      ListNode next;
+      ListNode() {}
+      ListNode(int val) { this.val = val; }
+      ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+  }
+
     public static void main(String[] args) {
-        System.out.println(decodeString("2[abc]3[cd]ef"));
+       ListNode a = new ListNode(1);
+        ListNode b = new ListNode(2);
+        ListNode c = new ListNode(3);
+        ListNode d = new ListNode(4);
+        ListNode e = new ListNode(5);
+        a.next = b;
+        b.next = c;
+        c.next = d;
+        d.next = e;
+
+        ListNode result = reverseList(a);
     }
 }

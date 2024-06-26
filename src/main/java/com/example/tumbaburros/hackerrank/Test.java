@@ -1884,6 +1884,233 @@ public class Test {
         return  result.toString();
     }
 
+    /*
+    You have a RecentCounter class which counts the number of recent requests within a certain time frame.
+    Implement the RecentCounter class:
+    RecentCounter() Initializes the counter with zero recent requests.
+    int ping(int t) Adds a new request at time t, where t represents some time in milliseconds,
+    and returns the number of requests that has happened in the past 3000 milliseconds (including the new request).
+    Specifically, return the number of requests that have happened in the inclusive range [t - 3000, t].
+    It is guaranteed that every call to ping uses a strictly larger value of t than the previous call.
+
+    QuickTest q = new QuickTest();
+       int[] array = new int[]{1178,1483,1563,4054,4152};
+
+       for(int a: array){
+           System.out.println(q.ping(a));
+       }
+     */
+    Queue<Integer> q = new LinkedList<>();
+
+    public int ping(int t) {
+        q.add(t);
+
+        while(q.peek() < t-3000){
+            q.poll();
+        }
+        return q.size();
+    }
+
+    /*
+    Ban one senator's right: A senator can make another senator lose all his rights in this and all the following rounds.
+    Announce the victory: If this senator found the senators who still have rights to vote are all from the same party,
+    he can announce the victory and decide on the change in the game.
+    Given a string senate representing each senator's party belonging. The character 'R' and 'D' represent the Radiant party and the Dire party.
+    Then if there are n senators, the size of the given string will be n.
+    The round-based procedure starts from the first senator to the last senator in the given order. This procedure will last until the end of voting.
+    All the senators who have lost their rights will be skipped during the procedure.
+    Suppose every senator is smart enough and will play the best strategy for his own party.
+    Predict which party will finally announce the victory and change the Dota2 game. The output should be "Radiant" or "Dire".
+
+    One strategy that would pass the judge (although not the most efficient) to think about the problem is for the first character in the string to move to the back and eliminate the first "opposing" character in the string. So in the case of "DDRRR":
+
+    DDRRR - the first D moves to the back and takes out the first R
+    DRRD - the first D moves to the back and takes out the first R
+    RDD - the first R moves to the back and takes out the first D
+    DR - the first (and only) D moves to the back and takes out the first (and only) R
+    D - D wins the vote.
+
+    System.out.println(predictPartyVictory("DDRRR"));
+     */
+    public static String predictPartyVictory(String senate) {
+        Queue<Character> queue = new LinkedList<>();
+
+        Character before = null;
+        for(char c: senate.toCharArray()){
+            queue.add(c);
+        }
+
+        Character contrary = null;
+        do {
+            if(before==null){
+                before=queue.peek();
+            } else {
+                queue.remove(contrary);
+                queue.add(queue.poll());
+                before=queue.peek();
+            }
+            if(before == 'R'){
+                contrary = 'D';
+            } else {
+                contrary = 'R';
+            }
+
+        }while(queue.contains(contrary));
+
+        if(before != null && before=='R'){
+            return "Radiant";
+        }
+        return "Dire";
+
+    }
+
+    /*
+    You are given the head of a linked list. Delete the middle node, and return the head of the modified linked list.
+    The middle node of a linked list of size n is the ⌊n / 2⌋th node from the start using 0-based indexing, where ⌊x⌋ denotes
+    the largest integer less than or equal to x.
+    For n = 1, 2, 3, 4, and 5, the middle nodes are 0, 1, 1, 2, and 2, respectively
+
+    ListNode a = new ListNode(1);
+    ListNode b = new ListNode(2);
+    ListNode c = new ListNode(3);
+    ListNode d = new ListNode(4);
+    a.next = b;
+    b.next = c;
+    c.next = d;
+
+        ListNode result = deleteMiddle(a);
+     */
+    public static QuickTest.ListNode deleteMiddle(QuickTest.ListNode head) {
+        int count=0;
+        QuickTest.ListNode test = head;
+        while(test != null){
+            count++;
+            test = test.next;
+        }
+
+        if(count<2){
+            return null;
+        }
+
+        int toRemoveIndex= count/2;
+
+        test = head;
+
+        int counter = 0;
+        QuickTest.ListNode before = null;
+        while(test != null){
+            if(counter == toRemoveIndex){
+                if(before.next.next != null){
+                    before.next = before.next.next;
+                } else {
+                    before.next = null;
+                }
+                before = test;
+                test = test.next;
+            } else{
+                before = test;
+                test = test.next;
+            }
+            counter++;
+        }
+
+        return head;
+    }
+
+    /*
+    Given the head of a singly linked list, group all the nodes with odd indices together followed by the nodes with even indices, and return the reordered list.
+    The first node is considered odd, and the second node is even, and so on.
+    Note that the relative order inside both the even and odd groups should remain as it was in the input.
+
+    ListNode a = new ListNode(1);
+    ListNode b = new ListNode(2);
+    ListNode c = new ListNode(3);
+    ListNode d = new ListNode(4);
+    ListNode e = new ListNode(5);
+    a.next = b;
+    b.next = c;
+    c.next = d;
+    d.next = e;
+
+    ListNode result = oddEvenList(a);
+     */
+    public static QuickTest.ListNode oddEvenList(QuickTest.ListNode head) {
+
+        if(head == null || head.next ==null){
+            return head;
+        }
+
+        Queue<QuickTest.ListNode> odd = new LinkedList<>();
+        Queue<QuickTest.ListNode> even = new LinkedList<>();
+        int count =1;
+        QuickTest.ListNode temp = head;
+        while(temp != null){
+            QuickTest.ListNode toAdd = new QuickTest.ListNode(temp.val);
+            if(count%2!=0){
+                odd.add(toAdd);
+            } else{
+                even.add(toAdd);
+            }
+            temp = temp.next;
+            count++;
+        }
+
+        if(!odd.isEmpty()){
+            temp = odd.poll();
+        } else {
+            temp = even.poll();
+        }
+
+        QuickTest.ListNode result = temp;
+        while(!odd.isEmpty()){
+            temp.next = odd.poll();
+            temp= temp.next;
+        }
+
+        while(!even.isEmpty()){
+            temp.next = even.poll();
+            temp= temp.next;
+        }
+
+        return result;
+    }
+
+    /*
+    Given the head of a singly linked list, reverse the list, and return the reversed list.
+
+    ListNode a = new ListNode(1);
+    ListNode b = new ListNode(2);
+    ListNode c = new ListNode(3);
+    ListNode d = new ListNode(4);
+    ListNode e = new ListNode(5);
+    a.next = b;
+    b.next = c;
+    c.next = d;
+    d.next = e;
+
+    ListNode result = reverseList(a);
+     */
+    public static QuickTest.ListNode reverseList(QuickTest.ListNode head) {
+        QuickTest.ListNode curr=head;
+        QuickTest.ListNode prev=null;
+        QuickTest.ListNode next=null;
+        while(curr!=null){
+            next = curr.next;
+            curr.next=prev;
+            prev=curr;
+            curr=next;
+        }
+        return prev;
+    }
+
+    static class ListNode {
+        int val;
+        QuickTest.ListNode next;
+        ListNode() {}
+        ListNode(int val) { this.val = val; }
+        ListNode(int val, QuickTest.ListNode next) { this.val = val; this.next = next; }
+    }
+
 
     public static void main(String[] args) throws ParseException {
        // ranks();
