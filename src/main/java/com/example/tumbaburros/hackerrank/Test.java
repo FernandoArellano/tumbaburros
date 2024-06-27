@@ -2089,6 +2089,8 @@ public class Test {
     d.next = e;
 
     ListNode result = reverseList(a);
+
+    curr.next for a moment points to prev so when prev=curr, prev points as next what prev was before
      */
     public static QuickTest.ListNode reverseList(QuickTest.ListNode head) {
         QuickTest.ListNode curr=head;
@@ -2101,6 +2103,179 @@ public class Test {
             curr=next;
         }
         return prev;
+    }
+
+    /*
+    In a linked list of size n, where n is even, the ith node (0-indexed) of the linked list is known as the twin of the (n-1-i)th node, if 0 <= i <= (n / 2) - 1.
+    For example, if n = 4, then node 0 is the twin of node 3, and node 1 is the twin of node 2. These are the only nodes with twins for n = 4.
+    The twin sum is defined as the sum of a node and its twin.
+    Given the head of a linked list with even length, return the maximum twin sum of the linked list.
+
+    static class ListNode {
+      int val;
+      ListNode next;
+      ListNode() {}
+      ListNode(int val) { this.val = val; }
+      ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+  }
+
+   ListNode a = new ListNode(1);
+        ListNode b = new ListNode(100000);
+        a.next = b;
+        System.out.println(pairSum(a));
+
+    !!!get from array faster than list.get
+     */
+    public static int pairSum(QuickTest.ListNode head) {
+        Integer maxVal =0;
+        List<Integer> list = new LinkedList<>();
+
+        while(head != null){
+            list.add(head.val);
+            head = head.next;
+        }
+
+        Integer[] array = list.stream().toArray(Integer[]::new);
+        for(int i=0; i<list.size()/2; i++){
+            Integer sum = array[i]+array[array.length-1-i];
+            if(maxVal<sum){
+                maxVal = sum;
+            }
+        }
+
+        return maxVal;
+    }
+
+    /*
+    Given the root of a binary tree, return its maximum depth.
+    A binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
+
+    static class TreeNode {
+      int val;
+      TreeNode left;
+      TreeNode right;
+      TreeNode() {}
+      TreeNode(int val) { this.val = val; }
+      TreeNode(int val, TreeNode left, TreeNode right) {
+          this.val = val;
+          this.left = left;
+          this.right = right;
+      }
+  }
+
+  TreeNode nine = new TreeNode(9);
+        TreeNode twenty = new TreeNode(20, new TreeNode(15), new TreeNode(7));
+       TreeNode root = new TreeNode(3, nine, twenty);
+        System.out.println(maxDepth(root));
+     */
+    public static int maxDepth(QuickTest.TreeNode root) {
+
+        if(root == null) {
+            return 0;
+        }
+        return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+    }
+
+
+    /*
+    Consider all the leaves of a binary tree, from left to right order, the values of those leaves form a leaf value sequence.
+    For example, in the given tree above, the leaf value sequence is (6, 7, 4, 9, 8).
+    Two binary trees are considered leaf-similar if their leaf value sequence is the same.
+
+    get all leafs from both trees and then compare
+
+        TreeNode six = new TreeNode(6);
+        TreeNode seven = new TreeNode(7);
+        TreeNode four = new TreeNode(4);
+        TreeNode nine = new TreeNode(9);
+        TreeNode eight = new TreeNode(8);
+
+        TreeNode two = new TreeNode(2, seven, four);
+        TreeNode five = new TreeNode(5,six, two);
+        TreeNode one = new TreeNode(1,nine,eight);
+
+        TreeNode three = new TreeNode(3, five, one);
+
+        System.out.println(leafSimilar(three, three));
+
+     */
+    public static boolean leafSimilar(QuickTest.TreeNode root1, QuickTest.TreeNode root2) {
+
+        List<Integer> list = new LinkedList<>();
+
+        fill(root1, list);
+
+        List<Integer> list2 = new LinkedList<>();
+        fill(root2, list2);
+
+        if(list.size() != list2.size()){
+            return false;
+        }
+
+        for(int i=0; i< list.size(); i++){
+            int a = list.get(i);
+            int b = list2.get(i);
+            if( a!= b){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static void fill(QuickTest.TreeNode tree, List<Integer> list){
+        if(tree.left == null && tree.right == null){
+            list.add(tree.val);
+            return;
+        }
+
+        if(tree.left != null){
+            fill(tree.left, list);
+        }
+        if(tree.right != null){
+            fill(tree.right, list);
+        }
+    }
+
+    /*
+    Given a binary tree root, a node X in the tree is named good if in the path from root to X there are no nodes with a value greater than X.
+    Return the number of good nodes in the binary tree.
+
+    times node value is greater or equal to max value
+
+        TreeNode four = new TreeNode(4);
+        TreeNode two = new TreeNode(2);
+
+        TreeNode three1 = new TreeNode(3,four, two);
+
+        TreeNode three = new TreeNode(3, three1, null);
+
+        System.out.println(goodNodes(three));
+
+     */
+    public static int counter =0;
+
+    public static int goodNodes(QuickTest.TreeNode root) {
+
+        Integer maxValue = Integer.MIN_VALUE;
+        fillMaxVal(root, maxValue);
+
+
+        return counter;
+    }
+
+    public static void fillMaxVal(QuickTest.TreeNode tree, Integer maxValue){
+        if(tree.val>=maxValue){
+            counter++;
+            maxValue = tree.val;
+        }
+
+        if(tree.left != null){
+            fillMaxVal(tree.left, maxValue);
+        }
+        if(tree.right != null){
+            fillMaxVal(tree.right, maxValue);
+        }
     }
 
     static class ListNode {

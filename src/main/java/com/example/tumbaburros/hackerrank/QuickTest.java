@@ -1,38 +1,60 @@
 package com.example.tumbaburros.hackerrank;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 public class QuickTest {
 
     /*
-    Given the head of a singly linked list, reverse the list, and return the reversed list.
+    Given a binary tree root, a node X in the tree is named good if in the path from root to X there are no nodes with a value greater than X.
+    Return the number of good nodes in the binary tree.
 
-    ListNode a = new ListNode(1);
-    ListNode b = new ListNode(2);
-    ListNode c = new ListNode(3);
-    ListNode d = new ListNode(4);
-    ListNode e = new ListNode(5);
-    a.next = b;
-    b.next = c;
-    c.next = d;
-    d.next = e;
+    times node value is greater or equal to max value
 
-    ListNode result = reverseList(a);
+        TreeNode four = new TreeNode(4);
+        TreeNode two = new TreeNode(2);
+
+        TreeNode three1 = new TreeNode(3,four, two);
+
+        TreeNode three = new TreeNode(3, three1, null);
+
+        System.out.println(goodNodes(three));
+
      */
-    public static ListNode reverseList(ListNode head) {
-        ListNode curr=head;
-        ListNode prev=null;
-        ListNode next=null;
-        while(curr!=null){
-            next = curr.next;
-            curr.next=prev;
-            prev=curr;
-            curr=next;
-        }
-        return prev;
+    public static int counter =0;
+
+    public static int goodNodes(TreeNode root) {
+
+        Integer maxValue = Integer.MIN_VALUE;
+        fillMaxVal(root, maxValue);
+
+
+        return counter;
     }
+
+    public static void fillMaxVal(TreeNode tree, Integer maxValue){
+        if(tree.val>=maxValue){
+            counter++;
+            maxValue = tree.val;
+        }
+
+        if(tree.left != null){
+            fillMaxVal(tree.left, maxValue);
+        }
+        if(tree.right != null){
+            fillMaxVal(tree.right, maxValue);
+        }
+    }
+
+    static class TreeNode {
+      int val;
+      TreeNode left;
+      TreeNode right;
+      TreeNode() {}
+      TreeNode(int val) { this.val = val; }
+      TreeNode(int val, TreeNode left, TreeNode right) {
+          this.val = val;
+          this.left = left;
+          this.right = right;
+      }
+  }
 
     static class ListNode {
       int val;
@@ -43,16 +65,13 @@ public class QuickTest {
   }
 
     public static void main(String[] args) {
-       ListNode a = new ListNode(1);
-        ListNode b = new ListNode(2);
-        ListNode c = new ListNode(3);
-        ListNode d = new ListNode(4);
-        ListNode e = new ListNode(5);
-        a.next = b;
-        b.next = c;
-        c.next = d;
-        d.next = e;
+        TreeNode four = new TreeNode(4);
+        TreeNode two = new TreeNode(2);
 
-        ListNode result = reverseList(a);
+        TreeNode three1 = new TreeNode(3,four, two);
+
+        TreeNode three = new TreeNode(3, three1, null);
+
+        System.out.println(goodNodes(three));
     }
 }
