@@ -2365,6 +2365,94 @@ public class Test {
         return ans;
     }
 
+    /*
+        We hire 3 workers in total. The total cost is initially 0.
+        - In the first hiring round we choose the worker from [17,12,10,2,7,2,11,20,8]. The lowest cost is 2, and we break the tie by the smallest index, which is 3. The total cost = 0 + 2 = 2.
+        - In the second hiring round we choose the worker from [17,12,10,7,2,11,20,8]. The lowest cost is 2 (index 4). The total cost = 2 + 2 = 4.
+        - In the third hiring round we choose the worker from [17,12,10,7,11,20,8]. The lowest cost is 7 (index 3). The total cost = 4 + 7 = 11. Notice that the worker with index 3 was common in the first and last four workers.
+        The total hiring cost is 11.
+        candidates is the size of the set starting or ending
+        starting set of 4 candidates for from example = first 4 elements [17,12,10,2]
+        ending set of 4 candidates for our example = last 4 elements [2,11,20,8]
+        middle element 7 is ignored in first k run
+
+        System.out.println(totalCost(new int[]{17,12,10,2,7,2,11,20,8}, 3, 4));
+
+        faster than being getting elements from list fill queue with number of elements needed
+        and be removing the smallest from them
+     */
+    public static long totalCost(int[] costs, int k, int candidates) {
+        if(costs.length == 0){
+            return 0;
+        }
+        int count =0;
+        long sum=0;
+        PriorityQueue<Integer> startQueue = new PriorityQueue<>();
+        PriorityQueue<Integer> endQueue = new PriorityQueue<>();
+
+        int i=0;
+        int j=costs.length-1;
+
+        while(count<k ){
+
+            while(startQueue.size()<candidates && i <= j){
+                startQueue.add(costs[i]);
+                i++;
+            }
+
+            while(endQueue.size()<candidates && i <= j){
+                endQueue.add(costs[j]);
+                j--;
+            }
+
+            int toSum;
+
+            int q1 = startQueue.peek() != null ? startQueue.peek():Integer.MAX_VALUE;
+            int q2 = endQueue.peek() != null ? endQueue.peek():Integer.MAX_VALUE;
+
+            sum += q1<=q2?startQueue.poll():endQueue.poll();
+            count++;
+        }
+
+        return sum;
+    }
+
+    /*
+        We are playing the Guess Game. The game is as follows:
+        I pick a number from 1 to n. You have to guess which number I picked.
+        Every time you guess wrong, I will tell you whether the number I picked is higher or lower than your guess.
+        You call a pre-defined API int guess(int num), which returns three possible results:
+
+        -1: Your guess is higher than the number I picked (i.e. num > pick).
+        1: Your guess is lower than the number I picked (i.e. num < pick).
+        0: your guess is equal to the number I picked (i.e. num == pick).
+
+        int guess(int num); returns 0,-1,1
+
+        binary search -> start + (start+end)/2
+     */
+    public static int guessNumber(int n) {
+
+        int start = 1;
+        int end = n;
+
+        while(start<=end){
+            int mid = (start + end)/2;
+            int num=0;
+
+            //num = guess(mid);
+
+            if(num == 0){
+                return mid;
+            } else if(num==-1){
+                end = mid-1;
+            } else{
+                start = mid+1;
+            }
+        }
+        return start;
+    }
+
     static class ListNode {
         int val;
         QuickTest.ListNode next;
