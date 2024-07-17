@@ -2500,7 +2500,269 @@ public class Test {
         return result;
     }
 
+    /*
+        BINARY SEARCH
+        A peak element is an element that is strictly greater than its neighbors.
+        Given a 0-indexed integer array nums, find a peak element, and return its index. If the array contains multiple peaks, return the index to any of the peaks.
+        You may imagine that nums[-1] = nums[n] = -∞. In other words, an element is always considered to be strictly greater than a neighbor that is outside the array.
+
+        EX: [1,2]  index 1 is bigger than previous and after (empty)
+        System.out.println(findPeakElement(new int[]{6,5,4,3,2,3,2}));
+     */
+    public static int findPeakElement(int[] nums) {
+
+        if(nums.length==1){
+            return 0;
+        }
+
+        if(nums[0] > nums[1]){
+            return 0;
+        }
+
+        if(nums[nums.length-1]>nums[nums.length-2]){
+            return nums.length-1;
+        }
+
+        if(nums.length==2){
+            if(nums[0]<nums[1]){
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+
+        int min=1;
+        int max= nums.length-2;
+
+        while(min<=max){
+            int mid = min + (max-min)/2;
+            if(nums[mid-1]< nums[mid] && nums[mid] > nums[mid+1]){
+                return mid;
+            } else if(nums[mid] < nums[mid-1]){
+                max = mid-1;
+            } else if(nums[mid] < nums[mid+1]){
+                min = mid+1;
+            }
+        }
+        return -1;
+    }
+
+    /*
+        BINARY SEARCH
+        Koko loves to eat bananas. There are n piles of bananas, the ith pile has piles[i] bananas. The guards have gone and will come back in h hours.
+        Koko can decide her bananas-per-hour eating speed of k. Each hour, she chooses some pile of bananas and eats k bananas from that pile.
+        If the pile has less than k bananas, she eats all of them instead and will not eat any more bananas during this hour.
+        Koko likes to eat slowly but still wants to finish eating all the bananas before the guards return.
+        Return the minimum integer k such that she can eat all the bananas within h hours.
+
+        piles = [3,6,7,11], h = 8
+        EX:
+        k = 3,
+        3/3 + 6/3 + 7/3 + 11/3 = 1+ 2+ 3 + 4 = 10hrs > 8 hrs = Not enough time
+
+        k = 4,
+        3/4 + 6/4 + 7/4 + 11/4 = 1 + 2 + 2 + 3 = 8hrs = GOOD
+
+        System.out.println(minEatingSpeed(new int[]{30,11,23,4,20},6));
+     */
+
+    public static int minEatingSpeed(int[] piles, int h) {
+
+        if(piles.length==0 || h == 0){
+            return 0;
+        }
+
+        long end = -1;
+
+        for(int i: piles){
+            if(i>end){
+                end = i;
+            }
+        }
+
+        long start =1;
+        long k = Long.MAX_VALUE;
+
+        while(start<=end){
+            long result =0;
+            long mid = start + (end-start)/2;
+
+            for(int pile : piles){
+                long divider;
+                if(pile>=mid){
+                    divider = pile/mid;
+                    long remaining = pile%mid;
+                    if(remaining>0){
+                        divider+=1;
+                    }
+                } else {
+                    divider=1;
+                }
+
+
+                result +=divider;
+            }
+
+            if(result<=h){
+                end = mid-1;
+                if(mid<k){
+                    k= mid;
+                }
+            } else{
+                start = mid+1;
+            }
+        }
+
+        return (int)k;
+    }
+
     // END BINARY SEARCH
+
+
+    // BACKTRACKING BINARY SEARCH
+
+/*
+        Given a String containing digits from 2-9 incusive, return all possible letter combinations that the number could represent.
+        Return the answer in ANY order.
+
+        Example:
+        input: digits="23"
+        output: ["ad","ae","af","bd","be","bf","cd","ce","cf"]
+
+        System.out.println(letterCombinations("23"));
+     */
+
+    private static void solve(String digit, StringBuilder output, int index, List<String> resultList, Map<Integer, String> map) {
+
+        if(digit.length()==index){
+            resultList.add(output.toString());
+            return;
+        }
+
+        String options = map.get(Character.getNumericValue(digit.charAt(index)));
+
+        //append first letter, then recursive for next index to all combinations, then remuve last digit to move
+        //to next option letter
+        for(int i=0; i<options.length(); i++){
+            output.append(options.charAt(i));
+            solve(digit,output,index+1, resultList,map);
+            output.deleteCharAt(index);
+        }
+
+    }
+
+    public static List<String> letterCombinations(String digits) {
+        List<String> resultList = new ArrayList<>();
+        if(digits.length()==0){
+            return resultList;
+        }
+
+        Map<Integer, String> map = new HashMap<>();
+        map.put(2,"abc");
+        map.put(3,"def");
+        map.put(4,"ghi");
+        map.put(5,"jkl");
+        map.put(6,"mno");
+        map.put(7,"pqrs");
+        map.put(8,"tuv");
+        map.put(9,"wxyz");
+
+        StringBuilder sb = new StringBuilder();
+        int index =0;
+
+        solve(digits, sb,index,resultList,map);
+
+        return resultList;
+    }
+
+     /*
+        Find all valid combinations of k numbers that sum up to n such that the following conditions are true
+        -only numbers 1 through 9 are used
+        -each number is used at most once on each combination
+        Return a list of all possible valid combinations, the list must not contain the same combination twice
+        and the combinations may be return in any order
+
+        Ex:
+        input: k=3, n=9
+        output: [[1,2,6],[1,3,5],[2,3,4]]
+        1+2+6=9
+        1+3+5=9
+        2+3+4=9
+     */
+
+    private static void combination(List<List<Integer>> ans, List<Integer> comb, int k,  int start, int n) {
+        if (comb.size() == k && n == 0) {
+            List<Integer> li = new ArrayList<Integer>(comb);
+            ans.add(li);
+            return;
+        }
+        for (int i = start; i <= 9; i++) {
+            comb.add(i);
+            combination(ans, comb, k, i+1, n-i);
+            comb.remove(comb.size() - 1);
+        }
+    }
+
+    public static List<List<Integer>> combinations(int k, int n){
+        List<List<Integer>> ans = new ArrayList<>();
+        combination(ans, new ArrayList<Integer>(), k, 1, n);
+        return ans;
+    }
+
+    // END BACKTRACKING
+
+
+    //DP
+
+    /*
+        The Tribonacci sequence Tn is defined as follows:
+        T0 = 0, T1 = 1, T2 = 1, and Tn+3 = Tn + Tn+1 + Tn+2 for n >= 0.
+
+        ex: Input: n = 4
+            Output: 4
+            Explanation:
+            T_3 = 0 + 1 + 1 = 2
+            T_4 = 1 + 1 + 2 = 4
+     */
+
+    public static int tribonacci(int n) {
+        if(n==0){
+            return 0;
+        } else if(n==1){
+            return 1;
+        } else if(n==2){
+            return 1;
+        }
+
+        Stack<Long> stack = new Stack<>();
+
+        long sum =0;
+        int count=0;
+        while(count<n){
+            if(stack.size()==0){
+                stack.push(0L);
+            } else if(stack.size()==1){
+                stack.push(1L);
+            } else if(stack.size()==2){
+                stack.push(1L);
+            } else {
+                Stack<Long> tempStack = new Stack<>();
+                tempStack.addAll(stack);
+                long val = 0;
+                for(int i=0; i<3;i++){
+                    val+=tempStack.pop();
+                }
+                stack.push(val);
+            }
+            count++;
+        }
+        for(int i=0; i<3;i++){
+            sum+=stack.pop();
+        }
+        return (int)sum;
+    }
+
+    // END DP
 
     static class ListNode {
         int val;

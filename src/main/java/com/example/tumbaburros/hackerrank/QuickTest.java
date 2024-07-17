@@ -1,53 +1,55 @@
 package com.example.tumbaburros.hackerrank;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class QuickTest {
 
     /*
-        Binary Search
+        The Tribonacci sequence Tn is defined as follows:
+        T0 = 0, T1 = 1, T2 = 1, and Tn+3 = Tn + Tn+1 + Tn+2 for n >= 0.
 
-        You are given two positive integer arrays spells and potions, of length n and m respectively, where spells[i] represents the strength of the ith spell
-        and potions[j] represents the strength of the jth potion.
-        You are also given an integer success. A spell and potion pair is considered successful if the product of their strengths is at least success.
-        Return an integer array pairs of length n where pairs[i] is the number of potions that will form a successful pair with the ith spell.
-
-        Example 1:
-
-        Input: spells = [5,1,3], potions = [1,2,3,4,5], success = 7
-        Output: [4,0,3]
-        Explanation:
-        - 0th spell: 5 * [1,2,3,4,5] = [5,10,15,20,25]. 4 pairs are successful.
-        - 1st spell: 1 * [1,2,3,4,5] = [1,2,3,4,5]. 0 pairs are successful.
-        - 2nd spell: 3 * [1,2,3,4,5] = [3,6,9,12,15]. 3 pairs are successful.
-        Thus, [4,0,3] is returned.
+        ex: Input: n = 4
+            Output: 4
+            Explanation:
+            T_3 = 0 + 1 + 1 = 2
+            T_4 = 1 + 1 + 2 = 4
      */
-    public static int[] successfulPairs(int[] spells, int[] potions, long success) {
 
-        if(spells.length==0 || potions.length == 0){
-            return new int[]{};
+    public static int tribonacci(int n) {
+        if(n==0){
+            return 0;
+        } else if(n==1){
+            return 1;
+        } else if(n==2){
+            return 1;
         }
 
-        Arrays.sort(potions);
-        int potionsSize = potions.length;
-        int[] result = new int[spells.length];
-        int spellCount = 0;
-        for(int spell: spells){
-            int min=0;
-            int max = potionsSize-1;
+        Stack<Long> stack = new Stack<>();
 
-             while(min<=max){
-                 int mid = min+(max-min)/2;
-              if(spell * ((long)potions[mid])>=success){
-                  max = mid-1;
-              } else {
-                  min= mid+1;
-              }
-             }
-                result[spellCount++] = potions.length-min;
+        long sum =0;
+        int count=0;
+        while(count<n){
+            if(stack.size()==0){
+                stack.push(0L);
+            } else if(stack.size()==1){
+                stack.push(1L);
+            } else if(stack.size()==2){
+                stack.push(1L);
+            } else {
+                Stack<Long> tempStack = new Stack<>();
+                tempStack.addAll(stack);
+                long val = 0;
+                for(int i=0; i<3;i++){
+                    val+=tempStack.pop();
+                }
+                stack.push(val);
             }
-        return result;
+            count++;
+        }
+        for(int i=0; i<3;i++){
+            sum+=stack.pop();
+        }
+        return (int)sum;
     }
 
 
@@ -73,6 +75,6 @@ public class QuickTest {
   }
 
     public static void main(String[] args) {
-        System.out.println(Arrays.stream(successfulPairs(new int[]{3,1,2}, new int[]{8,5,8}, 16)).boxed().collect(Collectors.toList()));
+        System.out.println(tribonacci(25));
     }
 }
