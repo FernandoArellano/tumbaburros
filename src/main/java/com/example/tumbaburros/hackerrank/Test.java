@@ -2762,7 +2762,157 @@ public class Test {
         return (int)sum;
     }
 
+    /*
+        You are given an integer array cost where cost[i] is the cost of ith step on a staircase. Once you pay the cost, you can either climb one or two steps.
+        You can either start from the step with index 0, or the step with index 1.
+        Return the minimum cost to reach the top of the floor.
+
+        Ex: Input: cost = [1,100,1,1,1,100,1,1,100,1]
+        Output: 6
+        Explanation: You will start at index 0.
+        - Pay 1 and climb two steps to reach index 2.
+        - Pay 1 and climb two steps to reach index 4.
+        - Pay 1 and climb two steps to reach index 6.
+        - Pay 1 and climb one step to reach index 7.
+        - Pay 1 and climb two steps to reach index 9.
+        - Pay 1 and climb one step to reach the top.
+        The total cost is 6.
+     */
+    public static int minCostClimbingStairs(int[] cost) {
+
+        int n= cost.length;
+        int[] temp = new int[n+1];
+        Arrays.fill(temp,-1);
+        return minCost(cost,n,temp);
+    }
+
+    public static int minCost(int[] cost, int n, int[] temp){
+
+        if(n==0 || n==1){
+            return temp[n] = 0;
+        }
+
+        if(temp[n] != -1){
+            return temp[n];
+        }
+
+        if(n==2){
+            return temp[n]=Math.min(cost[0],cost[1]);
+        }
+
+        return temp[n] = Math.min(minCost(cost, n-1, temp)+cost[n-1], minCost(cost, n-2, temp)+cost[n-2]);
+
+    }
+
+    /*
+        You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed,
+        the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and it will automatically
+        contact the police if two adjacent houses were broken into on the same night.
+        You can skip as many houses as youd like
+
+        Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police.
+
+        Input: nums = [2,7,9,3,1]
+        Output: 12
+        Explanation: Rob house 1 (money = 2), rob house 3 (money = 9) and rob house 5 (money = 1).
+        Total amount you can rob = 2 + 9 + 1 = 12.
+     */
+
+    public static int rob(int[] nums) {
+        int prev = nums[0];
+        int prev2 = 0;
+
+        for(int i=1; i<nums.length;i++){
+            int take = nums[i];
+            take += prev2;
+            int nonTake = prev;
+            int max = Math.max(take, nonTake);
+
+            prev2 = prev;
+            prev = max;
+        }
+        return prev;
+    }
+
     // END DP
+
+    //STARTS MULTIDIMENSIONAL
+/*
+        There is a robot on an m x n grid. The robot is initially located at the top-left corner (i.e., grid[0][0]). The robot tries to move to the bottom-right corner (i.e., grid[m - 1][n - 1]). The robot can only move either down or right at any point in time.
+        Given the two integers m and n, return the number of possible unique paths that the robot can take to reach the bottom-right corner.
+
+        If the current position (i, j) is out of bounds (i >= m or j >= n), return 0 because it's not a valid path.
+        If the current position (i, j) is the bottom-right corner of the grid (i == m-1 and j == n-1), return 1 because we've found a valid path.
+        If the value at a[i][j] is greater than 0, return the stored value. This avoids redundant calculations (memoization).
+        Otherwise, calculate the number of paths from the current cell by summing the number of paths from the cell to the right (i, j+1) and the cell below (i+1, j).
+        Store the result in a[i][j] and return it.
+
+        Input: m = 3, n = 2
+        System.out.println(uniquePaths(3,2));
+     */
+    public static int uniquePaths(int m, int n) {
+
+        int[][] array = new int[m][n];
+
+        return dest(array, m,n,0,0);
+    }
+
+    public static int dest(int[][] array,int m, int n, int i, int j){
+        if(i>=m || j>=n){
+            return 0;
+        }
+
+        if(i==m-1 && j==n-1){
+            return 1;
+        }
+
+        if(array[i][j] > 0){
+            return array[i][j];
+        }
+
+        return array[i][j] = dest(array,m,n, i+1,j) + dest(array,m,n,i,j+1);
+    }
+
+
+    /*
+        You are given an array prices where prices[i] is the price of a given stock on the ith day, and an integer fee representing a transaction fee.
+        Find the maximum profit you can achieve. You may complete as many transactions as you like, but you need to pay the transaction fee for each transaction.
+     */
+    public static int maxProfit(int[] prices, int fee) {
+        int buy = Integer.MIN_VALUE;
+        int sell = 0;
+
+        for (int price : prices) {
+            buy = Math.max(buy, sell - price);
+            sell = Math.max(sell, buy + price - fee);
+        }
+
+        return sell;
+    }
+
+    /*
+        Given an integer n, return an array ans of length n + 1 such that for each i (0 <= i <= n), ans[i] is the number of 1's in the binary representation of i.
+
+        result[i/2] gives the previous ones
+        i%2 gives if new number has a new 1
+
+        Ex: n=8
+        number: [0][1][2][3][4][5][6][7][8]
+        ones:    0  1  1  2  1  2  2  3  1
+        result[i/2] = index 4 = 1
+        i%2 = 0 for index res = 1
+
+     */
+    public static int[] countBits(int n) {
+        int[] result = new int [n+1];
+        for(int i=1;i<=n;i++){
+            result[i] = result[i/2]+i%2;
+
+        }
+        return result;
+    }
+
+    //END MULTIDIMENSIONAL
 
     static class ListNode {
         int val;
