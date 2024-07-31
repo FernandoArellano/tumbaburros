@@ -2890,6 +2890,12 @@ public class Test {
         return sell;
     }
 
+
+
+    //END MULTIDIMENSIONAL
+
+    //BIT OPERATIONS
+
     /*
         Given an integer n, return an array ans of length n + 1 such that for each i (0 <= i <= n), ans[i] is the number of 1's in the binary representation of i.
 
@@ -2912,7 +2918,24 @@ public class Test {
         return result;
     }
 
-    //END MULTIDIMENSIONAL
+    /*
+        Given a non-empty array of integers nums, every element appears twice except for one. Find that single one.
+        You must implement a solution with a linear runtime complexity and use only constant extra space.
+
+        ex: System.out.println(singleNumber( new int[]{5,3,4,1,5,2,1,2,3}));
+        ^ negates its equal
+          1,2,3,5 have 2 then are negated with each other leaving only 4
+          if you have 4 numbers of any for example, 1 eliminates 1, 1 eliminates 1 so all are gone
+     */
+    public static int singleNumber(int[] nums) {
+        int ans = 0;
+        int n = nums.length;
+        for(int i=0; i<n; i++){
+            ans = ans^nums[i];
+        }
+        return ans;
+    }
+    // END BIT OPERATIONS
 
     static class ListNode {
         int val;

@@ -28,6 +28,6 @@ public class QuickTest {
   }
 
     public static void main(String[] args) {
-        System.out.println(countBits( 4));
+        System.out.println(singleNumber( new int[]{5,3,4,1,5,2,1,2,3,1,2,3,5,5,3,2,1}));
     }
 }
