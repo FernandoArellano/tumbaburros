@@ -4,70 +4,30 @@ import java.util.*;
 
 public class QuickTest {
 
-    /*
-        Given 3 positives numbers a, b and c. Return the minimum flips required in some bits of a and b to make ( a OR b == c ). (bitwise OR operation).
-        Flip operation consists of change any single bit 1 to 0 or change the bit 0 to 1 in their binary representation.
+  /*
+      Given an array of integers temperatures represents the daily temperatures, return an array answer such that answer[i] is the
+      number of days you have to wait after the ith day to get a warmer temperature. If there is no future day for which this is possible,
+      keep answer[i] == 0 instead.
 
-        ex 2,6,5
-            primera corrida
+       stack index for array position
+       to calculate array result, position of the stack equals the i-stack pop only if temps in the stack position is less than actual temp
+      results[stack.peek] in case there is a bigger one, will calculate i, less stack.pop and assign to the position using the stack.peek
 
-            (a & 1) a es 2 por lo q es 10 en binario al multiplicar por 1 queda 00
-            (b & 1) b es 6 por lo q es 110 en binario al multiplicar por 1 queda 000
-            (c & 1) c es 5 por lo q es 101 en binario al multiplicar por 1 queda 001
-
-            boolean aHasOne = (a & 1) == 1;  //false
-            boolean bHasOne = (b & 1) == 1;  //false
-            boolean cHasOne = (c & 1) == 1;  //true
-
-            a = a>>1;  a pasa de ser 10 a ser 01 = int 1
-            b = b>>1; b pasa de ser 110 a ser 011 = int 3
-            c = c>>1; c pasa de ser 101 a ser 010 = int 2
-            z = z>>1; z pasa de ser 110 a ser 011 = int 3
-
-            segunda vuelta:
-            a = a>>1;  a pasa de ser 1 a ser 0 = int 0
-            b = b>>1; b pasa de ser 11 a ser 1 = int 1
-            c = c>>1; c pasa de ser 10 a ser 1 = int 1
-            z = z>>1; z pasa de ser 11 a ser 1 = int 1
-
-            tercera vuelta:
-
-            a = a>>1;  a pasa de ser 0 a ser 0 = int 0
-            b = b>>1; b pasa de ser 1 a ser 0 = int 0
-            c = c>>1; c pasa de ser 1 a ser 0 = int 0
-            z = z>>1; z pasa de ser 1 a ser 0 = int 0
-     */
-    public static int minFlips(int a, int b, int c) {
-        int ans = 0;
-
-
-        int z = Math.max(c,Math.max(a,b));
-
-        while(z>0){
-            boolean aHasOne = (a & 1) == 1;
-            boolean bHasOne = (b & 1) == 1;
-            boolean cHasOne = (c & 1) == 1;
-            if(aHasOne && bHasOne){
-                if(!cHasOne)
-                    ans += 2;
-            }
-            else if((aHasOne && !bHasOne) || (!aHasOne && bHasOne)){
-                if(!cHasOne){
-                    ans+=1;
-                }
-            }
-            else{
-                if(cHasOne)
-                    ans+=1;
-            }
-            a = a>>1;
-            b = b>>1;
-            c = c>>1;
-            z = z>>1;
-        }
-        return ans;
-
+       dailyTemperatures(new int[]{73,74,75,71,69,72,76,73});
+   */
+  public static int[] dailyTemperatures(int[] temps) {
+    int[] results = new int[temps.length];
+    Stack<Integer> stack = new Stack<>();
+    /// UPVOTE !
+    for (int i = 0; i < temps.length; i++) {
+      while (!stack.isEmpty() && temps[stack.peek()] < temps[i]) {
+        results[stack.peek()] = i - stack.pop();
+      }
+      stack.push(i);
     }
+
+    return results;
+  }
 
     static class TreeNode {
       int val;
@@ -91,6 +51,7 @@ public class QuickTest {
   }
 
     public static void main(String[] args) {
-        System.out.println(minFlips( 2,6,5));
+      dailyTemperatures(new int[]{73,74,75,71,69,72,76,73});
+
     }
 }

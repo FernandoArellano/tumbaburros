@@ -3006,6 +3006,105 @@ public class Test {
 
     // END BIT OPERATIONS
 
+    //TRIE
+
+    /*
+        A trie (pronounced as "try") or prefix tree is a tree data structure used to efficiently store and retrieve keys in a dataset of strings.
+         There are various applications of this data structure, such as autocomplete and spellchecker.
+        Implement the Trie class:
+        Trie() Initializes the trie object.
+        void insert(String word) Inserts the string word into the trie.
+        boolean search(String word) Returns true if the string word is in the trie (i.e., was inserted before), and false otherwise.
+        boolean startsWith(String prefix) Returns true if there is a previously inserted string word that has the prefix prefix, and false otherwise.
+
+        Firstly, we create a nodes array that symbolizes our alphabet.
+        Then, for each char in the word, we will traverse through using index. For each new letter, we will create a new Node.
+        At the end of our word, we will signify that by changing that node's isEnd to be true.
+     */
+    public static void testTrie2(String[] args) {
+        Trie2 trie = new Trie2();
+        trie.insert("apple");
+        trie.search("apple");   // return True
+        trie.search("app");     // return False
+        trie.startsWith("app"); // return True
+        trie.insert("app");
+        trie.search("app");     // return True
+
+    }
+
+
+    /*
+      You are given an array of strings products and a string searchWord.
+      Design a system that suggests at most three product names from products after each character of searchWord is typed.
+      Suggested products should have common prefix with searchWord. If there are more than three products with a common prefix
+      return the three lexicographically minimums products.
+      Return a list of lists of the suggested products after each character of searchWord is typed.
+
+      insert
+      each letter is a node, for each letter of a product, the product itself is stored as an option
+      [m][o][b][i][l][e]   each of this will have a suggested word mobile next
+      [m][o][n][i][t][o][r] each of this will have a suggested word mobile next  ( index m and next o would have suggested as mobile and monitor
+
+      search
+      for each letter get top three of the index according to the letter
+
+      suggestedProducts(new String[]{"mobile","mouse","moneypot","monitor","mousepad"}, "mouse");
+   */
+    public static List<List<String>> suggestedProducts(String[] products, String searchWord) {
+        TrieNode root = new TrieNode();
+        for (String product: products) insert(root, product);
+
+        List<List<String>> results = new ArrayList<>();
+        for (char c: searchWord.toCharArray()) {
+            if ((root = root.children[c - 'a']) == null) break;
+            results.add(root.getTopThree());
+        }
+
+        while (results.size() < searchWord.length())
+            results.add(new ArrayList<>());
+        return results;
+    }
+
+    private static void insert(TrieNode root, String word) {
+        for (char c : word.toCharArray()) {
+            if (root.children[c - 'a'] == null)
+                root.children[c - 'a'] = new TrieNode();
+            root = root.children[c - 'a'];
+            root.addToPQ(word);
+        }
+    }
+
+    //END TRIE
+
+    //START STACK
+
+    /*
+      Given an array of integers temperatures represents the daily temperatures, return an array answer such that answer[i] is the
+      number of days you have to wait after the ith day to get a warmer temperature. If there is no future day for which this is possible,
+      keep answer[i] == 0 instead.
+
+       stack index for array position
+       to calculate array result, position of the stack equals the i-stack pop only if temps in the stack position is less than actual temp
+       results[stack.peek] in case there is a bigger one, will calculate i, less stack.pop and assign to the position using the stack.peek
+
+       dailyTemperatures(new int[]{73,74,75,71,69,72,76,73});
+   */
+    public static int[] dailyTemperatures(int[] temps) {
+        int[] results = new int[temps.length];
+        Stack<Integer> stack = new Stack<>();
+        /// UPVOTE !
+        for (int i = 0; i < temps.length; i++) {
+            while (!stack.isEmpty() && temps[stack.peek()] < temps[i]) {
+                results[stack.peek()] = i - stack.pop();
+            }
+            stack.push(i);
+        }
+
+        return results;
+    }
+
+    //END STACK
+
     static class ListNode {
         int val;
         QuickTest.ListNode next;
