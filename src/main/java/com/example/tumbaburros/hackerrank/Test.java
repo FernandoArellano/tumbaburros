@@ -324,6 +324,139 @@ public class Test {
 
     // ENDS ARRAY/STRINGS
 
+
+    //START 2 POINTERS
+         /*
+      Given an integer array nums, move all 0's to the end of it while maintaining the relative order of the non-zero elements.
+      Note that you must do this in-place without making a copy of the array.
+
+      ex: moveZeroes(new int[]{0,1,0,3,12});
+   */
+    public static void moveZeroes(int[] nums) {
+        int index=0;
+        int counter = 0;
+        for(int i=0; i<nums.length;i++){
+            if(nums[i]!=0){
+                nums[index]= nums[i];
+                index++;
+            } else {
+                counter++;
+            }
+        }
+        for(int i=0; i<counter;i++){
+            nums[nums.length-1-i] = 0;
+        }
+    }
+
+    /*
+    Given two strings s and t, return true if s is a subsequence of t, or false otherwise.
+    A subsequence of a string is a new string that is formed from the original string by deleting some (can be none)
+    of the characters without disturbing the relative positions of the remaining characters. (i.e., "ace" is a subsequence of "abcde" while "aec" is not).
+
+    Input: s = "abc", t = "ahbgdc"
+    Output: true
+
+     System.out.println(isSubsequence("abc", "ahbgdc"));
+ */
+    public static boolean isSubsequence(String s, String t) {
+        Queue<Character> queue = new LinkedList<>();
+
+        for(char c: s.toCharArray()){
+            queue.add(c);
+        }
+
+        for(char c: t.toCharArray()){
+            if(s.contains(String.valueOf(c))){
+                if(!queue.isEmpty() && c== queue.peek()){
+                    queue.poll();
+                }
+            }
+        }
+
+        if(!queue.isEmpty()){
+            return false;
+        }
+        return true;
+    }
+
+
+    /*
+      You are given an integer array height of length n. There are n vertical lines drawn such that
+      the two endpoints of the ith line are (i, 0) and (i, height[i]).
+      Find two lines that together with the x-axis form a container, such that the container contains the most water.
+
+      Input: height = [1,8,6,2,5,4,8,3,7]
+      Output: 49
+      Explanation: The above vertical lines are represented by array [1,8,6,2,5,4,8,3,7].
+      In this case, the max area of water (blue section) the container can contain is 49.
+
+Return the maximum amount of water a container can store.
+   */
+    public static int maxArea(int[] height) {
+        int maxArea = 0;
+        int left=0;
+        int right = height.length-1;
+
+        while(left<right){
+            int total = getTotal(height, left, right);
+            if(total>maxArea){
+                maxArea = total;
+            }
+
+            if(height[left]<height[right]){
+                left++;
+            } else {
+                right--;
+            }
+
+        }
+        return maxArea;
+    }
+    private static int getTotal(int[] height, int left, int right) {
+        int multiplier = right - left;
+        int minValue = Math.min(height[left], height[right]);
+        int total = minValue*multiplier;
+        return total;
+    }
+
+    /*
+      You are given an integer array nums and an integer k.
+      In one operation, you can pick two numbers from the array whose sum equals k and remove them from the array.
+      Return the maximum number of operations you can perform on the array.
+
+      Example 1:
+      Input: nums = [1,2,3,4], k = 5
+      Output: 2
+      Explanation: Starting with nums = [1,2,3,4]:
+      - Remove numbers 1 and 4, then nums = [2,3]
+      - Remove numbers 2 and 3, then nums = []
+      There are no more pairs that sum up to 5, hence a total of 2 operations.
+
+      System.out.println(maxOperations(new int[]{1,2,3,4},5));
+   */
+    public static int maxOperations(int[] nums, int k) {
+        int operations =0;
+
+        Map<Integer, Long> map = IntStream.of(nums).boxed().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        Set<Integer> used = new HashSet<>();
+
+        for(Map.Entry<Integer, Long> entry : map.entrySet()){
+            int key = entry.getKey();
+            int toLook = k-key;
+            if(key == toLook){
+                operations += entry.getValue()/2;
+            } else if(map.containsKey(toLook) && !used.contains(toLook)) {
+                operations+= Math.min(entry.getValue(),map.get(toLook));
+            }
+            used.add(key);
+            used.add(toLook);
+        }
+
+        return operations;
+    }
+
+    //END 2 POINTERS
+
     //rank leader
     public static void ranks(){
         Scanner in = new Scanner(System.in);

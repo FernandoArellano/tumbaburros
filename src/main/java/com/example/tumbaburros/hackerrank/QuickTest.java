@@ -3,6 +3,7 @@ package com.example.tumbaburros.hackerrank;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.function.Function;
 
 public class QuickTest {
 
@@ -31,7 +32,7 @@ public class QuickTest {
 
     public static void main(String[] args) {
 
-
+      System.out.println(maxOperations(new int[]{1,2,3,4},5));
 
     }
 }
