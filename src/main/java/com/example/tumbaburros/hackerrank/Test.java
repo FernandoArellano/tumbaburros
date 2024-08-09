@@ -20,9 +20,309 @@ import java.util.stream.Stream;
 
 public class Test {
 
+    static Stack<int[]> st = new Stack<>();
+
     public static void line(){
         System.out.println("----------------------------------------");
     }
+
+    // START ARRAY/STRINGS
+
+    /*
+         You are given two strings word1 and word2. Merge the strings by adding letters in alternating order, starting with word1.
+         If a string is longer than the other, append the additional letters onto the end of the merged string.
+         Return the merged string.
+     */
+    public static String mergeAlternately(String word1, String word2) {
+        int size = word1.length() + word2.length();
+        int counterA = 0;
+        int counterB = 0;
+        StringBuilder sb = new StringBuilder();
+        while(sb.length()<size){
+            if(counterA<word1.length()){
+                sb.append(word1.charAt(counterA));
+                counterA++;
+            }
+            if(counterB<word2.length()){
+                sb.append(word2.charAt(counterB));
+                counterB++;
+            }
+        }
+        return sb.toString();
+    }
+
+    /*
+      For two strings s and t, we say "t divides s" if and only if s = t + t + t + ... + t + t (i.e., t is concatenated with itself one or more times).
+      Given two strings str1 and str2, return the largest string x such that x divides both str1 and str2.
+
+      str1+str2 == str2+str1 in order to be a greatest common divisor, if not does not apply and return 0
+
+      just need to confirm length of gcd and after that from 0 to length of gdc is the gdc
+
+      ex: System.out.println(gcdOfStrings("ABABAB", "ABAB"));
+      Input: str1 = "ABABAB", str2 = "ABAB"
+      Output: "AB"
+   */
+    public static String gcdOfStrings(String str1, String str2) {
+        if(!(str1+str2).equals(str2+str1)) return "";
+        int gcd = getGcd(str1.length(), str2.length());
+        return str1.substring(0, gcd);
+    }
+
+    public static int getGcd(int a, int b) {
+        if (b==0) return a;
+        return getGcd(b,a%b);
+    }
+
+
+    /*
+        There are n kids with candies. You are given an integer array candies, where each candies[i] represents the number of candies the
+        ith kid has, and an integer extraCandies, denoting the number of extra candies that you have.
+        Return a boolean array result of length n, where result[i] is true if, after giving the ith kid all the extraCandies, they will have the greatest number of candies among all the kids, or false otherwise.
+
+        Note that multiple kids can have the greatest number of candies.
+
+        find biggest and compare each kid + extra candies  to biggest
+
+        ex: System.out.println(kidsWithCandies(new int[]{2,3,5,1,3}, 3));
+     */
+    public static List<Boolean> kidsWithCandies(int[] candies, int extraCandies) {
+        List<Boolean> result = new LinkedList<>();
+
+        if(candies.length>=2 && candies.length<=100 && extraCandies>=1 && extraCandies<=50){
+            int max = IntStream.of(candies).boxed().collect(Collectors.toList()).stream().max(Comparator.naturalOrder()).get();
+            for(int i=0; i<candies.length; i++){
+                if(candies[i]+extraCandies>=max){
+                    result.add(true);
+                } else {
+                    result.add(false);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /*
+      You have a long flowerbed in which some of the plots are planted, and some are not. However, flowers cannot be planted in adjacent plots.
+
+      Given an integer array flowerbed containing 0's and 1's, where 0 means empty and 1 means not empty, and an integer n,
+      return true if n new flowers can be planted in the flowerbed without violating the no-adjacent-flowers rule and false otherwise.
+
+      check if previous and next are 0 then available spot mas 1
+      control was empty flag
+
+      ex: System.out.println(canPlaceFlowers(new int[]{1,0,0,0,1}, 2));
+
+   */
+    public static boolean canPlaceFlowers(int[] flowerbed, int n) {
+        boolean wasPreviousEmpty = true;
+        int availableSpots = 0;
+
+        if(flowerbed.length ==1 && flowerbed[0]==0){
+            return true;
+        }
+
+        for(int i=0; i<flowerbed.length; i++){
+            if(flowerbed[i]==0&&wasPreviousEmpty){
+                if((i+1< flowerbed.length && flowerbed[i+1]==0) || i+1 == flowerbed.length){
+                    availableSpots++;
+                    wasPreviousEmpty = false;
+                }
+            } else if(flowerbed[i]==0 && !wasPreviousEmpty){
+                wasPreviousEmpty = true;
+            } else if(i==0 && flowerbed[i]==1){
+                wasPreviousEmpty = false;
+            } else if(flowerbed[i]==1){
+                wasPreviousEmpty = false;
+            }
+        }
+        if(n<=availableSpots){
+            return true;
+        }
+        return false;
+    }
+
+    /*
+          Given a string s, reverse only all the vowels in the string and return it.
+          The vowels are 'a', 'e', 'i', 'o', and 'u', and they can appear in both lower and upper cases, more than once.
+
+          stack vowels only and pop in reverse order when vowel found
+
+          ex: System.out.println(reverseVowels("hello"));
+       */
+    public static String reverseVowels(String s) {
+        HashSet<Character> vowelList = new HashSet<>();
+        vowelList.addAll(Set.of('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'));
+        StringBuilder sb = new StringBuilder();
+        Stack<Character> stack = new Stack<>();
+        for(int i=0; i<s.length();i++){
+            char c = s.charAt(i);
+            if(vowelList.contains(c)){
+                stack.push(c);
+            }
+        }
+
+        for(int i=0; i<s.length();i++){
+            char c = s.charAt(i);
+            if(vowelList.contains(c)){
+                sb.append(stack.pop());
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /*
+      Given an input string s, reverse the order of the words.
+      A word is defined as a sequence of non-space characters. The words in s will be separated by at least one space.
+      Return a string of the words in reverse order concatenated by a single space.
+      Note that s may contain leading or trailing spaces or multiple spaces between two words.
+      The returned string should only have a single space separating the words. Do not include any extra spaces.
+
+      trim removes spaces at start and end
+      replaceAll(" +", " ")  will replace many spaces together for only 1 space
+
+      ex: System.out.println(reverseWords("a good   example"));
+   */
+    public static String reverseWords(String s) {
+        StringBuilder stringBuilder = new StringBuilder();
+        s = s.trim().replaceAll(" +", " ");
+        String[] words = s.split(" ");
+        for(int i= words.length-1; i>=0; i--){
+            stringBuilder.append(words[i]);
+            if(i>0){
+                stringBuilder.append(" ");
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    /*
+          Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].
+          The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.
+          You must write an algorithm that runs in O(n) time and without using the division operation.
+
+          2 different for = o(n)
+          left to right, index 0 = 1, multiply per 1 is like we ignore it to multiply by it
+                          last index will have result of multiply all except last
+          right to left multiply last index answer per 1 keeps result, multiply to the left and will get result
+
+          ex: List<Integer> result = Arrays.stream(productExceptSelf(new int[]{1,2,3,4})).boxed().collect(Collectors.toList());
+              System.out.println(result);
+       */
+    public static int[] productExceptSelf(int[] nums) {
+        int n = nums.length;
+        int[] answer = new int[n];
+
+        // Calculate the product of all elements to the left of each element
+        int leftProduct = 1;
+        for (int i = 0; i < n; i++) {
+            answer[i] = leftProduct;
+            leftProduct *= nums[i];
+        }
+
+        // Calculate the product of all elements to the right of each element
+        // and multiply it with the current value in the ans array
+        int rightProduct = 1;
+        for (int i = n - 1; i >= 0; i--) {
+            answer[i] *= rightProduct;
+            rightProduct *= nums[i];
+        }
+
+        return answer;
+    }
+
+    /*
+  Given an integer array nums, return true if there exists a triple of indices (i, j, k)
+  such that i < j < k and nums[i] < nums[j] < nums[k]. If no such indices exists, return false.
+
+  ex:
+  Input: nums = [2,1,5,0,4,6]
+  Output: true
+  Explanation: The triplet (3, 4, 5) is valid because nums[3] == 0 < nums[4] == 4 < nums[5] == 6.
+
+  System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
+*/
+    public static boolean increasingTriplet(int[] nums) {
+
+        int small = Integer.MAX_VALUE;
+        int mid = Integer.MAX_VALUE;
+
+
+        for(int big : nums) {
+            if(big <= small) {
+                small = big;
+            }
+            else if(big <= mid) {
+                mid = big;
+            }
+            else return true;
+        }
+        return false;
+    }
+
+
+    /*
+            Given an array of characters chars, compress it using the following algorithm:
+            Begin with an empty string s. For each group of consecutive repeating characters in chars:
+            If the group's length is 1, append the character to s.
+            Otherwise, append the character followed by the group's length.
+            The compressed string s should not be returned separately, but instead, be stored in the input character array chars.
+            Note that group lengths that are 10 or longer will be split into multiple characters in chars.
+            After you are done modifying the input array, return the new length of the array.
+            You must write an algorithm that uses only constant extra space.
+
+            Input: chars = ["a","a","b","b","c","c","c"]
+            Output: Return 6, and the first 6 characters of the input array should be: ["a","2","b","2","c","3"]
+            Explanation: The groups are "aa", "bb", and "ccc". This compresses to "a2b2c3".
+     */
+    public static int compress(char[] chars) {
+        StringBuilder stringBuilder = new StringBuilder();
+        char previousChar = Character.MAX_VALUE;
+        int count=0;
+
+        if(chars.length == 1){
+            return 1;
+        }
+
+        for(int i=0; i<chars.length;i++){
+            char c = chars[i];
+
+            if(previousChar == c && i<chars.length){
+                count++;
+            }
+            if(previousChar != c || i==chars.length-1) {
+                if(count>0){
+                    count++;
+                    String countString = String.valueOf(count);
+                    for(char cc: countString.toCharArray()){
+                        stringBuilder.append(cc);
+                    }
+
+                    count =0;
+                }
+
+                if(i!=chars.length-1 || (i==chars.length-1 && count==0 && previousChar != c)){
+                    stringBuilder.append(c);
+                }
+
+
+            }
+            previousChar = c;
+
+        }
+
+        for(int i=0; i<stringBuilder.length();i++){
+            chars[i] = stringBuilder.charAt(i);
+        }
+
+
+        return stringBuilder.length();
+    }
+
+    // ENDS ARRAY/STRINGS
 
     //rank leader
     public static void ranks(){
@@ -3101,6 +3401,48 @@ public class Test {
         }
 
         return results;
+    }
+
+
+    /*
+    Design an algorithm that collects daily price quotes for some stock and returns the span of that stock's price for the current day.
+    The span of the stock's price in one day is the maximum number of consecutive days (starting from that day and going backward) for
+    which the stock price was less than or equal to the price of that day.
+    For example, if the prices of the stock in the last four days is [7,2,1,2] and the price of the stock today is 2,
+    then the span of today is 4 because starting from today, the price of the stock was less than or equal 2 for 4 consecutive days.
+    Also, if the prices of the stock in the last four days is [7,34,1,2] and the price of the stock today is 8,
+    then the span of today is 3 because starting from today, the price of the stock was less than or equal 8 for 3 consecutive days.
+
+      ex: [100],[80],[60],[70],[60],[75],[85]]
+      System.out.println(next(100));
+      System.out.println(next(80));
+      System.out.println(next(60));
+      System.out.println(next(70));
+      System.out.println(next(60));
+      System.out.println(next(75));
+      System.out.println(next(85));
+
+        it 1: [100][1]
+        it 2: [100][1],[80][1]
+        it 3: [100][1],[80][1], [60][1]
+        it 4: [100][1],[80][1],[70][2]; 70 es mas grande q 60 pero no q 80, hace pop al 60 y agrega su suma quedando en 2,
+                                        si alguno es mas grande q 70 tmb lo sera q el 60, se suma el 2 q se guardo a 70 por ambos
+        it 5: [100][1],[80][1],[70][2],[60][1]
+        it 6: [100][1],[80][1],[75][4]
+        it 7: [100][1],[85][6]
+
+
+   */
+    public static int next(int price) {
+        int span = 1;
+
+        while(st.size() > 0 && price >= st.peek()[0]){
+            span += st.pop()[1];
+        }
+
+        st.push(new int[]{price, span});
+
+        return span;
     }
 
     //END STACK
