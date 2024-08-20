@@ -457,6 +457,359 @@ Return the maximum amount of water a container can store.
 
     //END 2 POINTERS
 
+    //START SLIDING WINDOW
+
+    /*
+      You are given an integer array nums consisting of n elements, and an integer k.
+      Find a contiguous subarray whose length is equal to k that has the maximum average value and return this value.
+      Any answer with a calculation error less than 10-5 will be accepted.
+
+      System.out.println(findMaxAverage(new int[]{1,12,-5,-6,50,3},4));
+   */
+
+    public static double findMaxAverage(int[] nums, int k) {
+        int max = Integer.MIN_VALUE;
+        int index=0;
+        java.math.BigDecimal result= new java.math.BigDecimal(0);
+
+        if(nums.length>=k){
+            while(index+k<=nums.length){
+                int tempMax =0;
+                for(int i=index, counter=0; counter<k; i++,counter++){
+                    tempMax+=nums[i];
+                }
+                if(tempMax>max){
+                    max=tempMax;
+                }
+                index++;
+            }
+            result = new java.math.BigDecimal(max).divide(new java.math.BigDecimal(k),5,java.math.BigDecimal.ROUND_HALF_UP);
+        } else if(nums.length>0){
+            for(int i=0; i<nums.length;i++){
+                max+= nums[i];
+            }
+            result = new java.math.BigDecimal(max).divide(new java.math.BigDecimal(nums.length),5,java.math.BigDecimal.ROUND_HALF_UP);
+        }
+
+
+        return result.doubleValue();
+    }
+
+    /*
+    Given a string s and an integer k, return the maximum number of vowel letters in any substring of s with length k.
+    Vowel letters in English are 'a', 'e', 'i', 'o', and 'u'.
+
+    get vowels of size k from the beggining
+    after that remove initial character and rest vowel if it was and add vowel+1 if current character is vowel
+
+    ex:System.out.println(maxVowels("abciiidef",3));
+
+ */
+    public static int maxVowels(String s, int k) {
+
+        String vowels = "aeiou";
+
+        int maxVowelCount = 0;
+        int currentVowelCount = 0;
+
+        //vowels before k
+        for (int i = 0; i < k; i++) {
+            if (vowels.indexOf(s.charAt(i)) != -1) {
+                currentVowelCount++;
+            }
+        }
+
+        maxVowelCount = Math.max(maxVowelCount, currentVowelCount);
+
+
+        for (int i = k; i < s.length(); i++) {
+
+            //after counting before k vowels, rest 1 if before starting character was a vowel
+            if (vowels.indexOf(s.charAt(i - k)) != -1) {
+                currentVowelCount--;
+            }
+
+            //add vowel count if current character is vowel
+            if (vowels.indexOf(s.charAt(i)) != -1) {
+                currentVowelCount++;
+            }
+
+            maxVowelCount = Math.max(maxVowelCount, currentVowelCount);
+        }
+        return maxVowelCount;
+    }
+
+    /*
+        Given a binary array nums and an integer k, return the maximum number of consecutive 1's in the array if you can flip at most k 0's
+
+        keep track of biggest, start only changes when there is a need to remove a 0 from the consecutive used
+        to know number of elements current iteration i-start +1 due to index 0
+
+     */
+    public static int longestOnes(int[] nums, int k) {
+        int start=0;
+        int biggest=0;
+        int zeros=0;
+
+        for(int i=0; i<nums.length;i++){
+            zeros+= nums[i]==0 ? 1 : 0;
+
+            while(zeros>k){
+                zeros -= nums[start]==1 ? 0 :1;
+                start++;
+            }
+
+            biggest = Math.max(biggest, ((i-start)+1));
+        }
+        return biggest;
+    }
+
+    /*
+    Given a binary array nums, you should delete one element from it.
+    Return the size of the longest non-empty subarray containing only 1's in the resulting array.
+    Return 0 if there is no such subarray.
+
+    iterate one by one, if there is already more than 1 zero, need to move starting evaluating point
+    until you remove 1 of the zeros, keep the biggest in the process
+
+    System.out.println(longestSubarray(new int[]{1,1,0,1}));
+ */
+    public static int longestSubarray(int[] nums) {
+        int start=0;
+        int biggest=0;
+        int zeros=0;
+
+        for(int i=0; i<nums.length;i++){
+            zeros+= nums[i]==0 ? 1 : 0;
+
+            while(zeros>1){
+                zeros -= nums[start]==1 ? 0 :1;
+                start++;
+            }
+
+            biggest = Math.max(biggest, i-start);
+        }
+        return biggest;
+    }
+
+    //END SLIDING WINDOW
+
+    //START PREFIX SUM
+
+    /*
+        There is a biker going on a road trip. The road trip consists of n + 1 points at different altitudes.
+        The biker starts his trip on point 0 with altitude equal 0.
+        You are given an integer array gain of length n where gain[i] is the net gain in altitude
+        between points i and i + 1 for all (0 <= i < n). Return the highest altitude of a point.
+
+        starting in zero, when was it highest  0,-5,4,2 = 1
+         0-5=-5
+        -5+4=-1
+        -1+2=1
+     */
+    public static int largestAltitude(int[] gain) {
+        int max = 0;
+        int temp=0;
+        for(int x: gain){
+            temp+= x;
+            if(temp>max){
+                max=temp;
+            }
+        }
+        return max;
+    }
+
+    /*
+    Given an array of integers nums, calculate the pivot index of this array.
+    The pivot index is the index where the sum of all the numbers strictly to the left of the index
+    is equal to the sum of all the numbers strictly to the index's right.
+    If the index is on the left edge of the array, then the left sum is 0 because there are no elements to the left. This also applies to the right edge of the array.
+    Return the leftmost pivot index. If no such index exists, return -1.
+
+    sum to left side of the evaluating only
+    rest left and actual to the sum of total will give right side
+
+    System.out.println(pivotIndex(new int[]{1,2,3}));
+ */
+    public static int pivotIndex(int[] nums) {
+        int sum = Arrays.stream(nums).boxed().mapToInt(i->new Integer(i)).sum();
+
+        int leftSide =0;
+        int rightSide =0;
+
+        for(int i=0; i<nums.length; i++){
+            int actual= nums[i];
+
+            if(i-1>=0){
+                leftSide+=nums[i-1];
+            }
+            rightSide= sum-leftSide-actual;
+
+            if(leftSide==rightSide){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    //END PREFIX SUM
+
+
+    //START HASHMAP/SET
+
+    /*
+       Given two 0-indexed integer arrays nums1 and nums2, return a list answer of size 2 where:
+       answer[0] is a list of all distinct integers in nums1 which are not present in nums2.
+       answer[1] is a list of all distinct integers in nums2 which are not present in nums1.
+       Note that the integers in the lists may be returned in any order.
+
+       distinct lists then remove from one list all in the other so will keep the ones in that list and not in the other
+
+       ex: System.out.println(findDifference(new int[]{1,2,3},new int[]{2,4,6}));
+     */
+    public static List<List<Integer>> findDifference(int[] nums1, int[] nums2) {
+        List<Integer> n1 = Arrays.stream(nums1).boxed().distinct().toList();
+        List<Integer> n2 = Arrays.stream(nums2).boxed().distinct().toList();
+
+        List<Integer> result1= new ArrayList<>(n1);
+        result1.removeAll(n2);
+
+        List<Integer> result2 = new ArrayList<>(n2);
+        result2.removeAll(n1);
+
+        List<List<Integer>> list = new ArrayList<>();
+        list.add(result1);
+        list.add(result2);
+
+        return list;
+    }
+
+    /*
+        Given an array of integers arr, return true if the number of occurrences of each value in the array is unique or false otherwise.
+
+        keep track of number of occurrences, if that is not equal after remove distinct then false
+
+        ex: System.out.println(uniqueOccurrences(new int[]{1,2,2,1,1,3}));
+     */
+    public static boolean uniqueOccurrences(int[] arr) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int i:arr){
+            if(map.containsKey(i)){
+                map.put(i, (map.get(i))+1);
+            } else {
+                map.put(i, 1);
+            }
+        }
+
+        List<Integer> all = map.values().stream().toList();
+        if(all.size() == all.stream().distinct().collect(Collectors.toList()).size()){
+            return true;
+        } else{
+            return false;
+        }
+    }
+
+    /*
+     Two strings are considered close if you can attain one from the other using the following operations:
+
+     Operation 1: Swap any two existing characters.
+     For example, abcde -> aecdb
+     Operation 2: Transform every occurrence of one existing character into another existing character, and do the same with the other character.
+     For example, aacabb -> bbcbaa (all a's turn into b's, and all b's turn into a's)
+     You can use the operations on either string as many times as necessary.
+
+     Given two strings, word1 and word2, return true if word1 and word2 are close, and false otherwise.
+
+        if one letter is equal 0 in array 1 and different than 0 in the other array then it can be swapt
+        int array of all letters, add number of letters per letter
+        sort numbers in array, if all numbers in array 1 and array 2 match then it can be swap and work
+
+
+     ex: System.out.println(closeStrings("abc","bca"));
+  */
+    public static boolean closeStrings(String word1, String word2) {
+
+        int[] array1 = new int[26];
+        int[] array2 = new int[26];
+
+        if(word1.length() != word2.length()){
+            return false;
+        }
+
+        for(int i=0; i<word2.length(); i++){
+            array1[word1.charAt(i)-'a'] +=1;
+            array2[word2.charAt(i)-'a'] +=1;
+        }
+
+        for(int i=0; i<array1.length;i++){
+            if(array1[i]==0 && array2[i]!=0 || array2[i]==0 && array1[i] !=0){
+                return false;
+            }
+        }
+
+        Arrays.sort(array1);
+        Arrays.sort(array2);
+
+        for(int i=0; i<array1.length;i++){
+            if(array1[i] != array2[i]){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*
+   Given a 0-indexed n x n integer matrix grid, return the number of pairs (ri, cj) such that row ri and column cj are equal.
+   A row and column pair is considered equal if they contain the same elements in the same order (i.e., an equal array).
+
+    crea una lista con los rows: 3,1,2,2, etc
+    crea una lista con los columns: 3,1,2,2, etc
+
+    si esta en ambas listas counter+1
+
+   System.out.println(equalPairs(new int[][]{{3,1,2,2},{1,4,4,4},{2,4,2,2},{2,5,2,2}}));
+    */
+    public static int equalPairs(int[][] grid) {
+
+        List<String> rowsList = new ArrayList<>();
+        List<String> columnsList = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        int counter =0;
+
+        for(int i=0; i<grid.length;i++){
+            for(int j=0; j< grid.length;j++) {
+                sb.append(grid[i][j]);
+                if(j< grid.length-1){
+                    sb.append(",");
+                }
+            }
+            rowsList.add(sb.toString());
+            sb = new StringBuilder();
+        }
+
+        for(int i=0; i<grid.length;i++){
+            for(int j=0; j< grid.length;j++) {
+                sb.append(grid[j][i]);
+                if(j< grid.length-1){
+                    sb.append(",");
+                }
+            }
+            columnsList.add(sb.toString());
+            sb = new StringBuilder();
+        }
+
+        for(String s: rowsList){
+            if(columnsList.contains(s)){
+                counter+=columnsList.stream().filter(c->s.equals(c)).count();
+            }
+        }
+
+
+        return counter;
+
+    }
+    //END HASHMAPSET
+
     //rank leader
     public static void ranks(){
         Scanner in = new Scanner(System.in);
@@ -2061,809 +2414,22 @@ Return the maximum amount of water a container can store.
         return count;
     }
 
-    public static List<List<Integer>> findDifference(int[] nums1, int[] nums2) {
-        List<Integer> n1 = Arrays.stream(nums1).boxed().distinct().toList();
-        List<Integer> n2 = Arrays.stream(nums2).boxed().distinct().toList();
-
-        List<Integer> result1= new ArrayList<>(n1);
-        result1.removeAll(n2);
-
-        List<Integer> result2 = new ArrayList<>(n2);
-        result2.removeAll(n1);
-
-        List<List<Integer>> list = new ArrayList<>();
-        list.add(result1);
-        list.add(result2);
-
-        return list;
-    }
-
-    public static boolean uniqueOccurrences(int[] arr) {
-        Map<Integer, Integer> map = new HashMap<>();
-        for(int i:arr){
-            if(map.containsKey(i)){
-                map.put(i, (map.get(i))+1);
-            } else {
-                map.put(i, 1);
-            }
-        }
-
-        List<Integer> all = map.values().stream().toList();
-        if(all.size() == all.stream().distinct().collect(Collectors.toList()).size()){
-            return true;
-        } else{
-            return false;
-        }
-    }
+    //BINARY SEARCH
 
     /*
-        Two strings are considered close if you can attain one from the other using the following operations:
+    We are playing the Guess Game. The game is as follows:
+    I pick a number from 1 to n. You have to guess which number I picked.
+    Every time you guess wrong, I will tell you whether the number I picked is higher or lower than your guess.
+    You call a pre-defined API int guess(int num), which returns three possible results:
 
-        Operation 1: Swap any two existing characters.
-        For example, abcde -> aecdb
-        Operation 2: Transform every occurrence of one existing character into another existing character, and do the same with the other character.
-        For example, aacabb -> bbcbaa (all a's turn into b's, and all b's turn into a's)
-        You can use the operations on either string as many times as necessary.
+    -1: Your guess is higher than the number I picked (i.e. num > pick).
+    1: Your guess is lower than the number I picked (i.e. num < pick).
+    0: your guess is equal to the number I picked (i.e. num == pick).
 
-        Given two strings, word1 and word2, return true if word1 and word2 are close, and false otherwise.
-     */
-    public static boolean closeStrings(String word1, String word2) {
+    int guess(int num); returns 0,-1,1
 
-        int[] array1 = new int[26];
-        int[] array2 = new int[26];
-
-        if(word1.length() != word2.length()){
-            return false;
-        }
-
-        for(int i=0; i<word2.length(); i++){
-            array1[word1.charAt(i)-'a'] +=1;
-            array2[word2.charAt(i)-'a'] +=1;
-        }
-
-        for(int i=0; i<array1.length;i++){
-            if(array1[i]==0 && array2[i]!=0 || array2[i]==0 && array1[i] !=0){
-                return false;
-            }
-        }
-
-        Arrays.sort(array1);
-        Arrays.sort(array2);
-
-        for(int i=0; i<array1.length;i++){
-            if(array1[i] != array2[i]){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /*
-    Given a 0-indexed n x n integer matrix grid, return the number of pairs (ri, cj) such that row ri and column cj are equal.
-    A row and column pair is considered equal if they contain the same elements in the same order (i.e., an equal array).
-
-    System.out.println(equalPairs(new int[][]{{3,1,2,2},{1,4,4,4},{2,4,2,2},{2,5,2,2}}));
-     */
-    public static int equalPairs(int[][] grid) {
-
-        List<String> rowsList = new ArrayList<>();
-        List<String> columnsList = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-        int counter =0;
-
-        for(int i=0; i<grid.length;i++){
-            for(int j=0; j< grid.length;j++) {
-                sb.append(grid[i][j]);
-                if(j< grid.length-1){
-                    sb.append(",");
-                }
-            }
-            rowsList.add(sb.toString());
-            sb = new StringBuilder();
-        }
-
-        for(int i=0; i<grid.length;i++){
-            for(int j=0; j< grid.length;j++) {
-                sb.append(grid[j][i]);
-                if(j< grid.length-1){
-                    sb.append(",");
-                }
-            }
-            columnsList.add(sb.toString());
-            sb = new StringBuilder();
-        }
-
-        for(String s: rowsList){
-            if(columnsList.contains(s)){
-                counter+=columnsList.stream().filter(c->s.equals(c)).count();
-            }
-        }
-
-
-        return counter;
-
-    }
-
-
-    /*
-    You are given a string s, which contains stars *.
-    In one operation, you can:
-    Choose a star in s.
-    Remove the closest non-star character to its left, as well as remove the star itself.
-    Return the string after all stars have been removed.
-    Note:
-    The input will be generated such that the operation is always possible.
-    It can be shown that the resulting string will always be unique.
-
-     System.out.println(removeStars("erase*****"));
-     */
-    public static String removeStars(String s) {
-
-        if(!s.contains("*")){
-            return s;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        Stack<Character> stack = new Stack<>();
-
-        for(int i=0; i<s.length(); i++){
-            if(s.charAt(i)=='*'){
-                stack.pop();
-            } else {
-                stack.push(s.charAt(i));
-            }
-        }
-
-        for(int i=0; i<stack.size();i++){
-            sb.append(stack.get(i));
-        }
-        return sb.toString();
-    }
-
-    /*
-        We are given an array asteroids of integers representing asteroids in a row.
-        For each asteroid, the absolute value represents its size, and the sign represents its direction (positive meaning right, negative meaning left).
-        Each asteroid moves at the same speed.
-        Find out the state of the asteroids after all collisions. If two asteroids meet, the smaller one will explode.
-        If both are the same size, both will explode. Two asteroids moving in the same direction will never meet.
-         */
-    public static int[] asteroidCollision(int[] asteroids) {
-        Stack<Integer> stack = new Stack<>();
-        boolean positiveInt = false;
-        boolean positiveStack = false;
-
-        for(int asteroid: asteroids){
-            do{
-                if(stack.isEmpty()){
-                    stack.push(asteroid);
-                    break;
-                } else{
-                    positiveInt = Integer.signum(asteroid)>=0?true:false;
-                    positiveStack = Integer.signum(stack.peek())>=0?true:false;
-
-                    if(positiveInt == positiveStack){
-                        stack.push(asteroid);
-                        break;
-                    } else {
-                        if(Math.abs(stack.peek())==Math.abs(asteroid)){
-                            stack.pop();
-                            break;
-                        } else if(Math.abs(stack.peek())>Math.abs(asteroid)) {
-                            break;
-                        } else{
-                            stack.pop();
-                        }
-                    }
-
-                }
-            } while(true);
-
-        }
-
-        int[] result = new int[stack.size()];
-
-        for(int i= result.length-1; i>=0;i--){
-            result[i]= stack.pop();
-        }
-        return result;
-    }
-
-    /*
-    Given an encoded string, return its decoded string.
-    The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is being repeated exactly k times.
-    Note that k is guaranteed to be a positive integer.
-    You may assume that the input string is always valid; there are no extra white spaces, square brackets are well-formed, etc.
-    Furthermore, you may assume that the original data does not contain any digits and that digits are only for those repeat numbers, k.
-    For example, there will not be input like 3a or 2[4].
-    The test cases are generated so that the length of the output will never exceed 105.
-
-     System.out.println(decodeString("2[abc]3[cd]ef"));
-     abcabccdcdcdef
-     */
-    public static String decodeString(String s) {
-        Stack<Character> stack = new Stack<>();
-        StringBuilder result = new StringBuilder();
-        for(char c : s.toCharArray()){
-            if(c == ']'){
-                StringBuilder sb = new StringBuilder();
-
-                while(!stack.isEmpty() && stack.peek() != '['){
-                    sb.insert(0,stack.pop());
-                }
-                //remove [
-                stack.pop();
-
-                StringBuilder numberBuilder = new StringBuilder();
-                while(!stack.isEmpty() && Character.isDigit(stack.peek())){
-                    numberBuilder.insert(0,stack.pop());
-                }
-
-                result.append(sb.toString().repeat(Integer.valueOf(numberBuilder.toString())));
-
-                for(Character character: result.toString().toCharArray()){
-                    stack.push(character);
-                }
-                result = new StringBuilder();
-            } else {
-                stack.push(c);
-            }
-        }
-
-        StringBuilder sb = new StringBuilder();
-        while(!stack.isEmpty()){
-            sb.insert(0, stack.pop());
-        }
-        result.append(sb);
-        return  result.toString();
-    }
-
-    /*
-    You have a RecentCounter class which counts the number of recent requests within a certain time frame.
-    Implement the RecentCounter class:
-    RecentCounter() Initializes the counter with zero recent requests.
-    int ping(int t) Adds a new request at time t, where t represents some time in milliseconds,
-    and returns the number of requests that has happened in the past 3000 milliseconds (including the new request).
-    Specifically, return the number of requests that have happened in the inclusive range [t - 3000, t].
-    It is guaranteed that every call to ping uses a strictly larger value of t than the previous call.
-
-    QuickTest q = new QuickTest();
-       int[] array = new int[]{1178,1483,1563,4054,4152};
-
-       for(int a: array){
-           System.out.println(q.ping(a));
-       }
-     */
-    Queue<Integer> q = new LinkedList<>();
-
-    public int ping(int t) {
-        q.add(t);
-
-        while(q.peek() < t-3000){
-            q.poll();
-        }
-        return q.size();
-    }
-
-    /*
-    Ban one senator's right: A senator can make another senator lose all his rights in this and all the following rounds.
-    Announce the victory: If this senator found the senators who still have rights to vote are all from the same party,
-    he can announce the victory and decide on the change in the game.
-    Given a string senate representing each senator's party belonging. The character 'R' and 'D' represent the Radiant party and the Dire party.
-    Then if there are n senators, the size of the given string will be n.
-    The round-based procedure starts from the first senator to the last senator in the given order. This procedure will last until the end of voting.
-    All the senators who have lost their rights will be skipped during the procedure.
-    Suppose every senator is smart enough and will play the best strategy for his own party.
-    Predict which party will finally announce the victory and change the Dota2 game. The output should be "Radiant" or "Dire".
-
-    One strategy that would pass the judge (although not the most efficient) to think about the problem is for the first character in the string to move to the back and eliminate the first "opposing" character in the string. So in the case of "DDRRR":
-
-    DDRRR - the first D moves to the back and takes out the first R
-    DRRD - the first D moves to the back and takes out the first R
-    RDD - the first R moves to the back and takes out the first D
-    DR - the first (and only) D moves to the back and takes out the first (and only) R
-    D - D wins the vote.
-
-    System.out.println(predictPartyVictory("DDRRR"));
-     */
-    public static String predictPartyVictory(String senate) {
-        Queue<Character> queue = new LinkedList<>();
-
-        Character before = null;
-        for(char c: senate.toCharArray()){
-            queue.add(c);
-        }
-
-        Character contrary = null;
-        do {
-            if(before==null){
-                before=queue.peek();
-            } else {
-                queue.remove(contrary);
-                queue.add(queue.poll());
-                before=queue.peek();
-            }
-            if(before == 'R'){
-                contrary = 'D';
-            } else {
-                contrary = 'R';
-            }
-
-        }while(queue.contains(contrary));
-
-        if(before != null && before=='R'){
-            return "Radiant";
-        }
-        return "Dire";
-
-    }
-
-    /*
-    You are given the head of a linked list. Delete the middle node, and return the head of the modified linked list.
-    The middle node of a linked list of size n is the ⌊n / 2⌋th node from the start using 0-based indexing, where ⌊x⌋ denotes
-    the largest integer less than or equal to x.
-    For n = 1, 2, 3, 4, and 5, the middle nodes are 0, 1, 1, 2, and 2, respectively
-
-    ListNode a = new ListNode(1);
-    ListNode b = new ListNode(2);
-    ListNode c = new ListNode(3);
-    ListNode d = new ListNode(4);
-    a.next = b;
-    b.next = c;
-    c.next = d;
-
-        ListNode result = deleteMiddle(a);
-     */
-    public static QuickTest.ListNode deleteMiddle(QuickTest.ListNode head) {
-        int count=0;
-        QuickTest.ListNode test = head;
-        while(test != null){
-            count++;
-            test = test.next;
-        }
-
-        if(count<2){
-            return null;
-        }
-
-        int toRemoveIndex= count/2;
-
-        test = head;
-
-        int counter = 0;
-        QuickTest.ListNode before = null;
-        while(test != null){
-            if(counter == toRemoveIndex){
-                if(before.next.next != null){
-                    before.next = before.next.next;
-                } else {
-                    before.next = null;
-                }
-                before = test;
-                test = test.next;
-            } else{
-                before = test;
-                test = test.next;
-            }
-            counter++;
-        }
-
-        return head;
-    }
-
-    /*
-    Given the head of a singly linked list, group all the nodes with odd indices together followed by the nodes with even indices, and return the reordered list.
-    The first node is considered odd, and the second node is even, and so on.
-    Note that the relative order inside both the even and odd groups should remain as it was in the input.
-
-    ListNode a = new ListNode(1);
-    ListNode b = new ListNode(2);
-    ListNode c = new ListNode(3);
-    ListNode d = new ListNode(4);
-    ListNode e = new ListNode(5);
-    a.next = b;
-    b.next = c;
-    c.next = d;
-    d.next = e;
-
-    ListNode result = oddEvenList(a);
-     */
-    public static QuickTest.ListNode oddEvenList(QuickTest.ListNode head) {
-
-        if(head == null || head.next ==null){
-            return head;
-        }
-
-        Queue<QuickTest.ListNode> odd = new LinkedList<>();
-        Queue<QuickTest.ListNode> even = new LinkedList<>();
-        int count =1;
-        QuickTest.ListNode temp = head;
-        while(temp != null){
-            QuickTest.ListNode toAdd = new QuickTest.ListNode(temp.val);
-            if(count%2!=0){
-                odd.add(toAdd);
-            } else{
-                even.add(toAdd);
-            }
-            temp = temp.next;
-            count++;
-        }
-
-        if(!odd.isEmpty()){
-            temp = odd.poll();
-        } else {
-            temp = even.poll();
-        }
-
-        QuickTest.ListNode result = temp;
-        while(!odd.isEmpty()){
-            temp.next = odd.poll();
-            temp= temp.next;
-        }
-
-        while(!even.isEmpty()){
-            temp.next = even.poll();
-            temp= temp.next;
-        }
-
-        return result;
-    }
-
-    /*
-    Given the head of a singly linked list, reverse the list, and return the reversed list.
-
-    ListNode a = new ListNode(1);
-    ListNode b = new ListNode(2);
-    ListNode c = new ListNode(3);
-    ListNode d = new ListNode(4);
-    ListNode e = new ListNode(5);
-    a.next = b;
-    b.next = c;
-    c.next = d;
-    d.next = e;
-
-    ListNode result = reverseList(a);
-
-    curr.next for a moment points to prev so when prev=curr, prev points as next what prev was before
-     */
-    public static QuickTest.ListNode reverseList(QuickTest.ListNode head) {
-        QuickTest.ListNode curr=head;
-        QuickTest.ListNode prev=null;
-        QuickTest.ListNode next=null;
-        while(curr!=null){
-            next = curr.next;
-            curr.next=prev;
-            prev=curr;
-            curr=next;
-        }
-        return prev;
-    }
-
-    /*
-    In a linked list of size n, where n is even, the ith node (0-indexed) of the linked list is known as the twin of the (n-1-i)th node, if 0 <= i <= (n / 2) - 1.
-    For example, if n = 4, then node 0 is the twin of node 3, and node 1 is the twin of node 2. These are the only nodes with twins for n = 4.
-    The twin sum is defined as the sum of a node and its twin.
-    Given the head of a linked list with even length, return the maximum twin sum of the linked list.
-
-    static class ListNode {
-      int val;
-      ListNode next;
-      ListNode() {}
-      ListNode(int val) { this.val = val; }
-      ListNode(int val, ListNode next) { this.val = val; this.next = next; }
-  }
-
-   ListNode a = new ListNode(1);
-        ListNode b = new ListNode(100000);
-        a.next = b;
-        System.out.println(pairSum(a));
-
-    !!!get from array faster than list.get
-     */
-    public static int pairSum(QuickTest.ListNode head) {
-        Integer maxVal =0;
-        List<Integer> list = new LinkedList<>();
-
-        while(head != null){
-            list.add(head.val);
-            head = head.next;
-        }
-
-        Integer[] array = list.stream().toArray(Integer[]::new);
-        for(int i=0; i<list.size()/2; i++){
-            Integer sum = array[i]+array[array.length-1-i];
-            if(maxVal<sum){
-                maxVal = sum;
-            }
-        }
-
-        return maxVal;
-    }
-
-    /*
-    Given the root of a binary tree, return its maximum depth.
-    A binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
-
-    static class TreeNode {
-      int val;
-      TreeNode left;
-      TreeNode right;
-      TreeNode() {}
-      TreeNode(int val) { this.val = val; }
-      TreeNode(int val, TreeNode left, TreeNode right) {
-          this.val = val;
-          this.left = left;
-          this.right = right;
-      }
-  }
-
-  TreeNode nine = new TreeNode(9);
-        TreeNode twenty = new TreeNode(20, new TreeNode(15), new TreeNode(7));
-       TreeNode root = new TreeNode(3, nine, twenty);
-        System.out.println(maxDepth(root));
-     */
-    public static int maxDepth(QuickTest.TreeNode root) {
-
-        if(root == null) {
-            return 0;
-        }
-        return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
-    }
-
-
-    /*
-    Consider all the leaves of a binary tree, from left to right order, the values of those leaves form a leaf value sequence.
-    For example, in the given tree above, the leaf value sequence is (6, 7, 4, 9, 8).
-    Two binary trees are considered leaf-similar if their leaf value sequence is the same.
-
-    get all leafs from both trees and then compare
-
-        TreeNode six = new TreeNode(6);
-        TreeNode seven = new TreeNode(7);
-        TreeNode four = new TreeNode(4);
-        TreeNode nine = new TreeNode(9);
-        TreeNode eight = new TreeNode(8);
-
-        TreeNode two = new TreeNode(2, seven, four);
-        TreeNode five = new TreeNode(5,six, two);
-        TreeNode one = new TreeNode(1,nine,eight);
-
-        TreeNode three = new TreeNode(3, five, one);
-
-        System.out.println(leafSimilar(three, three));
-
-     */
-    public static boolean leafSimilar(QuickTest.TreeNode root1, QuickTest.TreeNode root2) {
-
-        List<Integer> list = new LinkedList<>();
-
-        fill(root1, list);
-
-        List<Integer> list2 = new LinkedList<>();
-        fill(root2, list2);
-
-        if(list.size() != list2.size()){
-            return false;
-        }
-
-        for(int i=0; i< list.size(); i++){
-            int a = list.get(i);
-            int b = list2.get(i);
-            if( a!= b){
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static void fill(QuickTest.TreeNode tree, List<Integer> list){
-        if(tree.left == null && tree.right == null){
-            list.add(tree.val);
-            return;
-        }
-
-        if(tree.left != null){
-            fill(tree.left, list);
-        }
-        if(tree.right != null){
-            fill(tree.right, list);
-        }
-    }
-
-    /*
-    Given a binary tree root, a node X in the tree is named good if in the path from root to X there are no nodes with a value greater than X.
-    Return the number of good nodes in the binary tree.
-
-    times node value is greater or equal to max value
-
-        TreeNode four = new TreeNode(4);
-        TreeNode two = new TreeNode(2);
-
-        TreeNode three1 = new TreeNode(3,four, two);
-
-        TreeNode three = new TreeNode(3, three1, null);
-
-        System.out.println(goodNodes(three));
-
-     */
-    public static int counter =0;
-
-    public static int goodNodes(QuickTest.TreeNode root) {
-
-        Integer maxValue = Integer.MIN_VALUE;
-        fillMaxVal(root, maxValue);
-
-
-        return counter;
-    }
-
-    public static void fillMaxVal(QuickTest.TreeNode tree, Integer maxValue){
-        if(tree.val>=maxValue){
-            counter++;
-            maxValue = tree.val;
-        }
-
-        if(tree.left != null){
-            fillMaxVal(tree.left, maxValue);
-        }
-        if(tree.right != null){
-            fillMaxVal(tree.right, maxValue);
-        }
-    }
-
-    /*
-        Given an integer array nums and an integer k, return the kth largest element in the array.
-        Note that it is the kth largest element in the sorted order, not the kth distinct element.
-        Can you solve it without sorting?
-
-        System.out.println(findKthLargest(new int[]{3,2,1,5,6,4},2));
-     */
-
-    public static int findKthLargest(int[] nums, int k) {
-        PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.reverseOrder());
-
-        if(nums.length==0){
-            return 0;
-        }
-
-        for(int i=0; i< nums.length; i++){
-            queue.add(nums[i]);
-        }
-
-        for(int i=1; i<k; i++){
-            queue.poll();
-        }
-
-
-        return queue.poll();
-    }
-
-
-    /*
-    You are given two 0-indexed integer arrays nums1 and nums2 of equal length n and a positive integer k.
-    You must choose a subsequence of indices from nums1 of length k.
-    For chosen indices i0, i1, ..., ik - 1, your score is defined as:
-    The sum of the selected elements from nums1 multiplied with the minimum of the selected elements from nums2.
-    It can defined simply as: (nums1[i0] + nums1[i1] +...+ nums1[ik - 1]) * min(nums2[i0] , nums2[i1], ... ,nums2[ik - 1]).
-    Return the maximum possible score.
-
-    Input: nums1 = [1,3,3,2], nums2 = [2,1,3,4], k = 3
-    Output: 12
-    Explanation:
-    The four possible subsequence scores are:
-    - We choose the indices 0, 1, and 2 with score = (1+3+3) * min(2,1,3) = 7.
-    - We choose the indices 0, 1, and 3 with score = (1+3+2) * min(2,1,4) = 6.
-    - We choose the indices 0, 2, and 3 with score = (1+3+2) * min(2,3,4) = 12.
-    - We choose the indices 1, 2, and 3 with score = (3+3+2) * min(1,3,4) = 8.
-    Therefore, we return the max score, which is 12.
-
-   al ordenar el q se multiplica de mayor a menor, aseguras q se multiplique por el menor de los q se estan usando
-   al hacer pop al mas pequeño quedas con los mas grandes  para la suma
-   cuidado con el tipo de dato, el int no llega a sumas altas
+    binary search -> start + (start+end)/2
  */
-    public static long maxScore(int[] nums1, int[] nums2, int k) {
-        long ans =0;
-        List<int[]> list = new LinkedList<>();
-
-        if(nums1.length == nums2.length){
-
-            if(nums1.length==1){
-                return nums1[0]*nums2[0];
-            }
-
-
-
-            for(int i=0; i<nums1.length;i++){
-                list.add(new int[]{nums1[i],nums2[i]});
-            }
-
-            Collections.sort(list, (a, b) -> b[1]-a[1]);
-
-            long sum=0;
-            PriorityQueue<Integer> queue = new PriorityQueue<>();
-
-            for(int[] array : list){
-                sum+=array[0];
-
-                if(queue.size()==k){
-                    sum-= queue.poll();
-                }
-                if(queue.size()== k-1){
-                    ans = Math.max(ans, sum*array[1]);
-                }
-                queue.add(array[0]);
-            }
-        }
-
-        return ans;
-    }
-
-    /*
-        We hire 3 workers in total. The total cost is initially 0.
-        - In the first hiring round we choose the worker from [17,12,10,2,7,2,11,20,8]. The lowest cost is 2, and we break the tie by the smallest index, which is 3. The total cost = 0 + 2 = 2.
-        - In the second hiring round we choose the worker from [17,12,10,7,2,11,20,8]. The lowest cost is 2 (index 4). The total cost = 2 + 2 = 4.
-        - In the third hiring round we choose the worker from [17,12,10,7,11,20,8]. The lowest cost is 7 (index 3). The total cost = 4 + 7 = 11. Notice that the worker with index 3 was common in the first and last four workers.
-        The total hiring cost is 11.
-        candidates is the size of the set starting or ending
-        starting set of 4 candidates for from example = first 4 elements [17,12,10,2]
-        ending set of 4 candidates for our example = last 4 elements [2,11,20,8]
-        middle element 7 is ignored in first k run
-
-        System.out.println(totalCost(new int[]{17,12,10,2,7,2,11,20,8}, 3, 4));
-
-        faster than being getting elements from list fill queue with number of elements needed
-        and be removing the smallest from them
-     */
-    public static long totalCost(int[] costs, int k, int candidates) {
-        if(costs.length == 0){
-            return 0;
-        }
-        int count =0;
-        long sum=0;
-        PriorityQueue<Integer> startQueue = new PriorityQueue<>();
-        PriorityQueue<Integer> endQueue = new PriorityQueue<>();
-
-        int i=0;
-        int j=costs.length-1;
-
-        while(count<k ){
-
-            while(startQueue.size()<candidates && i <= j){
-                startQueue.add(costs[i]);
-                i++;
-            }
-
-            while(endQueue.size()<candidates && i <= j){
-                endQueue.add(costs[j]);
-                j--;
-            }
-
-            int toSum;
-
-            int q1 = startQueue.peek() != null ? startQueue.peek():Integer.MAX_VALUE;
-            int q2 = endQueue.peek() != null ? endQueue.peek():Integer.MAX_VALUE;
-
-            sum += q1<=q2?startQueue.poll():endQueue.poll();
-            count++;
-        }
-
-        return sum;
-    }
-
-    /*
-        We are playing the Guess Game. The game is as follows:
-        I pick a number from 1 to n. You have to guess which number I picked.
-        Every time you guess wrong, I will tell you whether the number I picked is higher or lower than your guess.
-        You call a pre-defined API int guess(int num), which returns three possible results:
-
-        -1: Your guess is higher than the number I picked (i.e. num > pick).
-        1: Your guess is lower than the number I picked (i.e. num < pick).
-        0: your guess is equal to the number I picked (i.e. num == pick).
-
-        int guess(int num); returns 0,-1,1
-
-        binary search -> start + (start+end)/2
-     */
     public static int guessNumber(int n) {
 
         int start = 1;
@@ -2885,8 +2451,6 @@ Return the maximum amount of water a container can store.
         }
         return start;
     }
-
-    //BINARY SEARCH
 
     /*
         Binary Search
@@ -3064,6 +2628,29 @@ Return the maximum amount of water a container can store.
 
         System.out.println(letterCombinations("23"));
      */
+public static List<String> letterCombinations(String digits) {
+    List<String> resultList = new ArrayList<>();
+    if(digits.length()==0){
+        return resultList;
+    }
+
+    Map<Integer, String> map = new HashMap<>();
+    map.put(2,"abc");
+    map.put(3,"def");
+    map.put(4,"ghi");
+    map.put(5,"jkl");
+    map.put(6,"mno");
+    map.put(7,"pqrs");
+    map.put(8,"tuv");
+    map.put(9,"wxyz");
+
+    StringBuilder sb = new StringBuilder();
+    int index =0;
+
+    solve(digits, sb,index,resultList,map);
+
+    return resultList;
+}
 
     private static void solve(String digit, StringBuilder output, int index, List<String> resultList, Map<Integer, String> map) {
 
@@ -3084,30 +2671,6 @@ Return the maximum amount of water a container can store.
 
     }
 
-    public static List<String> letterCombinations(String digits) {
-        List<String> resultList = new ArrayList<>();
-        if(digits.length()==0){
-            return resultList;
-        }
-
-        Map<Integer, String> map = new HashMap<>();
-        map.put(2,"abc");
-        map.put(3,"def");
-        map.put(4,"ghi");
-        map.put(5,"jkl");
-        map.put(6,"mno");
-        map.put(7,"pqrs");
-        map.put(8,"tuv");
-        map.put(9,"wxyz");
-
-        StringBuilder sb = new StringBuilder();
-        int index =0;
-
-        solve(digits, sb,index,resultList,map);
-
-        return resultList;
-    }
-
      /*
         Find all valid combinations of k numbers that sum up to n such that the following conditions are true
         -only numbers 1 through 9 are used
@@ -3122,6 +2685,11 @@ Return the maximum amount of water a container can store.
         1+3+5=9
         2+3+4=9
      */
+     public static List<List<Integer>> combinations(int k, int n){
+         List<List<Integer>> ans = new ArrayList<>();
+         combination(ans, new ArrayList<Integer>(), k, 1, n);
+         return ans;
+     }
 
     private static void combination(List<List<Integer>> ans, List<Integer> comb, int k,  int start, int n) {
         if (comb.size() == k && n == 0) {
@@ -3136,16 +2704,10 @@ Return the maximum amount of water a container can store.
         }
     }
 
-    public static List<List<Integer>> combinations(int k, int n){
-        List<List<Integer>> ans = new ArrayList<>();
-        combination(ans, new ArrayList<Integer>(), k, 1, n);
-        return ans;
-    }
-
     // END BACKTRACKING
 
 
-    //DP
+    //DP 1D
 
     /*
         The Tribonacci sequence Tn is defined as follows:
@@ -3157,7 +2719,6 @@ Return the maximum amount of water a container can store.
             T_3 = 0 + 1 + 1 = 2
             T_4 = 1 + 1 + 2 = 4
      */
-
     public static int tribonacci(int n) {
         if(n==0){
             return 0;
@@ -3267,9 +2828,9 @@ Return the maximum amount of water a container can store.
         return prev;
     }
 
-    // END DP
+    // END DP 1D
 
-    //STARTS MULTIDIMENSIONAL
+    //STARTS DP MULTIDIMENSIONAL
 /*
         There is a robot on an m x n grid. The robot is initially located at the top-left corner (i.e., grid[0][0]). The robot tries to move to the bottom-right corner (i.e., grid[m - 1][n - 1]). The robot can only move either down or right at any point in time.
         Given the two integers m and n, return the number of possible unique paths that the robot can take to reach the bottom-right corner.
@@ -3310,6 +2871,20 @@ Return the maximum amount of water a container can store.
     /*
         You are given an array prices where prices[i] is the price of a given stock on the ith day, and an integer fee representing a transaction fee.
         Find the maximum profit you can achieve. You may complete as many transactions as you like, but you need to pay the transaction fee for each transaction.
+
+        Note:
+        You may not engage in multiple transactions simultaneously (i.e., you must sell the stock before you buy again).
+        The transaction fee is only charged once for each stock purchase and sale.
+
+        ex:
+            Input: prices = [1,3,2,8,4,9], fee = 2
+            Output: 8
+            Explanation: The maximum profit can be achieved by:
+            - Buying at prices[0] = 1
+            - Selling at prices[3] = 8
+            - Buying at prices[4] = 4
+            - Selling at prices[5] = 9
+            The total profit is ((8 - 1) - 2) + ((9 - 4) - 2) = 8.
      */
     public static int maxProfit(int[] prices, int fee) {
         int buy = Integer.MIN_VALUE;
@@ -3323,11 +2898,9 @@ Return the maximum amount of water a container can store.
         return sell;
     }
 
+    //END DP MULTIDIMENSIONAL
 
-
-    //END MULTIDIMENSIONAL
-
-    //BIT OPERATIONS
+    //BIT MANIPULATION
 
     /*
         Given an integer n, return an array ans of length n + 1 such that for each i (0 <= i <= n), ans[i] is the number of 1's in the binary representation of i.
@@ -3437,7 +3010,7 @@ Return the maximum amount of water a container can store.
 
     }
 
-    // END BIT OPERATIONS
+    // END BIT MANIPULATION
 
     //TRIE
 
@@ -3453,6 +3026,22 @@ Return the maximum amount of water a container can store.
         Firstly, we create a nodes array that symbolizes our alphabet.
         Then, for each char in the word, we will traverse through using index. For each new letter, we will create a new Node.
         At the end of our word, we will signify that by changing that node's isEnd to be true.
+
+        Ex:
+            Input
+            ["Trie", "insert", "search", "search", "startsWith", "insert", "search"]
+            [[], ["apple"], ["apple"], ["app"], ["app"], ["app"], ["app"]]
+            Output
+            [null, null, true, false, true, null, true]
+
+            Explanation
+            Trie trie = new Trie();
+            trie.insert("apple");
+            trie.search("apple");   // return True
+            trie.search("app");     // return False
+            trie.startsWith("app"); // return True
+            trie.insert("app");
+            trie.search("app");     // return True
      */
     public static void testTrie2(String[] args) {
         Trie2 trie = new Trie2();
@@ -3509,9 +3098,9 @@ Return the maximum amount of water a container can store.
 
     //END TRIE
 
-    //START STACK
+    //START MONOTONIC STACK
 
-    /*
+        /*
       Given an array of integers temperatures represents the daily temperatures, return an array answer such that answer[i] is the
       number of days you have to wait after the ith day to get a warmer temperature. If there is no future day for which this is possible,
       keep answer[i] == 0 instead.
@@ -3521,7 +3110,10 @@ Return the maximum amount of water a container can store.
        results[stack.peek] in case there is a bigger one, will calculate i, less stack.pop and assign to the position using the stack.peek
 
        dailyTemperatures(new int[]{73,74,75,71,69,72,76,73});
-   */
+
+       Input: temperatures = [73,74,75,71,69,72,76,73]
+       Output: [1,1,4,2,1,1,0,0]
+    */
     public static int[] dailyTemperatures(int[] temps) {
         int[] results = new int[temps.length];
         Stack<Integer> stack = new Stack<>();
@@ -3536,36 +3128,35 @@ Return the maximum amount of water a container can store.
         return results;
     }
 
-
     /*
-    Design an algorithm that collects daily price quotes for some stock and returns the span of that stock's price for the current day.
-    The span of the stock's price in one day is the maximum number of consecutive days (starting from that day and going backward) for
-    which the stock price was less than or equal to the price of that day.
-    For example, if the prices of the stock in the last four days is [7,2,1,2] and the price of the stock today is 2,
-    then the span of today is 4 because starting from today, the price of the stock was less than or equal 2 for 4 consecutive days.
-    Also, if the prices of the stock in the last four days is [7,34,1,2] and the price of the stock today is 8,
-    then the span of today is 3 because starting from today, the price of the stock was less than or equal 8 for 3 consecutive days.
+Design an algorithm that collects daily price quotes for some stock and returns the span of that stock's price for the current day.
+The span of the stock's price in one day is the maximum number of consecutive days (starting from that day and going backward) for
+which the stock price was less than or equal to the price of that day.
+For example, if the prices of the stock in the last four days is [7,2,1,2] and the price of the stock today is 2,
+then the span of today is 4 because starting from today, the price of the stock was less than or equal 2 for 4 consecutive days.
+Also, if the prices of the stock in the last four days is [7,34,1,2] and the price of the stock today is 8,
+then the span of today is 3 because starting from today, the price of the stock was less than or equal 8 for 3 consecutive days.
 
-      ex: [100],[80],[60],[70],[60],[75],[85]]
-      System.out.println(next(100));
-      System.out.println(next(80));
-      System.out.println(next(60));
-      System.out.println(next(70));
-      System.out.println(next(60));
-      System.out.println(next(75));
-      System.out.println(next(85));
+  ex: [100],[80],[60],[70],[60],[75],[85]]
+  System.out.println(next(100));
+  System.out.println(next(80));
+  System.out.println(next(60));
+  System.out.println(next(70));
+  System.out.println(next(60));
+  System.out.println(next(75));
+  System.out.println(next(85));
 
-        it 1: [100][1]
-        it 2: [100][1],[80][1]
-        it 3: [100][1],[80][1], [60][1]
-        it 4: [100][1],[80][1],[70][2]; 70 es mas grande q 60 pero no q 80, hace pop al 60 y agrega su suma quedando en 2,
-                                        si alguno es mas grande q 70 tmb lo sera q el 60, se suma el 2 q se guardo a 70 por ambos
-        it 5: [100][1],[80][1],[70][2],[60][1]
-        it 6: [100][1],[80][1],[75][4]
-        it 7: [100][1],[85][6]
+    it 1: [100][1]
+    it 2: [100][1],[80][1]
+    it 3: [100][1],[80][1], [60][1]
+    it 4: [100][1],[80][1],[70][2]; 70 es mas grande q 60 pero no q 80, hace pop al 60 y agrega su suma quedando en 2,
+                                    si alguno es mas grande q 70 tmb lo sera q el 60, se suma el 2 q se guardo a 70 por ambos
+    it 5: [100][1],[80][1],[70][2],[60][1]
+    it 6: [100][1],[80][1],[75][4]
+    it 7: [100][1],[85][6]
 
 
-   */
+*/
     public static int next(int price) {
         int span = 1;
 
@@ -3578,7 +3169,924 @@ Return the maximum amount of water a container can store.
         return span;
     }
 
+    //END MONOTONIC STACK
+
+    //START STACK
+
+    /*
+        You are given a string s, which contains stars *.
+        In one operation, you can:
+        Choose a star in s.
+        Remove the closest non-star character to its left, as well as remove the star itself.
+        Return the string after all stars have been removed.
+        Note:
+        The input will be generated such that the operation is always possible.
+        It can be shown that the resulting string will always be unique.
+
+        add to stack if non start add if start pop to remove the one on the left
+
+         System.out.println(removeStars("erase*****"));
+ */
+    public static String removeStars(String s) {
+
+        if(!s.contains("*")){
+            return s;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        Stack<Character> stack = new Stack<>();
+
+        for(int i=0; i<s.length(); i++){
+            if(s.charAt(i)=='*'){
+                stack.pop();
+            } else {
+                stack.push(s.charAt(i));
+            }
+        }
+
+        for(int i=0; i<stack.size();i++){
+            sb.append(stack.get(i));
+        }
+        return sb.toString();
+    }
+
+
+    /*
+        We are given an array asteroids of integers representing asteroids in a row.
+        For each asteroid, the absolute value represents its size, and the sign represents its direction (positive meaning right, negative meaning left).
+        Each asteroid moves at the same speed.
+        Find out the state of the asteroids after all collisions. If two asteroids meet, the smaller one will explode.
+        If both are the same size, both will explode. Two asteroids moving in the same direction will never meet.
+
+        if empty add asteroid to stack
+        not empty check if goes to same direction, if does add to stack
+        if it goes to a different direction but first is going negative then add add to stack, they wont touch
+         if it goes to a different direction but first goes positive then they will collide, keep bigger
+        if stack has more continue comparing for bigger till stack empty or both go the same direction
+
+         */
+    public static int[] asteroidCollision(int[] asteroids) {
+        Stack<Integer> stack = new Stack<>();
+        boolean positiveInt = false;
+        boolean positiveStack = false;
+
+        for(int asteroid: asteroids){
+            do{
+                if(stack.isEmpty()){
+                    stack.push(asteroid);
+                    break;
+                } else{
+                    positiveInt = Integer.signum(asteroid)>=0?true:false;
+                    positiveStack = Integer.signum(stack.peek())>=0?true:false;
+
+                    if(positiveInt == positiveStack){
+                        stack.push(asteroid);
+                        break;
+                    } else {
+                        if(stack.peek()<0&&asteroid>0){
+                            stack.push(asteroid);
+                            break;
+                        } else if(Math.abs(stack.peek())==Math.abs(asteroid)){
+                            stack.pop();
+                            break;
+                        } else if(Math.abs(stack.peek())>Math.abs(asteroid)) {
+                            break;
+                        } else{
+                            stack.pop();
+                        }
+                    }
+
+                }
+            } while(true);
+
+        }
+
+        int[] result = new int[stack.size()];
+
+        for(int i= result.length-1; i>=0;i--){
+            result[i]= stack.pop();
+        }
+        return result;
+    }
+
+    /*
+  Given an encoded string, return its decoded string.
+  The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is being repeated exactly k times.
+  Note that k is guaranteed to be a positive integer.
+  You may assume that the input string is always valid; there are no extra white spaces, square brackets are well-formed, etc.
+  Furthermore, you may assume that the original data does not contain any digits and that digits are only for those repeat numbers, k.
+  For example, there will not be input like 3a or 2[4].
+  The test cases are generated so that the length of the output will never exceed 105.
+
+  add to stack all characters until ] is found
+  keep characters until [ is found
+  keep numbers until nan is found
+  result equal characters*number
+  return characters to stack in case more [] exist
+  result is all characters in stack
+
+   System.out.println(decodeString("2[abc]3[cd]ef"));
+   abcabccdcdcdef
+   */
+    public static String decodeString(String s) {
+        Stack<Character> stack = new Stack<>();
+        StringBuilder result = new StringBuilder();
+        for(char c : s.toCharArray()){
+            if(c == ']'){
+                StringBuilder sb = new StringBuilder();
+
+                while(!stack.isEmpty() && stack.peek() != '['){
+                    sb.insert(0,stack.pop());
+                }
+                //remove [
+                stack.pop();
+
+                StringBuilder numberBuilder = new StringBuilder();
+                while(!stack.isEmpty() && Character.isDigit(stack.peek())){
+                    numberBuilder.insert(0,stack.pop());
+                }
+
+                result.append(sb.toString().repeat(Integer.valueOf(numberBuilder.toString())));
+
+                for(Character character: result.toString().toCharArray()){
+                    stack.push(character);
+                }
+                result = new StringBuilder();
+            } else {
+                stack.push(c);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while(!stack.isEmpty()){
+            sb.insert(0, stack.pop());
+        }
+        result.append(sb);
+        return  result.toString();
+    }
+
     //END STACK
+
+
+    //START QUEUE
+
+
+    /*
+    You have a RecentCounter class which counts the number of recent requests within a certain time frame.
+    Implement the RecentCounter class:
+    RecentCounter() Initializes the counter with zero recent requests.
+    int ping(int t) Adds a new request at time t, where t represents some time in milliseconds,
+    and returns the number of requests that has happened in the past 3000 milliseconds (including the new request).
+    Specifically, return the number of requests that have happened in the inclusive range [t - 3000, t].
+    It is guaranteed that every call to ping uses a strictly larger value of t than the previous call.
+
+    QuickTest q = new QuickTest();
+       int[] array = new int[]{1178,1483,1563,4054,4152};
+
+       for(int a: array){
+           System.out.println(q.ping(a));
+       }
+
+       add new element
+       while peek of the queue is less than t-3000 poll it
+       then return the size of the queue
+
+     */
+    Queue<Integer> q = new LinkedList<>();
+
+    public int ping(int t) {
+        q.add(t);
+
+        while(q.peek() < t-3000){
+            q.poll();
+        }
+        return q.size();
+    }
+
+
+    /*
+    Ban one senator's right: A senator can make another senator lose all his rights in this and all the following rounds.
+    Announce the victory: If this senator found the senators who still have rights to vote are all from the same party,
+    he can announce the victory and decide on the change in the game.
+    Given a string senate representing each senator's party belonging. The character 'R' and 'D' represent the Radiant party and the Dire party.
+    Then if there are n senators, the size of the given string will be n.
+    The round-based procedure starts from the first senator to the last senator in the given order. This procedure will last until the end of voting.
+    All the senators who have lost their rights will be skipped during the procedure.
+    Suppose every senator is smart enough and will play the best strategy for his own party.
+    Predict which party will finally announce the victory and change the Dota2 game. The output should be "Radiant" or "Dire".
+
+    One strategy that would pass the judge (although not the most efficient) to think about the problem is for the first character in the string to move to the back and eliminate the first "opposing" character in the string. So in the case of "DDRRR":
+
+    DDRRR - the first D moves to the back and takes out the first R
+    DRRD - the first D moves to the back and takes out the first R
+    RDD - the first R moves to the back and takes out the first D
+    DR - the first (and only) D moves to the back and takes out the first (and only) R
+    D - D wins the vote.
+
+    System.out.println(predictPartyVictory("DDRRR"));
+     */
+    public static String predictPartyVictory(String senate) {
+        Queue<Character> queue = new LinkedList<>();
+
+        Character before = null;
+        for(char c: senate.toCharArray()){
+            queue.add(c);
+        }
+
+        Character contrary = null;
+        do {
+            if(before==null){
+                before=queue.peek();
+            } else {
+                queue.remove(contrary);
+                queue.add(queue.poll());
+                before=queue.peek();
+            }
+            if(before == 'R'){
+                contrary = 'D';
+            } else {
+                contrary = 'R';
+            }
+
+        }while(queue.contains(contrary));
+
+        if(before != null && before=='R'){
+            return "Radiant";
+        }
+        return "Dire";
+
+    }
+
+
+    //END QUEUE
+
+    //START LINKED LIST
+
+    /*
+ You are given the head of a linked list. Delete the middle node, and return the head of the modified linked list.
+ The middle node of a linked list of size n is the ⌊n / 2⌋th node from the start using 0-based indexing, where ⌊x⌋ denotes
+ the largest integer less than or equal to x.
+ For n = 1, 2, 3, 4, and 5, the middle nodes are 0, 1, 1, 2, and 2, respectively
+
+ keep track of the before and next elements
+ when index to remove is found, before.next = before.next.next if this is not null
+
+
+ ListNode a = new ListNode(1);
+ ListNode b = new ListNode(2);
+ ListNode c = new ListNode(3);
+ ListNode d = new ListNode(4);
+ a.next = b;
+ b.next = c;
+ c.next = d;
+
+     ListNode result = deleteMiddle(a);
+  */
+    public static QuickTest.ListNode deleteMiddle(QuickTest.ListNode head) {
+        int count=0;
+        QuickTest.ListNode test = head;
+        while(test != null){
+            count++;
+            test = test.next;
+        }
+
+        if(count<2){
+            return null;
+        }
+
+        int toRemoveIndex= count/2;
+
+        test = head;
+
+        int counter = 0;
+        QuickTest.ListNode before = null;
+        while(test != null){
+            if(counter == toRemoveIndex){
+                if(before.next.next != null){
+                    before.next = before.next.next;
+                } else {
+                    before.next = null;
+                }
+                before = test;
+                test = test.next;
+            } else{
+                before = test;
+                test = test.next;
+            }
+            counter++;
+        }
+
+        return head;
+    }
+
+    /*
+  Given the head of a singly linked list, group all the nodes with odd indices together followed by the nodes with even indices, and return the reordered list.
+  The first node is considered odd, and the second node is even, and so on.
+  Note that the relative order inside both the even and odd groups should remain as it was in the input.
+
+  fill a queue of even elements, fill a queue of odd elements
+  fill a list with all even then all odd
+
+  ListNode a = new ListNode(1);
+  ListNode b = new ListNode(2);
+  ListNode c = new ListNode(3);
+  ListNode d = new ListNode(4);
+  ListNode e = new ListNode(5);
+  a.next = b;
+  b.next = c;
+  c.next = d;
+  d.next = e;
+
+  ListNode result = oddEvenList(a);
+   */
+    public static QuickTest.ListNode oddEvenList(QuickTest.ListNode head) {
+
+        if(head == null || head.next ==null){
+            return head;
+        }
+
+        Queue<QuickTest.ListNode> odd = new LinkedList<>();
+        Queue<QuickTest.ListNode> even = new LinkedList<>();
+        int count =1;
+        QuickTest.ListNode temp = head;
+        while(temp != null){
+            QuickTest.ListNode toAdd = new QuickTest.ListNode(temp.val);
+            if(count%2!=0){
+                odd.add(toAdd);
+            } else{
+                even.add(toAdd);
+            }
+            temp = temp.next;
+            count++;
+        }
+
+        if(!odd.isEmpty()){
+            temp = odd.poll();
+        } else {
+            temp = even.poll();
+        }
+
+        QuickTest.ListNode result = temp;
+        while(!odd.isEmpty()){
+            temp.next = odd.poll();
+            temp= temp.next;
+        }
+
+        while(!even.isEmpty()){
+            temp.next = even.poll();
+            temp= temp.next;
+        }
+
+        return result;
+    }
+
+    /*
+Given the head of a singly linked list, reverse the list, and return the reversed list.
+
+ListNode a = new ListNode(1);
+ListNode b = new ListNode(2);
+ListNode c = new ListNode(3);
+ListNode d = new ListNode(4);
+ListNode e = new ListNode(5);
+a.next = b;
+b.next = c;
+c.next = d;
+d.next = e;
+
+ListNode result = reverseList(a);
+
+curr.next for a moment points to prev so when prev=curr, prev points as next what prev was before
+ */
+    public static QuickTest.ListNode reverseList(QuickTest.ListNode head) {
+        QuickTest.ListNode curr=head;
+        QuickTest.ListNode prev=null;
+        QuickTest.ListNode next=null;
+        while(curr!=null){
+            next = curr.next;
+            curr.next=prev;
+            prev=curr;
+            curr=next;
+        }
+        return prev;
+    }
+
+    /*
+In a linked list of size n, where n is even, the ith node (0-indexed) of the linked list is known as the twin of the (n-1-i)th node, if 0 <= i <= (n / 2) - 1.
+For example, if n = 4, then node 0 is the twin of node 3, and node 1 is the twin of node 2. These are the only nodes with twins for n = 4.
+The twin sum is defined as the sum of a node and its twin.
+Given the head of a linked list with even length, return the maximum twin sum of the linked list.
+
+static class ListNode {
+  int val;
+  ListNode next;
+  ListNode() {}
+  ListNode(int val) { this.val = val; }
+  ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+ListNode a = new ListNode(1);
+    ListNode b = new ListNode(100000);
+    a.next = b;
+    System.out.println(pairSum(a));
+
+!!!get from array faster than list.get
+
+    first and last sum i+ length-1-i, it would increment i to right and end -i to go left
+ */
+    public static int pairSum(QuickTest.ListNode head) {
+        Integer maxVal =0;
+        List<Integer> list = new LinkedList<>();
+
+        while(head != null){
+            list.add(head.val);
+            head = head.next;
+        }
+
+        Integer[] array = list.stream().toArray(Integer[]::new);
+        for(int i=0; i<list.size()/2; i++){
+            Integer sum = array[i]+array[array.length-1-i];
+            if(maxVal<sum){
+                maxVal = sum;
+            }
+        }
+
+        return maxVal;
+    }
+
+    //END LINKED LIST
+
+    //START BINARY TREE DFS
+
+    /*
+        Given the root of a binary tree, return its maximum depth.
+        A binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
+
+        static class TreeNode {
+          int val;
+          TreeNode left;
+          TreeNode right;
+          TreeNode() {}
+          TreeNode(int val) { this.val = val; }
+          TreeNode(int val, TreeNode left, TreeNode right) {
+              this.val = val;
+              this.left = left;
+              this.right = right;
+          }
+        }
+
+        TreeNode nine = new TreeNode(9);
+            TreeNode twenty = new TreeNode(20, new TreeNode(15), new TreeNode(7));
+           TreeNode root = new TreeNode(3, nine, twenty);
+            System.out.println(maxDepth(root));
+     */
+    public static int maxDepth(QuickTest.TreeNode root) {
+
+        if(root == null) {
+            return 0;
+        }
+        return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+    }
+
+    /*
+Consider all the leaves of a binary tree, from left to right order, the values of those leaves form a leaf value sequence.
+For example, in the given tree above, the leaf value sequence is (6, 7, 4, 9, 8).
+Two binary trees are considered leaf-similar if their leaf value sequence is the same.
+
+get all leafs from both trees and then compare
+
+    TreeNode six = new TreeNode(6);
+    TreeNode seven = new TreeNode(7);
+    TreeNode four = new TreeNode(4);
+    TreeNode nine = new TreeNode(9);
+    TreeNode eight = new TreeNode(8);
+
+    TreeNode two = new TreeNode(2, seven, four);
+    TreeNode five = new TreeNode(5,six, two);
+    TreeNode one = new TreeNode(1,nine,eight);
+
+    TreeNode three = new TreeNode(3, five, one);
+
+    System.out.println(leafSimilar(three, three));
+
+ */
+    public static boolean leafSimilar(QuickTest.TreeNode root1, QuickTest.TreeNode root2) {
+
+        List<Integer> list = new LinkedList<>();
+
+        fill(root1, list);
+
+        List<Integer> list2 = new LinkedList<>();
+        fill(root2, list2);
+
+        if(list.size() != list2.size()){
+            return false;
+        }
+
+        for(int i=0; i< list.size(); i++){
+            int a = list.get(i);
+            int b = list2.get(i);
+            if( a!= b){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static void fill(QuickTest.TreeNode tree, List<Integer> list){
+        if(tree.left == null && tree.right == null){
+            list.add(tree.val);
+            return;
+        }
+
+        if(tree.left != null){
+            fill(tree.left, list);
+        }
+        if(tree.right != null){
+            fill(tree.right, list);
+        }
+    }
+
+    /*
+Given a binary tree root, a node X in the tree is named good if in the path from root to X there are no nodes with a value greater than X.
+Return the number of good nodes in the binary tree.
+
+times node value is greater or equal to max value
+
+    TreeNode four = new TreeNode(4);
+    TreeNode two = new TreeNode(2);
+
+    TreeNode three1 = new TreeNode(3,four, two);
+
+    TreeNode three = new TreeNode(3, three1, null);
+
+    System.out.println(goodNodes(three));
+
+ */
+    public static int counter =0;
+
+    public static int goodNodes(QuickTest.TreeNode root) {
+
+        Integer maxValue = Integer.MIN_VALUE;
+        fillMaxVal(root, maxValue);
+
+
+        return counter;
+    }
+
+    public static void fillMaxVal(QuickTest.TreeNode tree, Integer maxValue){
+        if(tree.val>=maxValue){
+            counter++;
+            maxValue = tree.val;
+        }
+
+        if(tree.left != null){
+            fillMaxVal(tree.left, maxValue);
+        }
+        if(tree.right != null){
+            fillMaxVal(tree.right, maxValue);
+        }
+    }
+
+    /*
+        Given the root of a binary tree and an integer targetSum, return the number of paths where the sum of the values along the path equals targetSum.
+        The path does not need to start or end at the root or a leaf, but it must go downwards (i.e., traveling only from parent nodes to child nodes).
+     */
+    public static int pathSum(QuickTest.TreeNode root, int targetSum) {
+        Map<Long, Integer> map = new HashMap<>();
+        map.put(0L, 1);
+        return get(root, targetSum, map, 0L);
+    }
+
+    private static int get(QuickTest.TreeNode root, int targetSum, Map<Long, Integer> map, long prefixSum) {
+        if (root == null) {
+            return 0;
+        }
+
+        prefixSum += root.val;
+        int count = map.getOrDefault(prefixSum - targetSum, 0);
+
+        map.put(prefixSum, map.getOrDefault(prefixSum, 0) + 1);
+        count += get(root.left, targetSum, map, prefixSum);
+        count += get(root.right, targetSum, map, prefixSum);
+        map.put(prefixSum, map.get(prefixSum) - 1);
+
+        return count;
+    }
+
+
+    /*
+        You are given the root of a binary tree.
+        A ZigZag path for a binary tree is defined as follow:
+        Choose any node in the binary tree and a direction (right or left).
+        If the current direction is right, move to the right child of the current node; otherwise, move to the left child.
+        Change the direction from right to left or from left to right.
+        Repeat the second and third steps until you can't move in the tree.
+        Zigzag length is defined as the number of nodes visited - 1. (A single node has a length of 0).
+
+        Return the longest ZigZag path contained in that tree.
+     */
+    static int maxZigZag = 0;
+    public static int longestZigZag(QuickTest.TreeNode root) {
+        if (root == null) return 0;
+        traverse(root.left, true, 1);
+        traverse(root.right, false, 1);
+        return maxZigZag;
+    }
+
+    private static void traverse(QuickTest.TreeNode node, boolean isLeft, int length) {
+        if (node == null) return;
+        maxZigZag = Math.max(maxZigZag, length);
+        if (isLeft) {
+            traverse(node.right, false, length+1);
+            traverse(node.left, true, 1);
+        } else {
+            traverse(node.left, true, length+1);
+            traverse(node.right, false, 1);
+        }
+    }
+
+    /*
+        Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
+        According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between
+        two nodes p and q as the lowest node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
+     */
+    public QuickTest.TreeNode lowestCommonAncestor(QuickTest.TreeNode root, QuickTest.TreeNode p, QuickTest.TreeNode q) {
+        if (root == null) return root;
+        QuickTest.TreeNode left = lowestCommonAncestor(root.left, p, q);
+        QuickTest.TreeNode right = lowestCommonAncestor(root.right, p, q);
+        if (root == p || root == q) return root;
+        if (left == null) return right;
+        if (right == null) return left;
+        return root;
+    }
+
+    //END BINARY TREE DFS
+
+
+    //START BINARY TREE BFS
+
+    /*
+        Given the root of a binary tree, imagine yourself standing on the right side of it,
+        return the values of the nodes you can see ordered from top to bottom.
+
+        only add when current depth equals list, this will only be true for right side since that is called first
+     */
+    public static List<Integer> rightSideView(QuickTest.TreeNode root) {
+        List<Integer> result = new ArrayList<Integer>();
+        rightView(root, result, 0);
+        return result;
+    }
+
+    public static void rightView(QuickTest.TreeNode curr, List<Integer> result, int currDepth){
+        if(curr == null){
+            return;
+        }
+        if(currDepth == result.size()){
+            result.add(curr.val);
+        }
+
+        rightView(curr.right, result, currDepth + 1);
+        rightView(curr.left, result, currDepth + 1);
+
+    }
+
+    /*
+        Given the root of a binary tree, the level of its root is 1, the level of its children is 2, and so on.
+        Return the smallest level x such that the sum of all the values of nodes at level x is maximal.
+
+        Input: root = [1,7,0,7,-8,null,null]
+        Output: 2
+        Explanation:
+        Level 1 sum = 1.
+        Level 2 sum = 7 + 0 = 7.
+        Level 3 sum = 7 + -8 = -1.
+        So we return the level with the maximum sum which is level 2.
+
+
+     */
+    public static int maxLevelSum(QuickTest.TreeNode root) {
+        if(root == null)
+            return 0;
+
+        Queue<QuickTest.TreeNode> queue = new LinkedList<>();
+        int minLevel = 0;
+        int maxSum = Integer.MIN_VALUE;
+        queue.add(root);
+        int level = 1;
+        while(!queue.isEmpty()) {
+            int size = queue.size();
+            int sum = 0;
+            while(size > 0) {
+                QuickTest.TreeNode node = queue.poll();
+                sum += node.val;
+
+                if(node.left != null)
+                    queue.add(node.left);
+                if(node.right != null)
+                    queue.add(node.right);
+
+                size--;
+            }
+
+            if(maxSum < sum) {
+                maxSum = sum;
+                minLevel = level;
+            }
+
+            level++;
+        }
+
+        return minLevel;
+    }
+    //END BINARY TREE BFS
+
+
+    //START HEAP PRIORITY QUEUE
+
+        /*
+        Given an integer array nums and an integer k, return the kth largest element in the array.
+        Note that it is the kth largest element in the sorted order, not the kth distinct element.
+        Can you solve it without sorting?
+
+        EX:
+            Input: nums = [3,2,1,5,6,4], k = 2
+            Output: 5
+
+        add elements to Priority queue reverse order to have largest at peek, poll number of k times
+
+        System.out.println(findKthLargest(new int[]{3,2,1,5,6,4},2));
+     */
+
+    public static int findKthLargest(int[] nums, int k) {
+        PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.reverseOrder());
+
+        if(nums.length==0){
+            return 0;
+        }
+
+        for(int i=0; i< nums.length; i++){
+            queue.add(nums[i]);
+        }
+
+        for(int i=1; i<k; i++){
+            queue.poll();
+        }
+
+
+        return queue.poll();
+    }
+
+
+    /*
+        You have a set which contains all positive integers [1, 2, 3, 4, 5, ...].
+        Implement the SmallestInfiniteSet class:
+        SmallestInfiniteSet() Initializes the SmallestInfiniteSet object to contain all positive integers.
+        int popSmallest() Removes and returns the smallest integer contained in the infinite set.
+        void addBack(int num) Adds a positive integer num back into the infinite set, if it is not already in the infinite set.
+
+        ex:
+            Input
+            ["SmallestInfiniteSet", "addBack", "popSmallest", "popSmallest", "popSmallest", "addBack", "popSmallest", "popSmallest", "popSmallest"]
+     */
+    static HashSet<Integer>set = new HashSet<>();
+    static Queue<Integer>queue = new PriorityQueue<>();
+
+    {
+        for(Integer i=1; i<=1000;i++){
+            set.add(i);
+            queue.add(i);
+        }
+    }
+
+    public static int popSmallest() {
+        Integer val = queue.poll();
+        set.remove(val);
+        return val;
+    }
+
+    public static void addBack(int num) {
+        if(!set.contains(num)){
+            set.add(num);
+            queue.add(num);
+        }
+    }
+
+
+    /*
+    You are given two 0-indexed integer arrays nums1 and nums2 of equal length n and a positive integer k.
+    You must choose a subsequence of indices from nums1 of length k.
+    For chosen indices i0, i1, ..., ik - 1, your score is defined as:
+    The sum of the selected elements from nums1 multiplied with the minimum of the selected elements from nums2.
+    It can defined simply as: (nums1[i0] + nums1[i1] +...+ nums1[ik - 1]) * min(nums2[i0] , nums2[i1], ... ,nums2[ik - 1]).
+    Return the maximum possible score.
+
+    Input: nums1 = [1,3,3,2], nums2 = [2,1,3,4], k = 3
+    Output: 12
+    Explanation:
+    The four possible subsequence scores are:
+    - We choose the indices 0, 1, and 2 with score = (1+3+3) * min(2,1,3) = 7.
+    - We choose the indices 0, 1, and 3 with score = (1+3+2) * min(2,1,4) = 6.
+    - We choose the indices 0, 2, and 3 with score = (1+3+2) * min(2,3,4) = 12.
+    - We choose the indices 1, 2, and 3 with score = (3+3+2) * min(1,3,4) = 8.
+    Therefore, we return the max score, which is 12.
+
+   al ordenar el q se multiplica de mayor a menor, aseguras q se multiplique por el menor de los q se estan usando
+   al hacer pop al mas pequeño quedas con los mas grandes  para la suma
+   cuidado con el tipo de dato, el int no llega a sumas altas
+ */
+    public static long maxScore(int[] nums1, int[] nums2, int k) {
+        long ans =0;
+        List<int[]> list = new LinkedList<>();
+
+        if(nums1.length == nums2.length){
+
+            if(nums1.length==1){
+                return nums1[0]*nums2[0];
+            }
+
+
+
+            for(int i=0; i<nums1.length;i++){
+                list.add(new int[]{nums1[i],nums2[i]});
+            }
+
+            Collections.sort(list, (a, b) -> b[1]-a[1]);
+
+            long sum=0;
+            PriorityQueue<Integer> queue = new PriorityQueue<>();
+
+            for(int[] array : list){
+                sum+=array[0];
+
+                if(queue.size()==k){
+                    sum-= queue.poll();
+                }
+                if(queue.size()== k-1){
+                    ans = Math.max(ans, sum*array[1]);
+                }
+                queue.add(array[0]);
+            }
+        }
+
+        return ans;
+    }
+
+
+    /*
+    We hire 3 workers in total. The total cost is initially 0.
+    - In the first hiring round we choose the worker from [17,12,10,2,7,2,11,20,8]. The lowest cost is 2, and we break the tie by the smallest index, which is 3. The total cost = 0 + 2 = 2.
+    - In the second hiring round we choose the worker from [17,12,10,7,2,11,20,8]. The lowest cost is 2 (index 4). The total cost = 2 + 2 = 4.
+    - In the third hiring round we choose the worker from [17,12,10,7,11,20,8]. The lowest cost is 7 (index 3). The total cost = 4 + 7 = 11. Notice that the worker with index 3 was common in the first and last four workers.
+    The total hiring cost is 11.
+    candidates is the size of the set starting or ending
+    starting set of 4 candidates for from example = first 4 elements [17,12,10,2]
+    ending set of 4 candidates for our example = last 4 elements [2,11,20,8]
+    middle element 7 is ignored in first k run
+
+    System.out.println(totalCost(new int[]{17,12,10,2,7,2,11,20,8}, 3, 4));
+
+    faster than being getting elements from list fill queue with number of elements needed
+    and be removing the smallest from them
+ */
+    public static long totalCost(int[] costs, int k, int candidates) {
+        if(costs.length == 0){
+            return 0;
+        }
+        int count =0;
+        long sum=0;
+        PriorityQueue<Integer> startQueue = new PriorityQueue<>();
+        PriorityQueue<Integer> endQueue = new PriorityQueue<>();
+
+        int i=0;
+        int j=costs.length-1;
+
+        while(count<k ){
+
+            while(startQueue.size()<candidates && i <= j){
+                startQueue.add(costs[i]);
+                i++;
+            }
+
+            while(endQueue.size()<candidates && i <= j){
+                endQueue.add(costs[j]);
+                j--;
+            }
+
+            int toSum;
+
+            int q1 = startQueue.peek() != null ? startQueue.peek():Integer.MAX_VALUE;
+            int q2 = endQueue.peek() != null ? endQueue.peek():Integer.MAX_VALUE;
+
+            sum += q1<=q2?startQueue.poll():endQueue.poll();
+            count++;
+        }
+
+        return sum;
+    }
+
+
+    //END HEAP PRIORITY QUEUE
 
     static class ListNode {
         int val;

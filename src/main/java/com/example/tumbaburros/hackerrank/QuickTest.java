@@ -7,7 +7,18 @@ import java.util.function.Function;
 
 public class QuickTest {
 
+  public static void rightView(TreeNode curr, List<Integer> result, int currDepth){
+    if(curr == null){
+      return;
+    }
+    if(currDepth == result.size()){
+      result.add(curr.val);
+    }
 
+    rightView(curr.right, result, currDepth + 1);
+    rightView(curr.left, result, currDepth + 1);
+
+  }
 
     static class TreeNode {
       int val;
@@ -32,7 +43,7 @@ public class QuickTest {
 
     public static void main(String[] args) {
 
-      System.out.println(maxOperations(new int[]{1,2,3,4},5));
+     // System.out.println(decodeString("2[abc]3[cd]ef"));
 
     }
 }
