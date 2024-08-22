@@ -1,18 +1,13 @@
 package com.example.tumbaburros.hackerrank;
 
-import com.fasterxml.jackson.core.JsonToken;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.text.DateFormat;
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -2898,6 +2893,8 @@ public static List<String> letterCombinations(String digits) {
         return sell;
     }
 
+
+
     //END DP MULTIDIMENSIONAL
 
     //BIT MANIPULATION
@@ -3097,6 +3094,10 @@ public static List<String> letterCombinations(String digits) {
     }
 
     //END TRIE
+
+    //START INTERVALS
+
+    //END INTERVALS
 
     //START MONOTONIC STACK
 
@@ -3900,6 +3901,145 @@ times node value is greater or equal to max value
         return minLevel;
     }
     //END BINARY TREE BFS
+
+    //START BINARY SEARCH TREE
+
+    /*
+        You are given the root of a binary search tree (BST) and an integer val.
+        Find the node in the BST that the node's value equals val and return the subtree rooted with that node.
+        If such a node does not exist, return null.
+
+        traverse through the node while it is not null
+        if value smaller go node left else go node right
+
+        ex:
+        Input: root = [4,2,7,1,3], val = 2
+        Output: [2,1,3]
+     */
+    public static QuickTest.TreeNode searchBST(QuickTest.TreeNode root, int val) {
+        if(root==null)return null;
+        if(root.val==val)return root;
+        if(val<root.val) return searchBST(root.left,val);
+        else
+            return searchBST(root.right,val);
+    }
+
+    /*
+        Given a root node reference of a BST and a key, delete the node with the given key in the BST.
+        Return the root node reference (possibly updated) of the BST.
+        Basically, the deletion can be divided into two stages:
+        Search for a node to remove.
+        If the node is found, delete the node.
+
+        if delete with children, new reference would be first right child if not left child
+
+        ex:
+        Input: root = [5,3,6,2,4,null,7], key = 3
+        Output: [5,4,6,2,null,null,7]
+        Explanation: Given key to delete is 3. So we find the node with value 3 and delete it.
+        One valid answer is [5,4,6,2,null,null,7], shown in the above BST.
+        Please notice that another valid answer is [5,2,6,null,4,null,7] and it's also accepted
+     */
+    public static QuickTest.TreeNode deleteNode(QuickTest.TreeNode root, int key) {
+        if(root==null){
+            return root;
+        }
+        if(root.val<key){
+            root.right= deleteNode(root.right,key);
+        }else if(root.val>key){
+            root.left= deleteNode(root.left,key);
+        }else{
+            if(root.right==null && root.left==null){
+                return null;
+            }
+            if(root.left==null){
+                return root.right;
+            }
+            if(root.right==null){
+                return root.left;
+            }
+
+            QuickTest.TreeNode IS= fis(root.right);
+            root.val= IS.val;
+            root.right= deleteNode(root.right, IS.val);
+        }
+        return root;
+    }
+
+    public static QuickTest.TreeNode fis(QuickTest.TreeNode root){
+        while(root.left!=null){
+            root= root.left;
+        }
+        return root;
+    }
+
+    //END BINARY SEARCH TREE
+
+    //START GRAPHS DFS
+
+    /*
+  There are n rooms labeled from 0 to n - 1 and all the rooms are locked except for room 0.
+  Your goal is to visit all the rooms. However, you cannot enter a locked room without having its key.
+  When you visit a room, you may find a set of distinct keys in it.
+  Each key has a number on it, denoting which room it unlocks, and you can take all of them with you to unlock the other rooms.
+  Given an array rooms where rooms[i] is the set of keys that you can obtain if you visited room i,
+  return true if you can visit all the rooms, or false otherwise.
+
+  set keeps track of accessed rooms, if it is equal to number of rooms all have been visited
+  keys available keys, room 0 is always accesible
+
+  ex:
+  Input: rooms = [[1,3],[3,0,1],[2],[0]]
+  Output: false
+  Explanation: We can not enter room number 2 since the only key that unlocks it is in that room.
+
+  List<Integer> keys = new LinkedList<>();
+    List<List<Integer>> list = new LinkedList<>();
+    keys.add(1);
+    keys.add(3);
+    list.add(keys);
+    keys = new LinkedList<>();
+    keys.add(3);
+    keys.add(0);
+    keys.add(1);
+    list.add(keys);
+    keys = new LinkedList<>();
+    keys.add(2);
+    list.add(keys);
+    keys = new LinkedList<>();
+    keys.add(0);
+    list.add(keys);
+    System.out.println(canVisitAllRooms(list));
+ */
+    public static boolean canVisitAllRooms(List<List<Integer>> rooms) {
+
+        Stack<Integer> keys = new Stack<>();
+        Set<Integer> set = new HashSet<>();
+
+        set.add(0);
+        for(int ele : rooms.get(0)){
+            keys.push(ele);
+        }
+
+        while(!keys.isEmpty()){
+            int key = keys.pop();
+            if(!set.contains(key)){
+                set.add(key);
+
+                for(int ele : rooms.get(key)){
+                    if(!set.contains(ele)){
+                        keys.push(ele);
+                    }
+                }
+            }
+
+        }
+        if(set.size() == rooms.size()) return true;
+
+        return false;
+    }
+
+    // END GRAPHS DFS
 
 
     //START HEAP PRIORITY QUEUE
