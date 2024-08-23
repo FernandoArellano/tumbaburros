@@ -3097,6 +3097,74 @@ public static List<String> letterCombinations(String digits) {
 
     //START INTERVALS
 
+    /*
+
+    Given an array of intervals intervals where intervals[i] = [starti, endi],
+    return the minimum number of intervals you need to remove to make the rest of the intervals non-overlapping
+
+    Input: intervals = [[1,2],[2,3],[3,4],[1,3]]
+    Output: 1
+    Explanation: [1,3] can be removed and the rest of the intervals are non-overlapping.
+
+    order according to the end hour of the meeting
+    if ending time of second is greater or equal to endint time of starting
+    then count++ and new prev is the starting available hour
+
+     System.out.println(eraseOverlapIntervals(new int[][]{{1,2},{2,3},{3,4},{1,3}}));
+ */
+    public static int eraseOverlapIntervals(int[][] intervals) {
+        int n = intervals.length;
+        Arrays.sort(intervals, (a, b) -> Integer.compare(a[1], b[1]));
+
+        int prev = 0;
+        int count = 1;
+
+        for (int i = 1; i < n; i++) {
+            if (intervals[i][0] >= intervals[prev][1]) {
+                prev = i;
+                count++;
+            }
+        }
+        return n - count;
+    }
+
+    /*
+    There are some spherical balloons taped onto a flat wall that represents the XY-plane.
+    The balloons are represented as a 2D integer array points where points[i] = [xstart, xend] denotes a balloon whose horizontal
+    diameter stretches between xstart and xend. You do not know the exact y-coordinates of the balloons.
+    Arrows can be shot up directly vertically (in the positive y-direction) from different points along the x-axis.
+    A balloon with xstart and xend is burst by an arrow shot at x if xstart <= x <= xend.
+    There is no limit to the number of arrows that can be shot. A shot arrow keeps traveling up infinitely, bursting any balloons in its path.
+    Given the array points, return the minimum number of arrows that must be shot to burst all balloons.
+
+    ex:
+    Input: points = [[1,2],[2,3],[3,4],[4,5]]
+    Output: 2
+    Explanation: The balloons can be burst by 2 arrows:
+    - Shoot an arrow at x = 2, bursting the balloons [1,2] and [2,3].
+    - Shoot an arrow at x = 4, bursting the balloons [3,4] and [4,5].
+
+    System.out.println(findMinArrowShots(new int[][]{{1,2},{2,3},{3,4},{4,5}}));
+ */
+    public static int findMinArrowShots(int[][] points) {
+        if(points.length == 0) return 0;
+        Arrays.sort(points, (a, b) -> Integer.compare(a[1], b[1]));
+        int count = 0;
+        int end = points[0][1];
+        for(int i = 1; i < points.length; i++) {
+            if(points[i][0] <= end) {
+                continue;
+            } else {
+                count++;
+                end = points[i][1];
+            }
+        }
+        count++;
+        return count;
+    }
+
+
+
     //END INTERVALS
 
     //START MONOTONIC STACK
