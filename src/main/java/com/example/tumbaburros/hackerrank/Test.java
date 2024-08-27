@@ -2721,6 +2721,17 @@ times node value is greater or equal to max value
         }
     }
 
+    /*
+        An arcade game player wants to climb to the top of the leaderboard and track their ranking. The game uses Dense Ranking, so its leaderboard works like this:
+        The player with the highest score is ranked number 1 on the leaderboard.
+        Players who have equal scores receive the same ranking number, and the next player(s) receive the immediately following ranking number.
+        Example
+        ranked = 100,90,90,80
+        player = 70,80,105
+
+        The ranked players will have ranks 1, 2, 2, and 3, respectively. If the player's scores are 70,80 and 105, their rankings after each game are 4, 3 and 1.
+        Return 4,3,1.
+     */
     //Collections.binarySearch needs the collection to be sorted in natural order
     public static List<Integer> climbingLeaderboard(List<Integer> ranked, List<Integer> player) {
         // Write your code here
@@ -4299,7 +4310,98 @@ times node value is greater or equal to max value
         return count;
     }
 
+    //Sherlock and the Valid String
 
+    /*
+      Sherlock considers a string to be valid if all characters of the string appear the same number of times.
+      It is also valid if he can remove just 1 character at 1 index in the string,
+      and the remaining characters will occur the same number of times. Given a string , determine if it is valid.
+      If so, return YES, otherwise return NO.
+
+      Example: abc
+      This is a valid string because frequencies are 1,1,1.
+
+      abcc
+      This is a valid string because we can remove one c and have 1 of each character in the remaining string.
+
+      abccc
+      This string is not valid as we can only remove 1 occurrence of c. That leaves character frequencies of 1,1,2
+
+      only valid when all frequencies are same, when all same but 1 with frequency 1,
+      when all same but 1 which 1 higher in frequency ex aabbccc = 2,2,3. 3 is 1 higher than the frequency 2 of the rest
+
+      System.out.println(isValid("aabbccc"));
+   */
+    public static String isValid(String s) {
+        // Write your code here
+        if(s==null || s.length()<=2){
+            return "YES";
+        }
+
+        Character[] chars = new Character[s.length()];
+
+        for(int i=0; i< chars.length;i++){
+            chars[i] = s.charAt(i);
+        }
+
+        Map<Character, Long> map = Arrays.stream(chars).collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
+        System.out.println(map);
+        Map<Long, Long> times = map.values().stream().collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
+        System.out.println(times);
+
+        if(times.size()==1){
+            return "YES";
+        } else if(times.size()==2){
+            if(times.get(1L) != null && times.get(1L)==1L){
+                times.remove(1L);
+                if(times.size()==1){
+                    return "YES";
+                }
+            } else {
+                Long max= times.keySet().stream().max(Comparator.naturalOrder()).get();
+                Long min= times.keySet().stream().min(Comparator.naturalOrder()).get();
+                if(max-1L == min && times.get(max)==1L){
+                    return "YES";
+                }
+            }
+
+        }
+
+        return "NO";
+    }
+
+    //END Sherlock and the Valid String
+
+    /*
+        A linked list is said to contain a cycle if any node is visited more than once while traversing the list.
+        Given a pointer to the head of a linked list, determine if it contains a cycle. If it does, return 1. Otherwise, return 0.
+
+        Example
+
+        head refers to the list of nodes 1-2-3-NULL
+        The numbers shown are the node numbers, not their data values. There is no cycle in this list so return 0.
+
+        head refers to the list of nodes 1-2-3-1-null
+        There is a cycle where node 3 points back to node 1, so return 1.
+     */
+    static boolean hasCycle(SinglyLinkedListNode head) {
+
+        if(head == null) return false;
+
+        //fast starts ahead, if eventually they are equal then there is a cycle
+        SinglyLinkedListNode slow = head;
+        SinglyLinkedListNode fast = head.next;
+
+        while(fast != null && fast.next != null){
+            if(slow == fast){
+                return true;
+            }
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        return false;
+    }
 
     //END HACKER RANK
 
