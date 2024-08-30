@@ -2960,49 +2960,6 @@ times node value is greater or equal to max value
         return IntStream.of(frequencyArray).boxed().collect(Collectors.toList());
     }
 
-    //Sherlock considers a string to be valid if all characters of the string appear the same number of times.
-    // It is also valid if he can remove just  character at  index in the string, and the remaining characters will occur the same number of times.
-    // Given a string , determine if it is valid. If so, return YES, otherwise return NO.
-    //Example
-    // abc
-    //This is a valid string because frequencies are a=1 b=1 c=1.
-    public static String isValid(String s) {
-        Map<String, Long> map = Stream.of(s.split("")).collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
-        Set<Long> set = map.values().stream().collect(Collectors.toSet());
-
-        if(set.size()>2){
-            return "NO";
-        } else if(set.size()==1){
-            return "YES";
-        } else {
-            Set<String> keySet = map.keySet();
-            if(keySet.size()!=2){
-                return "NO";
-            }
-            Iterator<Long> iterator = set.iterator();
-            long a = iterator.next();
-            long b = iterator.next();
-
-            int counta=0;
-            int countb=0;
-            for(Map.Entry<String,Long> entry: map.entrySet()){
-                if(entry.getValue() == a){
-                    counta++;
-                } else if(entry.getValue() == b){
-                    countb++;
-                }
-            }
-            if(counta == 1 || countb == 1){
-                return "YES";
-            }
-            if(Math.min(counta,countb) > 1){
-                return "NO";
-            }
-        }
-
-        return "YES";
-    }
-
     public static int flippingMatrix(List<List<Integer>> matrix) {
         System.out.println("Flipping matrix");
 
@@ -3036,53 +2993,6 @@ times node value is greater or equal to max value
         return count;
     }
 
-
-    //Given an array of  distinct integers, transform the array into a zig zag sequence by permuting the array elements.
-    // A sequence will be called a zig zag sequence if the first  elements in the sequence are in increasing order
-    // and the last  elements are in decreasing order, where . You need to find the lexicographically smallest zig
-    // zag sequence of the given array.
-    //al ordenar la primera mitad ya esta
-    //despues al intercambiar el ultimo con el medio la posicion media y final ya estan
-    //ya solo invertir las posiciones medio+1 a tamaño del arreglo menos 2 (el ultimo elemento ya estara donde debe)
-    public static void findZigZagSequence(int [] a, int n){
-        System.out.println("FindZigZag");
-        Arrays.sort(a);
-        int mid = (n)/2;
-        int temp = a[mid];
-        a[mid] = a[n - 1];
-        a[n - 1] = temp;
-
-        int st = mid + 1;
-        int ed = n - 2;
-        while(st <= ed){
-            temp = a[st];
-            a[st] = a[ed];
-            a[ed] = temp;
-            st = st + 1;
-            ed = ed - 1;
-        }
-        for(int i = 0; i < n; i++){
-            if(i > 0) System.out.print(" ");
-            System.out.print(a[i]);
-        }
-        System.out.println();
-    }
-
-    public static void findZigZagSequence2(int a[], int n){
-        System.out.println("finsZigzag2");
-
-        Arrays.sort(a);
-        int mid = (n/2)-1;
-        List<Integer> result = new LinkedList<>();
-        for(int i=0; i<=mid;i++){
-            result.add(a[i]);
-        }
-
-        for(int i=n-1; i>mid;i--){
-            result.add(a[i]);
-        }
-        System.out.println(result);
-    }
 
     //player 1 starts
     //player 2 can match if even towera player 2 will win
@@ -3490,32 +3400,32 @@ times node value is greater or equal to max value
     }
 
 
-    //Two friends like to pool their money and go to the ice cream parlor. They always choose two distinct flavors and they spend all of their money.
-    //Given a list of prices for the flavors of ice cream, select the two that will cost all of the money they have.
-    //Example.
-    //m=6  cost[1,3,4,5,6]
-    //The two flavors that cost 1 and 5  meet the criteria. Using 1-based indexing, they are at indices 1 and 4.
-    public static List<Integer> icecreamParlor(int m, List<Integer> arr) {
-        // Write your code here
-        List<Integer>result = new LinkedList<>();
-        List<Integer> ordered = new ArrayList<>(arr);
-        Collections.sort(ordered);
-        for(int i=0; i<ordered.size();i++){
-            int value = ordered.get(i);
-            int index = Collections.binarySearch(ordered, m-value);
-            if(index>=0){
-                int index1 = (arr.indexOf(ordered.get(i)))+1;
-                int index2 = (arr.indexOf(ordered.get(index)))+1;
-                if(index1 == index2){
-                    index2++;
-                }
-                result.add(Math.min(index1,index2));
-                result.add(Math.max(index1,index2));
-                break;
-            }
-        }
-        return result;
-    }
+//    //Two friends like to pool their money and go to the ice cream parlor. They always choose two distinct flavors and they spend all of their money.
+//    //Given a list of prices for the flavors of ice cream, select the two that will cost all of the money they have.
+//    //Example.
+//    //m=6  cost[1,3,4,5,6]
+//    //The two flavors that cost 1 and 5  meet the criteria. Using 1-based indexing, they are at indices 1 and 4.
+//    public static List<Integer> icecreamParlor(int m, List<Integer> arr) {
+//        // Write your code here
+//        List<Integer>result = new LinkedList<>();
+//        List<Integer> ordered = new ArrayList<>(arr);
+//        Collections.sort(ordered);
+//        for(int i=0; i<ordered.size();i++){
+//            int value = ordered.get(i);
+//            int index = Collections.binarySearch(ordered, m-value);
+//            if(index>=0){
+//                int index1 = (arr.indexOf(ordered.get(i)))+1;
+//                int index2 = (arr.indexOf(ordered.get(index)))+1;
+//                if(index1 == index2){
+//                    index2++;
+//                }
+//                result.add(Math.min(index1,index2));
+//                result.add(Math.max(index1,index2));
+//                break;
+//            }
+//        }
+//        return result;
+//    }
 
 
     //There are two -element arrays of integers,  and . Permute them into some  and  such that the relation  holds for all  where .
@@ -3599,6 +3509,8 @@ times node value is greater or equal to max value
     //The subset of brackets enclosed within the confines of a matched pair of brackets is also a matched pair of brackets.
     //Given  strings of brackets, determine whether each sequence of brackets is balanced. If a string is balanced, return YES. Otherwise, return NO.
     //para balance el stack asi va a mantener obteniendo {[(  agrega y remueve en orden ([{ asi confirmamos el ordenamiento
+
+    //System.out.println(isBalanced("{{[[(())]]}}"));
     public static String isBalanced(String s) {
 
         char[] array = s.toCharArray();
@@ -4403,6 +4315,372 @@ times node value is greater or equal to max value
         return false;
     }
 
+    /*
+    Two friends like to pool their money and go to the ice cream parlor.
+    They always choose two distinct flavors and they spend all of their money.
+    Given a list of prices for the flavors of ice cream, select the two that will cost all of the money they have.
+    Example. m=4, cost = 1,4,5,3,2
+    The two flavors that cost 1 and 3 meet the criteria. Using 1-based indexing, they are at indices 1 and 4.
+
+    System.out.println(icecreamParlor(4, List.of(1,4,5,3,2)));
+ */
+    public static List<Integer> icecreamParlor(int m, List<Integer> arr) {
+        // Write your code here
+        Map<Integer, Integer> map = new HashMap();
+        int[] array = arr.stream().mapToInt(i->i).toArray();
+        List<Integer> result = new LinkedList<>();
+
+        for(int i=0; i<array.length;i++){
+            if(map.containsKey(m-array[i])){
+                result.add(Math.min(i+1, map.get(m-array[i])));
+                result.add(Math.max(i+1, map.get(m-array[i])));
+                return result;
+            } else {
+                map.put(array[i],i+1);
+            }
+        }
+
+        return Collections.EMPTY_LIST;
+    }
+
+    /*
+    Queue using 2 stacks
+    A queue is an abstract data type that maintains the order in which elements were added to it,
+    allowing the oldest elements to be removed from the front and new elements to be added to the rear.
+    This is called a First-In-First-Out (FIFO) data structure because the first element added to the queue
+    (i.e., the one that has been waiting the longest) is always the first one to be removed.
+
+    when moving from one stack to other, the order will be switched so moving to a second stack will have
+    order to be as in a queue would be
+
+    Stacks stacks = new Stacks();
+    Scanner in = new Scanner(System.in);
+    int q = in.nextInt();
+    for(int i=0; i<q;i++){
+      int op = in.nextInt();
+      if(op==1){
+        int val = in.nextInt();
+        stacks.enqueue(val);
+      } else if(op==2){
+        stacks.deque();
+      } else if(op==3){
+        System.out.println(stacks.peek());
+      }
+    }
+ */
+    public static class Stacks{
+
+        Stack<Integer> newestOnTop = new Stack<>();
+        Stack<Integer> oldestOnTop = new Stack<>();
+
+        public void enqueue(Integer val){
+            newestOnTop.push(val);
+        }
+
+        public Integer peek(){
+            if(oldestOnTop.isEmpty()){
+                shiftStacks();
+            }
+            if(!oldestOnTop.isEmpty()){
+                return oldestOnTop.peek();
+            }
+            return null;
+        }
+
+        public Integer deque(){
+            if(oldestOnTop.isEmpty()){
+                shiftStacks();
+            }
+            if(!oldestOnTop.isEmpty()){
+                return oldestOnTop.pop();
+            }
+            return null;
+        }
+
+        private void shiftStacks() {
+            while(!newestOnTop.isEmpty()){
+                oldestOnTop.push(newestOnTop.pop());
+            }
+        }
+    }
+
+    /*
+    Two strings are anagrams of each other if the letters of one string can be rearranged to form the other string.
+    Given a string, find the number of pairs of substrings of the string that are anagrams of each other.
+    Example s=mom
+    The list of all anagrammatic pairs is [m,m], [mo,om] at positions [0,2], [[0,1],[1,2]] respectively.
+
+    add all available substrings to a map
+    order them to confirm if substring is conformed by same chars
+    only substring, so not same length than original string
+
+    System.out.println(sherlockAndAnagrams("mom"));
+ */
+    public static int sherlockAndAnagrams(String s) {
+        // Write your code here
+
+        Map<String, Integer> map = new HashMap<>();
+
+        for(int i=0; i<s.length();i++){
+            for(int j=i; j<s.length();j++){
+                //j+1 because if not substring to 0,0 ,etc will have nothing in it
+                char[] array = s.substring(i,j+1).toCharArray();
+                Arrays.sort(array);
+                String ss= new String(array);
+                if(map.containsKey(ss)){
+                    map.put(ss, map.get(ss)+1);
+                } else {
+                    map.put(ss,1);
+                }
+            }
+        }
+
+        int count = 0;
+        for(Map.Entry<String, Integer> entry:map.entrySet()){
+            int val = entry.getValue();
+            count+= (val * (val-1)) /2;
+        }
+
+        return count;
+    }
+
+    /*
+    Reduce a string of lowercase characters in range ascii[‘a’..’z’]by doing a series of operations.
+    In each operation, select a pair of adjacent letters that match, and delete them.
+    Delete as many characters as possible using this method and return the resulting string.
+    If the final string is empty, return Empty String
+
+    Example. aab
+      aab shortens to b in one operation: remove the adjacent a characters.
+    Example abba
+      Remove the two 'b' characters leaving 'aa'. Remove the two 'a' characters to leave ''. Return 'Empty String'.
+
+      System.out.println(superReducedString("abba"));
+ */
+    public static String superReducedString(String s) {
+        // Write your code here
+
+        StringBuilder sb = new StringBuilder(s);
+
+        for(int i=1; i<sb.length();i++){
+            if(sb.charAt(i)==sb.charAt(i-1)){
+                //delete start inclusive, end exclusive
+                sb.delete(i-1,i+1);
+                //when this instruction ends, will go to start of for making i to go 1
+                i=0;
+            }
+        }
+
+        String result = sb.toString();
+
+        if(result.length()==0) return "Empty String";
+
+        return result;
+    }
+
+    /*
+  a+b >c   -> valid non degenerate triangle
+
+  //important to validate against the valid triangles only sorting received list first
+
+  Given an array of stick lengths, use 3 of them to construct a non-degenerate triangle with the maximum possible perimeter.
+  Return an array of the lengths of its sides as 3 integers in non-decreasing order.
+  If there are several valid triangles having the maximum perimeter:
+
+  Choose the one with the longest maximum side.
+  If more than one has that maximum, choose from them the one with the longest minimum side.
+  If more than one has that maximum as well, print any one them.
+  If no non-degenerate triangle exists, return -1.
+
+  Example
+  sticks: 1,2,3,4,5,10
+  The triplet 1,2,3 will not form a triangle. Neither will 4,5,10 or 2,3,5, so the problem is reduced to 2,3,4 and 3,4,5 . The longer perimeter is 3+4+5=12.
+
+  System.out.println(maximumPerimeterTriangle(List.of(1,2,3,4,5,10)));
+*/
+    public static List<Integer> maximumPerimeterTriangle(List<Integer> sticks) {
+        // Write your code here
+        //important to validate against the valid triangles only
+        Collections.sort(sticks);
+        int sum=0;
+        Queue<Integer> queue = new LinkedList<>();
+        int max = Integer.MIN_VALUE;
+        List<Integer> resultList = new ArrayList<>();
+
+        for(int i=0; i< sticks.size(); i++){
+            int val = sticks.get(i);
+            if(queue.size()<3){
+                queue.add(val);
+                sum+=val;
+            }
+
+            if(queue.size()==3) {
+                int nextInQueue = val;
+                if(sum-nextInQueue>nextInQueue && sum>=max){
+                    if(sum>max){
+                        max = sum;
+                        resultList.clear();
+                        getListFromQueue(queue, resultList);
+                        Collections.sort(resultList, Comparator.naturalOrder());
+                    } else {
+                        List<Integer> tempList = new ArrayList<>();
+                        getListFromQueue(queue, tempList);
+                        Collections.sort(tempList, Comparator.naturalOrder());
+                        if(resultList.get(2)<tempList.get(2) || resultList.get(0)<tempList.get(0)){
+                            resultList.clear();
+                            resultList.addAll(tempList);
+                        }
+                    }
+                }
+                sum -= queue.poll();
+
+            }
+        }
+
+        if(resultList.isEmpty()){
+            resultList.add(-1);
+        }
+
+        return resultList;
+    }
+
+    private static void getListFromQueue(Queue<Integer> queue, List<Integer> resultList) {
+        Queue<Integer> tempQueue = new LinkedList<>(queue);
+        while (!tempQueue.isEmpty()){
+            resultList.add(tempQueue.poll());
+        }
+    }
+
+    /*
+        In this challenge, the task is to debug the existing code to successfully execute all provided test files.
+        Given an array of n distinct integers, transform the array into a zig zag sequence by permuting the array elements.
+        A sequence will be called a zig zag sequence if the first k elements in the sequence are in increasing order
+        and the last k elements are in decreasing order, where k=n+1/2.
+        You need to find the lexicographically smallest zig zag sequence of the given array.
+
+        Example.
+
+        Now if we permute the array as , the result is a zig zag sequence.
+
+        firt half except mid with sort works
+        mid one switch with last
+        then switch places between mid +1 and end -1 till they encounter
+
+     */
+    public static void findZigZagSequence(int [] a, int n){
+        //sort gives us first part
+        Arrays.sort(a);
+        // -1 since is array based
+        int mid = ((n + 1)/2)-1;
+        //switch mid with last element
+        int temp = a[mid];
+        a[mid] = a[n - 1];
+        a[n - 1] = temp;
+
+        //switch elements after mid and before last element
+        int st = mid + 1;
+        int ed = n - 2;
+        while(st <= ed){
+            temp = a[st];
+            a[st] = a[ed];
+            a[ed] = temp;
+            st = st + 1;
+            ed = ed - 1;
+        }
+        for(int i = 0; i < n; i++){
+            if(i > 0) System.out.print(" ");
+            System.out.print(a[i]);
+        }
+        System.out.println();
+    }
+
+    /*
+        There will be two arrays of integers. Determine all integer satisfy the following 2 conditions:
+        1. The elements of the first array are all factor of the integer being considered (considered int% each element must result 0)
+            ex: 6%2 and 6%6    first number evaluated number second is a number in set a
+        2. The integer being considered is a factor of all elements of second array (each element in set 2 % considered int must result 0)
+            ex: 24%6 and 36%6  first number element in set b, second evaluated number
+
+            a: 2,6
+            b: 24,36
+
+            considered number must be multiply of biggest number of a, if not for example the 2 -> 2%6 -> different than 0
+            System.out.println(getTotalX(List.of(3,4),List.of(24,48)));
+     */
+    public static int getTotalX(List<Integer> a, List<Integer> b) {
+        // Write your code here
+        //get multiply
+        Integer maxA = a.stream().max(Comparator.naturalOrder()).get();
+        //get max value to consider
+        Integer maxB = b.stream().max(Comparator.naturalOrder()).get();
+        int multiply = maxA;
+        int counter =0;
+        while(multiply<=maxB){
+            boolean valid = false;
+
+            //factor of set a
+            for(int i=0; i<a.size();i++){
+                if(multiply%a.get(i) != 0){
+                    break;
+                }
+                if(i==a.size()-1){
+                    valid=true;
+                }
+            }
+
+            if(valid) {
+                for (int i = 0; i < b.size(); i++) {
+                    Long longVal = b.get(i).longValue();
+                    if (Long.valueOf(longVal % multiply) != 0L) {
+                        break;
+                    }
+                    //factor of all in b
+                    if (i == b.size() - 1) {
+                        counter++;
+                    }
+                }
+            }
+            //multiples of multiply only
+            multiply = multiply+maxA;
+        }
+        return counter;
+
+    }
+
+
+    /*
+        The absolute difference is the positive difference between two values a and b, is written a-b or b-a and they are equal.
+        If a=3 and b=2, |3-2|=|2-3| =1 . Given an array of integers, find the minimum absolute difference between any two elements in the array.
+
+        Example. [-2,2,4]
+
+        There are 3 pairs of numbers: [-2,2],[-2,4] and [2,4] .
+        The absolute differences for these pairs are |-2-2| = 4, |-2-4| = 6 and |2-4|=2. The minimum absolute difference is 2.
+
+        important to sort, if you sort you will have them in the closest range so if compared to the one next
+        will always be smaller than with the one next to it
+
+        System.out.println(minimumAbsoluteDifference(List.of(-2,2,4)));
+     */
+    public static int minimumAbsoluteDifference(List<Integer> arr) {
+        // Write your code here
+        int min = Integer.MAX_VALUE;
+        int[] array = arr.stream().mapToInt(i->i).toArray();
+        //sort so will have closest values next to it
+        Arrays.sort(array);
+
+        //no need to extra for to compare to others since they will be bigger
+        //than the one next to it
+        for(int i=0; i<arr.size()-1; i++){
+            int difference = Math.abs(array[i]-array[i+1]);
+            if(difference<min){
+                min=difference;
+            }
+        }
+
+        return min;
+    }
+
     //END HACKER RANK
 
 
@@ -4448,7 +4726,6 @@ times node value is greater or equal to max value
         System.out.println(flippingMatrix(matrixList));
 
         findZigZagSequence(new int[]{1,3,5,7,9,2,4,6,8,10}, 10);
-        findZigZagSequence2(new int[]{1,3,5,7,9,2,4,6,8,10}, 10);
 
         System.out.println(towerBreakers(3,1));
         System.out.println(towerBreakers(13,11));

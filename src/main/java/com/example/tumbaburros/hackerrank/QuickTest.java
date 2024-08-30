@@ -9,7 +9,7 @@ public class QuickTest {
 
 
 
-    static class TreeNode {
+  static class TreeNode {
       int val;
       TreeNode left;
       TreeNode right;
@@ -31,6 +31,9 @@ public class QuickTest {
   }
 
     public static void main(String[] args) {
+
+
+
 
     }
 }
