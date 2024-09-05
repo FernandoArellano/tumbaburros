@@ -3076,7 +3076,7 @@ times node value is greater or equal to max value
     //Query: 2 x y
     //Let .
     //Assign the value  to .
-    //Store the new value of  to an answers array.
+    //Store the new value of last answer to an answers array.
     public static List<Integer> dynamicArray(int n, List<List<Integer>> queries) {
         // Write your code here
         ArrayList<ArrayList<Integer>> seqs=new ArrayList<ArrayList<Integer>>();
@@ -4681,6 +4681,318 @@ times node value is greater or equal to max value
         return min;
     }
 
+
+    /*
+        smart number if square of val * square of val = original val
+
+        A number is called a smart number if it has an odd number of factors.
+        Given some numbers, find whether they are smart numbers or not.
+        Debug the given function is_smart_number to correctly check if a given number is a smart number.
+
+        4 sqr = 2
+        2*2= original val 4
+     */
+    public static boolean isSmartNumber(int num) {
+        int val = (int) Math.sqrt(num);
+        if(val * val == num)
+            return true;
+        return false;
+    }
+
+    /*
+    NW SOME not sure why
+
+    first half replace with - instead of letters
+    sort them base on first element or index
+
+    ex:
+    List<String> l1 = List.of("0","ab");
+    List<String> l2 = List.of("6","cd");
+    List<String> l3 = List.of("0","ef");
+    List<String> l4 = List.of("6","gh");
+    List<String> l5 = List.of("4","ij");
+    List<String> l6 = List.of("0","ab");
+    List<String> l7 = List.of("6","cd");
+    List<String> l8 = List.of("0","ef");
+    List<String> l9 = List.of("6","gh");
+    List<String> l10 = List.of("0","ij");
+    List<String> l11 = List.of("4","that");
+    List<String> l12 = List.of("3","be");
+    List<String> l13 = List.of("0","to");
+    List<String> l14 = List.of("1","be");
+    List<String> l15 = List.of("5","question");
+    List<String> l16 = List.of("1","or");
+    List<String> l17 = List.of("2","not");
+    List<String> l18 = List.of("4","is");
+    List<String> l19 = List.of("2","to");
+    List<String> l20 = List.of("4","the");
+
+
+
+
+    List<String> ll1 = new ArrayList<>(l1);
+    List<String> ll2 = new ArrayList<>(l2);
+    List<String> ll3 = new ArrayList<>(l3);
+    List<String> ll4 = new ArrayList<>(l4);
+    List<String> ll5 = new ArrayList<>(l5);
+    List<String> ll6 = new ArrayList<>(l6);
+    List<String> ll7 = new ArrayList<>(l7);
+    List<String> ll8 = new ArrayList<>(l8);
+    List<String> ll9 = new ArrayList<>(l9);
+    List<String> ll10 = new ArrayList<>(l10);
+    List<String> ll11 = new ArrayList<>(l11);
+    List<String> ll12 = new ArrayList<>(l12);
+    List<String> ll13 = new ArrayList<>(l13);
+    List<String> ll14 = new ArrayList<>(l14);
+    List<String> ll15 = new ArrayList<>(l15);
+    List<String> ll16 = new ArrayList<>(l16);
+    List<String> ll17 = new ArrayList<>(l17);
+    List<String> ll18 = new ArrayList<>(l18);
+    List<String> ll19 = new ArrayList<>(l19);
+    List<String> ll20 = new ArrayList<>(l20);
+
+    List<List<String>> ll = new ArrayList<>();
+    ll.add(ll1);
+    ll.add(ll2);
+    ll.add(ll3);
+    ll.add(ll4);
+    ll.add(ll5);
+    ll.add(ll6);
+    ll.add(ll7);
+    ll.add(ll8);
+    ll.add(ll9);
+    ll.add(ll10);
+    ll.add(ll11);
+    ll.add(ll12);
+    ll.add(ll13);
+    ll.add(ll14);
+    ll.add(ll15);
+    ll.add(ll16);
+    ll.add(ll17);
+    ll.add(ll18);
+    ll.add(ll19);
+    ll.add(ll20);
+
+    countSort(ll);
+
+ */
+    public static void countSort(List<List<String>> arr) {
+
+        List<List<String>> result = new ArrayList<>();
+
+        for(int i=0; i<arr.size(); i++){
+            List<String> l = new ArrayList<>(arr.get(i));
+            result.add(l);
+        }
+
+        // Write your code here
+        for(int i=0; i<result.size()/2;i++){
+            List<String> l = result.get(i);
+            l.remove(1);
+            l.add("-");
+        }
+
+        class ListComparator<T extends Comparable<T>> implements Comparator<List<T>>{
+
+            @Override
+            public int compare(List<T> o1, List<T> o2) {
+
+                return o1.get(0).compareTo(o2.get(0));
+            }
+        }
+
+        Collections.sort(result, new ListComparator());
+
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<result.size();i++){
+            result.get(i).remove(0);
+            sb.append(result.get(i).get(0));
+            if(i< result.size()-1){
+                sb.append(" ");
+            }
+        }
+
+        System.out.println(sb.toString());
+    }
+
+    /*
+        Two people are playing game of Misère Nim. The basic rules for this game are as follows:
+
+        The game starts with n piles of stones indexed from 0 to n-1.
+        Each pile i (where 0<=i<n) has si stones.
+        The players move in alternating turns. During each move, the current player must remove one or more stones from a single pile.
+        The player who removes the last stone loses the game.
+        Given the value of n and the number of stones in each pile,
+        determine whether the person who wins the game is the first or second person to move.
+        If the first player to move wins, print First on a new line; otherwise, print Second.
+        Assume both players move optimally.
+
+        System.out.println(misereNim(List.of(1,2,2)));
+     */
+    public static String misereNim(List<Integer> s) {
+        // Write your code here
+        int n = s.size();
+        // if there is only 1 pile AND it has more than 1 element => First player wins
+        if (n == 1) {
+            return s.get(0) > 1 ? "First" : "Second";
+        }
+        int total = s.get(0);
+        int xor = s.get(0);
+
+        for (int i = 1; i < n; i++) {
+            total += s.get(i);
+            xor ^= s.get(i);
+        }
+        /*
+         * If sum of all stones equals the total piles, all piles have a single (1)
+         * stone. For even number of piles, first player will always win.
+         */
+        if (total == n) {
+            return total % 2 == 0 ? "First" : "Second";
+        }
+        /*
+         * For all other cases, the xor value determines winner. If xor value = 0, then
+         * second player will always win as all piles (stones) can be paired.
+         */
+        return xor > 0 ? "First" : "Second";
+
+    }
+
+    /*
+    We define a magic square to be an nxn matrix of distinct positive integers from 1 to n square where the sum of any row, column,
+    or diagonal of length n is always equal to the same number: the magic constant.
+    You will be given a 3x3 matrix s of integers in the inclusive range 1,9.
+    We can convert any digit a to any other digit b in the range 1,9 at cost of a-b.
+    Given s, convert it into a magic square at minimal cost. Print this cost on a new line.
+    Note: The resulting magic square must contain distinct integers in the inclusive range 1,9.
+
+    there are 8 matrix which can be magic square, we create a list with them squares
+    s.get(j/3).get(j%3) to get positions:
+        00 01 01
+        10 11 12
+        20 21 22
+        from original matrix and rest it to the correct value from 1 of the magic matrix
+
+        List<List<Integer>> s = new ArrayList<>();
+        s.add(Arrays.asList(5,3,4));
+        s.add(Arrays.asList(1,5,8));
+        s.add(Arrays.asList(6,4,2));
+
+        System.out.println(formingMagicSquare(s));
+     */
+    public static int formingMagicSquare(List<List<Integer>> s) {
+        // Write your code here
+        List<List<Integer>> squares = new ArrayList<>();
+        squares.add(Arrays.asList(8,3,4,1,5,9,6,7,2));
+        squares.add(Arrays.asList(4,3,8,9,5,1,2,7,6));
+        squares.add(Arrays.asList(8,1,6,3,5,7,4,9,2));
+        squares.add(Arrays.asList(6,1,8,7,5,3,2,9,4));
+        squares.add(Arrays.asList(2,9,4,7,5,3,6,1,8));
+        squares.add(Arrays.asList(4,9,2,3,5,7,8,1,6));
+        squares.add(Arrays.asList(2,7,6,9,5,1,4,3,8));
+        squares.add(Arrays.asList(6,7,2,1,5,9,8,3,4));
+
+        int min = Integer.MAX_VALUE;
+
+        for(int i=0; i<squares.size();i++){
+            int total = 0;
+            for(int j=0; j<squares.get(i).size(); j++){
+                //si fueran iguales las matrices, el total seria 0, no podria haber menos
+                //cada posicion es tomada y restada con su par y solo cuando se necesito restar va a sumar a total
+                total += Math.abs(s.get(j/3).get(j%3) - squares.get(i).get(j));
+            }
+            if(total < min) min=total;
+        }
+        return min;
+    }
+
+    /*
+        Louise and Richard have developed a numbers game.
+        They pick a number and check to see if it is a power of 2. If it is, they divide it by 2.
+        If not, they reduce it by the next lower number which is a power of 2.
+        Whoever reduces the number to 1 wins the game. Louise always starts.
+        Given an initial value, determine who wins the game.
+
+        Example n=132
+
+        It's Louise's turn first. She determines that 132 is not a power of 2.
+        The next lower power of 2 is 128, so she subtracts that from 132 and passes 4 to Richard.
+        4 is a power of 2, so Richard divides it by 2 and passes 2 to Louise.
+        Likewise, 2 is a power so she divides it by 2 and reaches 1. She wins the game.
+
+Update If they initially set counter to , Richard wins. Louise cannot make a move so she loses.
+     */
+    public static String counterGame(long n) {
+        // Write your code here
+        if(n == 1){
+            return "Richard";
+        }
+
+        boolean chanceLouise = true;
+        while(n>1){
+            if(Long.bitCount(n) >1){
+                double i=1;
+                int count =0;
+                while(i<n){
+                    i=Math.pow(2,count);
+                    if(i>n){
+                        break;
+                    }
+                    count++;
+                }
+                count --;
+                double nextNum = (long) Math.pow(2,count);
+                n = (long) (n-nextNum);
+            } else{
+                n=n/2;
+            }
+
+            if(n==1)
+                break;
+
+            chanceLouise = !chanceLouise;
+        }
+
+        if(chanceLouise){
+            return "Louise";
+        } else {
+            return "Richard";
+        }
+    }
+
+
+    /*
+    Time Complexity: O(n log(n)) //It takes n log(n) time to convert to binary using two's division
+    Space Complexity: O(1) //There is no ddynamically allocated variables
+
+    Given an integer n, find each x such that:
+    0<=x<=n
+    n+x = n xor x
+    where xor denotes the bitwise XOR operator. Return the number of x's satisfying the criteria.
+
+    Example n=4
+    4+0 = 4 xor 0 = 4
+    4+1 = 4 xor 1 = 5
+    4+2 = 4 xor 2 = 6
+    4+3 = 4 xor 3 = 7
+
+    There are four values that meet the criteria:
+
+    Return 4.
+
+    System.out.println(sumXor(4));
+ */
+    public static long sumXor(long n) {
+        // Write your code here
+        long count = 0;
+        //This performs a basic conversion from int to binary using divide by two and checking even or odd
+        while(n != 0){
+            count += (n%2 == 0)?1:0;
+            n/=2;
+        }
+        count = (long) Math.pow(2,count);
+        return count;
+    }
     //END HACKER RANK
 
 
