@@ -3606,8 +3606,7 @@ times node value is greater or equal to max value
             switch (type){
                 case 1:
                     stack.push(sb.toString());
-                    String toAppend = scan.next();
-                    sb.append(toAppend);
+                    sb.append(scan.next());
                     break;
                 case 2:
                     stack.push(sb.toString());
@@ -3625,18 +3624,21 @@ times node value is greater or equal to max value
                     if(!stack.isEmpty()){
                         sb= new StringBuilder(stack.pop());
                     }
-
                     break;
             }
         }
     }
 
-    //You are a waiter at a party. There is a pile of numbered plates. Create an empty  array. At each iteration, ,
-    // remove each plate from the top of the stack in order. Determine if the number on the plate is evenly divisible by the
-    // prime number. If it is, stack it in pile . Otherwise, stack it in stack . Store the values in  from top to bottom in . In the next iteration,
-    // do the same with the values in stack . Once the required number of iterations is complete, store the remaining values in  in ,
-    // again from top to bottom. Return the  array.
-    //al cambiar a la stack cambia el orden de a, pero no afecto segun?
+    /*
+         You are a waiter at a party. There is a pile of numbered plates.
+         Create an empty answers array. At each iteration, i, remove each plate from the top of the stack in order.
+         Determine if the number on the plate is evenly divisible by the ith prime number.
+         If it is, stack it in pile Bi. Otherwise, stack it in stack Ai.
+         Store the values in Bi from top to bottom in answers.
+         In the next iteration, do the same with the values in stack Ai.
+         Once the required number of iterations is complete, store the remaining values in Ai in answers,
+         again from top to bottom. Return the answers array.
+      */
     public static List<Integer> waiter(List<Integer> number, int q) {
         // Write your code here
 
@@ -4992,6 +4994,297 @@ Update If they initially set counter to , Richard wins. Louise cannot make a mov
         }
         count = (long) Math.pow(2,count);
         return count;
+    }
+
+    /*
+        Given a string of lowercase letters in the range ascii a-z, determine
+        the index of a character that can be remove to make the string a palindrome.
+        There may be more than one solution, but any will do.
+        if the word is already a palindrome or there is no solution return -1.
+        otherwise return the index of a character to remove.
+
+        ex: s=bcbc
+        either remove index 0 or 3
+        System.out.println(palindromeIndex2("aaab"));
+     */
+    public static int palindromeIndex2(String s) {
+        // Write your code here
+        System.out.println(s);
+        if(s.equals(new StringBuilder(s).reverse().toString())){
+            return -1;
+        }
+
+        char[] array = s.toCharArray();
+        for(int i=0; i<=s.length()/2;i++){
+            if(array[i] != array[s.length()-1-i]){
+                StringBuilder start = new StringBuilder(s);
+                start.deleteCharAt(i);
+                StringBuilder end = new StringBuilder(s);
+                end.deleteCharAt(s.length()-1-i);
+
+                if(start.toString().equals(start.reverse().toString())){
+                    return i;
+                } else if(end.toString().equals(end.reverse().toString())){
+                    return s.length()-1-i;
+                }
+
+            }
+        }
+
+
+
+        return -1;
+    }
+
+
+    /*
+    Given the pointer to the head node of a doubly linked list, reverse the order of the nodes in place.
+    That is, change the next and prev pointers of the nodes so that the direction of the list is reversed.
+    Return a reference to the head node of the reversed list.
+
+    Note: The head node might be NULL to indicate that the list is empty.
+     */
+    public static DoublyLinkedListNode reverseDoubly(DoublyLinkedListNode llist) {
+        // Write your code here
+        if(llist == null) return llist;
+
+        DoublyLinkedListNode current_node = llist;
+        DoublyLinkedListNode new_head = llist;
+
+        while(current_node != null){
+            DoublyLinkedListNode prev = current_node.prev;
+            current_node.prev = current_node.next;
+            current_node.next = prev;
+            new_head = current_node;
+            current_node = current_node.prev;
+        }
+
+        return new_head;
+    }
+
+    /*
+    instead of looking for the position, look for position-1 for simplicity
+
+    Given the pointer to the head node of a linked list and an integer to insert at a certain position,
+    create a new node with the given integer as its data attribute, insert this node at the desired position and return the head node.
+
+    A position of 0 indicates head, a position of 1 indicates one node away from the head and so on.
+    The head pointer given may be null meaning that the initial list is empty.
+
+    Example
+    head refers to the first node in the list 1-2-3
+    data = 4
+    position = 2
+
+    Insert a node at position 2 with data=4 . The new list is 1-2-4-3
+ */
+    public static SinglyLinkedListNode insertNodeAtPosition(SinglyLinkedListNode llist, int data, int position) {
+        // Write your code here
+        SinglyLinkedListNode new_node = new SinglyLinkedListNode(data);
+        SinglyLinkedListNode current_node = llist;
+
+        int index=0;
+        while(index < position-1){
+            current_node = current_node.next;
+            index++;
+        }
+
+        new_node.next = current_node.next;
+        current_node.next = new_node;
+
+
+        return llist;
+    }
+
+    /*
+    big sorting
+    Adding to a Priority Queue and then fill another list would exceed time
+
+    faster to use compare way
+
+    System.out.println(bigSorting(Arrays.asList("1","5","3", "54654654")));
+ */
+    public static List<String> bigSorting(List<String> unsorted) {
+        // Write your code here
+        Collections.sort(unsorted, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                if(o1.length()>o2.length()){
+                    return 1;
+                } else if(o2.length()>o1.length()){
+                    return -1;
+                } else{
+                    BigInteger big1 = new BigInteger(o1);
+                    BigInteger big2 = new BigInteger(o2);
+                    return big1.compareTo(big2);
+                }
+            }
+        });
+        return unsorted;
+    }
+
+    /*
+    Delete duplicate value nodes from sorted
+    You are given the pointer to the head node of a sorted linked list
+    where data in the nodes is in ascending order. delete nodes and return a sorted list
+    with each distinct value in the original list
+
+    ex: 1-2-2-3-3-3-3-null
+        -> 1-2-3-null
+
+    SinglyLinkedListNode headOne = new SinglyLinkedListNode();
+    headOne.data = 1;
+    SinglyLinkedListNode headOne2 = new SinglyLinkedListNode();
+    headOne2.data=3;
+    SinglyLinkedListNode headOne22 = new SinglyLinkedListNode();
+    headOne22.data=3;
+    SinglyLinkedListNode headOne3 = new SinglyLinkedListNode();
+    headOne3.data =7;
+
+    headOne.next = headOne2;
+    headOne2.next = headOne22;
+    headOne22.next = headOne3;
+    removeDuplicates(headOne);
+ */
+    public static SinglyLinkedListNode removeDuplicates(SinglyLinkedListNode llist) {
+        if(llist == null) return llist;
+
+        // Write your code here
+        SinglyLinkedListNode current = llist;
+        SinglyLinkedListNode next = llist.next;
+
+        while(current != null){
+            if(next != null){
+                while(current != null && next != null && current.data == next.data){
+                    next = next.next;
+                }
+            }
+
+            current.next = next;
+            current = current.next;
+            if(next != null){
+                next = next.next;
+            }
+
+        }
+        return llist;
+    }
+
+    /*
+        Your algorithms have become so good at predicting the market that you now know what the share price of Wooden Orange Toothpicks Inc.
+        (WOT) will be for the next number of days.
+
+        Each day, you can either buy one share of WOT, sell any number of shares of WOT that you own, or not make any transaction at all.
+        What is the maximum profit you can obtain with an optimum trading strategy?
+
+        ex: 1,2,100
+        but the first 2 days = 3
+        sell your 2 on day 3 = 200
+        res = 200-3
+
+        System.out.println(stockmax(Arrays.asList(1,2,100)));
+     */
+    public static long stockmax(List<Integer> prices) {
+        // Write your code here
+        long ans = 0;
+        int max_num=0;
+
+        for(int i= prices.size()-1;i>=0;i--){
+            max_num = Integer.max(max_num, prices.get(i));
+            ans += Integer.max(0, max_num - prices.get(i));
+        }
+        return ans;
+    }
+
+    /*
+    You have three stacks of cylinders where each cylinder has the same diameter, but they may vary in height.
+    You can change the height of a stack by removing and discarding its topmost cylinder any number of times.
+    Find the maximum possible height of the stacks such that all of the stacks are exactly the same height.
+    This means you must remove zero or more cylinders from the top of zero or more of the three stacks until they are all the same height,
+    then return the height.
+
+    ex:
+    [1,2,1,1]
+    [1,1,2]
+    [1,1]
+
+    There are 4,3 and 2 cylinders in the three stacks, with their heights in the three arrays.
+    Remove the top 2 cylinders from h1 (heights = [1, 2]) and from h2 (heights = [1, 1]) so that the three stacks all are 2 units tall.
+    Return 2 as the answer.
+
+    The height of the stack is the sum of its values
+    it is really a queue because the element to pop first is the one inserted first
+    stack 1 remove 1 and 2
+    stack 2 removes 1 and 1
+    [1,1]
+    [2]
+    [1,1]
+
+    so the height of them all is 2 which is the sum of its elements
+
+    Note: An empty stack is still a stack.
+
+    System.out.println(equalStacks(Arrays.asList(1,2,1,1), Arrays.asList(1,1,2), Arrays.asList(1,1)));
+   */
+    public static int equalStacks(List<Integer> h1, List<Integer> h2, List<Integer> h3) {
+        // Write your code here
+        Queue<Integer> q1 = new LinkedList<>();
+        Queue<Integer> q2 = new LinkedList<>();
+        Queue<Integer> q3 = new LinkedList<>();
+
+        h1.stream().forEach(i -> {
+            q1.add(i);
+        });
+        h2.stream().forEach(i -> {
+            q2.add(i);
+        });
+        h3.stream().forEach(i -> {
+            q3.add(i);
+        });
+
+        int sumA = h1.stream().mapToInt(i -> i).sum();
+        int sumB = h2.stream().mapToInt(i -> i).sum();
+        int sumC = h3.stream().mapToInt(i -> i).sum();
+        while (!(sumA == sumB && sumB == sumC)) {
+            int biggest = Math.max(sumA, Math.max(sumB, sumC));
+            if (sumA == biggest) {
+                sumA -= q1.poll();
+            }
+            if (sumB == biggest) {
+                sumB -= q2.poll();
+            }
+            if (sumC == biggest) {
+                sumC -= q3.poll();
+            }
+        }
+        return sumA;
+    }
+
+    /*
+      Given an amount and the denominations of coins available, determine how many ways change can be made for amount.
+      There is a limitless supply of each coin type.
+
+      Example
+      n=3
+      c=8,3,1,2
+
+      There are 3 ways to make change for n=3: {1,1,1}, {1,2} and {3}.
+
+      System.out.println(getWays(3, Arrays.asList(8l,3l,1l,2l)));
+   */
+    public static long getWays(int n, List<Long> c) {
+        // Write your code here
+        long[] array = new long[n+1];
+        Arrays.fill(array,0l);
+        array[0]=1;
+
+        for(Long coin : c){
+            for(long total = coin; total< array.length; total++){
+                long remainder = total-coin;
+                array[(int)total] += array[(int)remainder];
+            }
+        }
+        return array[n];
     }
     //END HACKER RANK
 
