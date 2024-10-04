@@ -5432,6 +5432,56 @@ Update If they initially set counter to , Richard wins. Louise cannot make a mov
         return max;
     }
 
+
+    /*
+  Chief's bot is playing an old DOS based game.
+  There is a row of buildings of different heights arranged at each index along a number line.
+  The bot starts at building 0 and at a height of 0.
+  You must determine the minimum energy his bot needs at the start so that he can jump to the top of each building without his energy going below zero.
+
+  Units of height relate directly to units of energy. The bot's energy level is calculated as follows:
+
+  If the bot's botEnergy is less than the height of the building, his newEnergy = botEnergy -(height-botEnergy)
+  If the bot's botEnergy is greater than the height of the building, his newEnergy = botEnergy + (botEnergy - height)
+
+  Example arr= 2,3,4,3,2
+
+  Starting with botEnergy =4, we get the following table:
+
+  botEnergy   height  delta
+  4               2       +2
+  6               3       +3
+  9               4       +5
+  14              3       +11
+  25              2       +23
+  48
+
+  That allows the bot to complete the course, but may not be the minimum starting value. The minimum starting botEnergy in this case is 3.
+
+  System.out.println(chiefHopper(List.of(2,3,4,3,2)));
+ */
+    public static int chiefHopper(List<Integer> arr) {
+        int minEnergy = 0;
+        // Write your code here
+        for(int i = arr.size()-1; i >= 0; i--)
+        {
+            int buildingHeight = arr.get(i);
+
+            if(buildingHeight > minEnergy)
+            {
+                minEnergy += (int) Math.ceil((buildingHeight - minEnergy) / 2.0);
+            }
+            else if(buildingHeight < minEnergy)
+            {
+                minEnergy = (int) Math.ceil((buildingHeight + minEnergy) / 2.0);
+            }
+
+            //Nothing occurs in the == case so we simply don't check for it
+        }
+
+        return minEnergy;
+    }
+
     //END HACKER RANK
 
 
