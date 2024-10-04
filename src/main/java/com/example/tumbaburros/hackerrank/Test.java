@@ -5286,6 +5286,152 @@ Update If they initially set counter to , Richard wins. Louise cannot make a mov
         }
         return array[n];
     }
+
+
+    /*
+
+    Given a string, remove characters until the string is made up of any two alternating characters.
+    When you choose a character to remove, all instances of that character must be removed.
+    Determine the longest string possible that contains just two alternating letters.
+
+    Example s= abaacdabd
+
+    Delete a, to leave bcdbd. Now, remove the character c to leave the valid string bdbd with a length of 4.
+    Removing either b or d at any point would not result in a valid string. Return 4.
+
+    Given a string s, convert it to the longest possible string t made up only of alternating characters.
+    Return the length of string t. If no string t can be formed, return 0.
+    must have at least 2 distinct letters alternated
+
+    rows and columns updated with last character found
+    if new character is the same to the last character in the position
+    then duplicated letter will be so mark it as -1 to ignore
+    A | B | C
+  A
+  B
+  C
+
+    System.out.println(alternate("beabeefeab"));
+ */
+    public static int alternate(String str) {
+        // Write your code here
+        final int NUM_LETTERS = 26;
+        int length = str.length();
+        int max = 0;
+
+        if(str.length()<=1){
+            return 0;
+        }
+
+        /* Create arrays representing the 26^2 subproblems */
+        int[][] pair = new int[NUM_LETTERS][NUM_LETTERS];
+        int[][] count = new int[NUM_LETTERS][NUM_LETTERS];
+
+        for (int i = 0; i < length; i++) {
+            char letter = str.charAt(i);
+            int letterNum = letter - 'a';
+
+            /* Update row */
+            for (int col = 0; col < NUM_LETTERS; col++) {
+                if (pair[letterNum][col] == letter) {
+                    count[letterNum][col] = -1;
+                }
+                if (count[letterNum][col] != -1) {
+                    pair[letterNum][col] = letter;
+                    count[letterNum][col]++;
+                }
+            }
+
+            /* Update column */
+            for (int row = 0; row < NUM_LETTERS; row++) {
+                if (pair[row][letterNum] == letter) {
+                    count[row][letterNum] = -1;
+                }
+                if (count[row][letterNum] != -1) {
+                    pair[row][letterNum] = letter;
+                    count[row][letterNum]++;
+                }
+            }
+
+
+            /* Find max in "count" array */
+
+
+            //make sure to just take max in the last iteration after all letters have been processed
+            max=0;
+            for (int row = 0; row < NUM_LETTERS; row++) {
+                for (int col = 0; col < NUM_LETTERS; col++) {
+                    max = Math.max(max, count[row][col]);
+                }
+            }
+
+        }
+
+        return max;
+    }
+
+
+    /*
+    memoization
+    keep track of previous computation and use it to evaluate it with current i iteration only
+
+    We define subsequence as any subset of an array. We define a subarray as a contiguous subsequence in an array.
+
+    Given an array, find the maximum possible sum among:
+
+    all nonempty subarrays.
+    all nonempty subsequences.
+    Print the two values as space-separated integers on one line.
+
+    Note that empty subarrays/subsequences should not be considered.
+
+    Example
+    arr = -1,2,3,-4,5,10
+
+    The maximum subarray sum is comprised of elements at indexes 1 through 5. Their sum is 2+3+-4+5+10 = 16 .
+    The maximum subsequence sum is comprised of elements at indexes 1,2,4,5 and their sum is 2+3+5+10 = 20.
+
+    System.out.println(maxSubarray(List.of(-2,-5,6,-2,-3,1,5,-6)));
+
+   */
+    public static List<Integer> maxSubarray(List<Integer> arr) {
+        // Write your code here
+
+        int subsequence = arr.stream().max(Comparator.naturalOrder()).get();
+        if(subsequence>0){
+            subsequence=0;
+        }
+
+        for(int i:arr){
+            if(i>0){
+                subsequence+=i;
+            }
+        }
+
+        int subarray = getMaxValue(arr);
+
+        List<Integer> result = new LinkedList<>();
+        result.add(subarray);
+        result.add(subsequence);
+
+        return result;
+    }
+
+    private static int getMaxValue(List<Integer> arr) {
+        int currentMax = arr.get(0);
+        int max = arr.get(0);
+
+        for(int i=1; i<arr.size(); i++){
+            //if keeping the previous sum is bigger than the current i then keep it
+            //if not just keep the current max with the current i element and forget previous
+            //values
+            currentMax = Math.max(arr.get(i), arr.get(i)+currentMax);
+            max = Math.max(max, currentMax);
+        }
+
+        return max;
+    }
+
     //END HACKER RANK
 
 
