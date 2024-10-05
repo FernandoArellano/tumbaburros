@@ -5482,6 +5482,210 @@ Update If they initially set counter to , Richard wins. Louise cannot make a mov
         return minEnergy;
     }
 
+
+    /*
+        A weighted string is a string of lowercase English letters where each letter has a weight. Character weights are 1 to 26
+         The weight of a string is the sum of the weights of its characters. For example:
+         apple = 1+16+12+5 = 50
+         A uniform string consists of a single character repeated zero or more times.
+         For example, ccc and a are uniform strings, but bcb and cd are not.
+
+         ex:
+         s=abbcccdddd
+         queries: 1,7,5,4,15
+
+         1 and 4 does exist so return YES
+         7,5,15 dont so return NO
+
+         string  weight
+        a       1  YES
+        b       2
+        bb      4
+        c       3
+        cc      6
+        ccc     9
+        d       4  YES
+        dd      8
+        ddd     12
+        dddd    16
+
+        response: Yes,No,No,Yes,No
+        System.out.println(weightedUniformStrings("abbcccdddd", List.of(1,7,5,4,15)));
+     */
+    public static List<String> weightedUniformStrings(String s, List<Integer> queries) {
+        // Write your code here
+        List<String> result = new LinkedList<>();
+        Map<Character, Integer> map = new HashMap<>();
+        map.put('a', 1);
+        map.put('b', 2);
+        map.put('c', 3);
+        map.put('d', 4);
+        map.put('e', 5);
+        map.put('f', 6);
+        map.put('g', 7);
+        map.put('h', 8);
+        map.put('i', 9);
+        map.put('j', 10);
+        map.put('k', 11);
+        map.put('l', 12);
+        map.put('m', 13);
+        map.put('n', 14);
+        map.put('o', 15);
+        map.put('p', 16);
+        map.put('q', 17);
+        map.put('r', 18);
+        map.put('s', 19);
+        map.put('t', 20);
+        map.put('u', 21);
+        map.put('v', 22);
+        map.put('w', 23);
+        map.put('x', 24);
+        map.put('y', 25);
+        map.put('z', 26);
+
+        Stack<Character> stack = new Stack<>();
+        Map<Integer, String> resultMap = new HashMap<>();
+
+        for(char c : s.toCharArray()){
+            if(stack.isEmpty()){
+                stack.push(c);
+                processPreviosCharacterInStack(map, stack, resultMap);
+            } else {
+                if(stack.peek()==c) {
+                    stack.push(c);
+                    processPreviosCharacterInStack(map, stack, resultMap);
+                } else {
+                    stack.clear();
+                    stack.push(c);
+                    processPreviosCharacterInStack(map, stack, resultMap);
+                }
+            }
+        }
+
+        if(!stack.isEmpty()){
+            processPreviosCharacterInStack(map, stack, resultMap);
+            stack.clear();
+        }
+
+        for(int i:queries){
+            if(resultMap.containsKey(i)){
+                result.add("Yes");
+            } else {
+                result.add("No");
+            }
+        }
+        return result;
+    }
+
+    private static void processPreviosCharacterInStack(Map<Character, Integer> map, Stack<Character> stack, Map<Integer, String> resultMap) {
+        int charWeight = map.get(stack.peek());
+        int totalWeight = charWeight * stack.size();
+
+        resultMap.put(totalWeight, null);
+    }
+
+    /*
+    This question is designed to help you get a better understanding of basic heap operations.
+
+    There are 3 types of query:
+
+    "1 v" - Add an element v to the heap.
+    "2 v" - Delete the element v from the heap.
+    "3" - Print the minimum of all the elements in the heap.
+    NOTE: It is guaranteed that the element to be deleted will be there in the heap.
+    Also, at any instant, only distinct elements will be in the heap.
+
+    ex:
+    5           Q = 5
+    1 4         insert 4
+    1 9         insert 9
+    3           print minimum (4)
+    2 4         delete 4
+    3           print minimum (9)
+
+    res:
+    4
+    9
+   */
+    public static void qheap1(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int q = sc.nextInt();
+        TreeSet<Integer> set = new TreeSet();
+        Integer smallest = null;
+        for(int i=0; i<q; i++){
+            int op = sc.nextInt();
+
+            switch (op){
+                case 1:
+                    int n= sc.nextInt();
+                    set.add(n);
+
+                    if(smallest==null){
+                        smallest=n;
+                    }
+                    else if(smallest > n){
+                        smallest=n;
+                    }
+
+                    break;
+
+                case 2:
+                    n= sc.nextInt();
+                    set.remove(n);
+                    if(smallest==n){
+                        if(set.isEmpty()){
+                            smallest=null;
+                        } else {
+                            smallest= set.iterator().next();
+                        }
+
+                    }
+
+                    break;
+
+                case 3:
+                    System.out.println(smallest);
+                    break;
+            }
+        }
+    }
+
+    /*
+    Skyline Real Estate Developers is planning to demolish a number of old,
+    unoccupied buildings and construct a shopping mall in their place.
+    Your task is to find the largest solid area in which the mall can be constructed.
+
+    There are a number of buildings in a certain two-dimensional landscape.
+    Each building has a height, given by h[i] where i belongs [1,n].
+    If you join k adjacent buildings, they will form a solid rectangle of area kxmin(h[i],h[i+1],....
+
+    Example
+    h = 3,2,3
+    A rectangle of height 2 and length 3 can be constructed within the boundaries.
+    The area formed is h*k = 2*3=6.
+
+     System.out.println(largestRectangle(List.of(1,2,3,4,5)));
+ */
+    public static long largestRectangle(List<Integer> h) {
+        // Write your code here
+        int heights[] = new int[h.size()+1];
+        for(int i=0; i<h.size();i++){
+            heights[i]= h.get(i);
+        }
+
+        long maxArea = 0;
+        Stack<Integer> indices = new Stack<Integer>();
+        for (int i = 0; i < heights.length; i++) {
+            while (!indices.empty() && heights[i] <= heights[indices.peek()]) {
+                int index = indices.pop();
+                long area = (long) heights[index]
+                        * (i - (indices.empty() ? 0 : (indices.peek() + 1)));
+                maxArea = Math.max(maxArea, area);
+            }
+            indices.push(i);
+        }
+        return maxArea;
+    }
     //END HACKER RANK
 
 
