@@ -3698,34 +3698,6 @@ times node value is greater or equal to max value
         return true;
     }
 
-    //PriorityQueue good performance, from smaller to top all the time
-    //poll retrieves and remove the tiniest element always
-    public static int cookies(int k, List<Integer> A) {
-        // Write your code here
-        int count=0;
-
-        PriorityQueue<Integer> priorityQueue = new PriorityQueue<>();
-        for(Integer i:A){
-            priorityQueue.add(i);
-        }
-        if(priorityQueue.peek()>=k){
-            return 0;
-        }
-
-        while(priorityQueue.size()>1 && k>count && priorityQueue.peek()<k){
-            int value = priorityQueue.poll()+(priorityQueue.poll()*2);
-            count++;
-            priorityQueue.add(value);
-
-        }
-        if (priorityQueue.size() == 0)
-            return -1;
-
-        if (priorityQueue.peek().intValue() >= k)
-            return count;
-        else
-            return -1;
-    }
 
     public static int legoBlocks(int n, int m) {
         // Write your code here
@@ -5668,6 +5640,8 @@ Update If they initially set counter to , Richard wins. Louise cannot make a mov
  */
     public static long largestRectangle(List<Integer> h) {
         // Write your code here
+        //size+1 so we get an extra 0 value at the last position
+        //of the array
         int heights[] = new int[h.size()+1];
         for(int i=0; i<h.size();i++){
             heights[i]= h.get(i);
@@ -5676,8 +5650,12 @@ Update If they initially set counter to , Richard wins. Louise cannot make a mov
         long maxArea = 0;
         Stack<Integer> indices = new Stack<Integer>();
         for (int i = 0; i < heights.length; i++) {
+            //since we will have 0 in the last position we make sure it goes in here
+            //at least once to evaluate
             while (!indices.empty() && heights[i] <= heights[indices.peek()]) {
                 int index = indices.pop();
+                //i is always last less value
+                //while it is popping it increases the multiplier
                 long area = (long) heights[index]
                         * (i - (indices.empty() ? 0 : (indices.peek() + 1)));
                 maxArea = Math.max(maxArea, area);
@@ -5685,6 +5663,104 @@ Update If they initially set counter to , Richard wins. Louise cannot make a mov
             indices.push(i);
         }
         return maxArea;
+    }
+
+    /*
+    Jesse loves cookies and wants the sweetness of some cookies to be greater than value k.
+    To do this, two cookies with the least sweetness are repeatedly mixed. This creates a special combined cookie with:
+    sweetness = 1 x Least sweet cookie + 2 x 2nd least sweet cookie).
+
+    This occurs until all the cookies have a sweetness >=k.
+
+    Given the sweetness of a number of cookies, determine the minimum number of operations required. If it is not possible, return -1.
+
+    Example
+    k = 7
+    a = 1,2,3,9,10,12
+
+    1x1 + 2x2 = 5
+    -> 3,5,9,10,12
+
+    1x3 + 2x5 = 13
+    -> 9,10,12,13 all cookies have sweetness >=7 after 2 operations then return 2
+
+    The smallest values are .
+    Remove them then return  to the array. Now .
+    Remove  and return  to the array. Now .
+    Remove , return  and .
+    Finally, remove  and return  to . Now .
+    All values are  so the process stops after  iterations. Return .
+
+    System.out.println(cookies(7, Arrays.asList(1,2,3,9,10,12)));
+ */
+    public static int cookies(int k, List<Integer> A) {
+        // Write your code here
+        if(A.isEmpty()){
+            return -1;
+        }
+
+        PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.naturalOrder());
+        queue.addAll(A);
+
+        int count =0;
+
+        while(queue.peek()<k && queue.size()>=2){
+            int newCookie = queue.poll() + (queue.poll()*2);
+            queue.add(newCookie);
+            count++;
+        }
+
+        if(queue.peek()>= k && count>0){
+            return count;
+        } else if(queue.peek()>=k){
+            return 0;
+        }
+
+        return -1;
+    }
+
+    /*
+    Hackerland is a one-dimensional city with houses aligned at integral locations along a road.
+    The Mayor wants to install radio transmitters on the roofs of the city's houses.
+    Each transmitter has a fixed range meaning it can transmit a signal to all houses within that number of units distance away.
+
+    Given a map of Hackerland and the transmission range, determine the minimum number of transmitters so that every house is within range of at least one transmitter.
+    Each transmitter must be installed on top of an existing house.
+
+    Example
+    x = 1,2,3,5,9
+    k=1
+
+    3 antennae at houses 2 and 5 and 9 provide complete coverage. There is no house at location 7 to cover both 5 and 9.
+    Ranges of coverage, are 1,2,3, 5, and 9.
+
+    System.out.println(hackerlandRadioTransmitters(Arrays.asList(7,2,4,6,5,9,12,11), 2));
+ */
+    public static int hackerlandRadioTransmitters(List<Integer> h, int k) {
+        // Write your code here
+        Collections.sort(h);
+        int x[] = new int[h.size()];
+        for(int i=0; i<h.size();i++){
+            x[i] = h.get(i);
+        }
+
+        int counter = 0;
+        int i = 0;
+        while (i < x.length) {
+            counter++;
+            int leftStartingPoint = i;
+
+            while((i + 1 < x.length) && (x[i + 1] - x[leftStartingPoint] <= k)) {
+                i++;
+            }
+            int middlePoint = i;
+
+            while((i + 1 < x.length) && (x[i + 1] - x[middlePoint] <= k)) {
+                i++; }
+            i++;
+        }
+
+        return counter;
     }
     //END HACKER RANK
 
