@@ -5762,6 +5762,97 @@ Update If they initially set counter to , Richard wins. Louise cannot make a mov
 
         return counter;
     }
+
+    /*
+       Consider an n-integer sequence, A= {a0,a1,...an-1}.
+       We perform a query on A by using an integer, d, to calculate the result of the following expression:
+       min (max aj)
+       0<i<n-d   i<=j<i+d
+
+       In other words, if we let mi = max(ai+ai+1,)..., then you need to calculate min(m0,m1,...mn-d).
+
+       Given arr and q queries, return a list of answers to each query.
+
+       Example
+       arr = [2,3,4,5,6]
+       queries = [2,3]
+
+       The first query uses all of the subarrays of length 2: [2,3],[3,4],[4,5],[5,6]. The maxima of the subarrays are [3,4,5,6]. The minimum of these is 3.
+
+       The second query uses all of the subarrays of length 3: [2,3,4].[3,4,5],[4,5,6] . The maxima of the subarrays are [4,5,6]. The minimum of these is 4.
+
+       Return 3,4.
+
+       System.out.println(solve(Arrays.asList(2,3,4,5,6), Arrays.asList(2,3)));
+    */
+    public static List<Integer> solve(List<Integer> arr, List<Integer> queries) {
+        // Write your code here
+        List<Integer> maxList = new ArrayList<>();
+
+        for(int query : queries){
+            int minMax = Integer.MAX_VALUE;
+            int max = Integer.MIN_VALUE;
+
+            //calculate the initial maximum with in the first window
+
+            for(int i=0; i<query; i++){
+                max = Math.max(max, arr.get(i));
+            }
+
+            minMax = Math.min(minMax, max);
+
+            //slide the window and update the maximum
+
+            for(int i=query; i<arr.size();i++){
+                //remove the element that goes out of the window
+                if(arr.get(i-query)==max){
+                    max = Integer.MIN_VALUE;
+                    //recalculate the maximum within the current window
+                    for(int j=i-query+1;j<=i;j++){
+                        max = Math.max(max, arr.get(j));
+                    }
+                }
+
+                //update the window with the new element
+                max = Math.max(max, arr.get(i));
+                //update the window with the minimums of maximums
+                minMax = Math.min(minMax, max);
+            }
+            maxList.add(minMax);
+        }
+        return maxList;
+    }
+
+    /*
+    A string is said to be a child of a another string if it can be formed by deleting 0 or more characters from the other string.
+    Letters cannot be rearranged. Given two strings of equal length, what's the longest string that can be constructed such that it is a child of both?
+
+    Example
+    s1 = ABCD
+    s2 = ABDC
+
+    These strings have two children with maximum length 3, ABC and ABD.
+    They can be formed by eliminating either the D or C from both strings. Return 3.
+
+    System.out.println(commonChild("HARRY", "SALLY"));
+ */
+    public static int commonChild(String str1, String str2) {
+        // Write your code here
+        int L[][] = new int[str1.length()+1][str2.length()+1];
+        for(int i=0;i<=str1.length();i++){
+            for(int j=0;j<=str2.length();j++){
+                if(i==0 || j==0)
+                    L[i][j]=0;
+                else if(str1.charAt(i-1)==str2.charAt(j-1)){
+                    L[i][j] = L[i-1][j-1]+1;
+                }
+                else{
+                    L[i][j] = Math.max(L[i-1][j],L[i][j-1]);
+                }
+            }
+        }
+        return L[str1.length()][str2.length()];
+    }
     //END HACKER RANK
 
 
