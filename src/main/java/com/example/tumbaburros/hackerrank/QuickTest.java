@@ -1,18 +1,14 @@
 package com.example.tumbaburros.hackerrank;
 
-import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.function.Function;
+
 
 public class QuickTest {
 
 
-
-
-
-    static class TreeNode {
+  static class TreeNode {
       int val;
       TreeNode left;
       TreeNode right;
