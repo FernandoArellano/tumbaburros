@@ -1,5 +1,6 @@
 package com.example.tumbaburros.strings;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -34,11 +35,16 @@ public class Main {
 
         System.out.println(s.subSequence(0,4));
 
-        String s2= "Jose Ferbabdi\n\t dd".translateEscapes();
+        String s2= "Jose Ferbabdi\n\t dd";
         System.out.println(s2);
+        System.out.println(s2.translateEscapes());
 
         String[] array = s.split(" ");
         Stream.of(array).forEach(System.out::println);
+
+        List<String> lista = List.of("aaa","bbb");
+        Stream.of(lista).forEach(System.out::println);
+        lista.forEach(System.out::println);
 
         System.out.println(s.replace("fer", "XXX"));
 
@@ -64,5 +70,28 @@ public class Main {
         //String join
         String link="Un link a poner guiones";
         System.out.println(String.join("-",link.split(" ")));
+
+        String fer = "jose fernando arellano saldaña";
+        IntStream intStream = fer.chars();
+
+        intStream.mapToObj(Character::toChars).forEach(System.out::println);
+        int total = fer.chars().sum();
+        System.out.println(total);
+
+
+        System.out.println(String.join(";", new String[]{"fer","  aaa", "mdmd  f  f"}));
+
+        //lines
+        //returns a Stream of String for each \n
+        String separado = "Jose\nFernando\nArellano\tSaldaña";
+
+        separado.lines().forEach(System.out::println);
+
+        //strip
+        String toStrip = "      jose fernando       ";
+        System.out.println(toStrip.strip());
+        System.out.println(toStrip.stripIndent());
+        System.out.println(toStrip.stripTrailing());
+
     }
 }
