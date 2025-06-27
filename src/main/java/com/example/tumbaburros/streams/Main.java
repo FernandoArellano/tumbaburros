@@ -120,5 +120,28 @@ public class Main {
                       Collectors.maxBy(Comparator.comparingInt(String::length)),
                       Optional::get))));
 
+        //create a set from a list
+        List<Integer> nums3 = List.of(9,1, 2, 2, 3);
+        Set<Integer> set = nums3.stream().collect(Collectors.toCollection(TreeSet::new));
+        System.out.println(set);
+
+        //create map with starting letter and the values which start with it
+        List<String> nombres2 = List.of("Ana", "Alberto", "Bruno", "Bea");
+        Map<Character, List<String>> collect1 = nombres2.stream().collect(Collectors.groupingBy(n -> n.charAt(0)));
+        System.out.println(collect1);
+
+
+        //find first starting with letter p
+        List<String> nombres4 = List.of("Juan", "Pedro", "Ana");
+        System.out.println(nombres4.stream().filter(s->s.startsWith("P")).findFirst().orElse(""));
+
+        //merge lists
+        List<List<String>> listas2 = List.of(List.of("a", "b"), List.of("c"));
+        List<String> collect2 = listas2.stream().flatMap(List::stream).collect(Collectors.toList());
+        System.out.println(collect2);
+
+        List<String> nombres5 = List.of("Ana", "Pedro");
+        Map<String, Integer> collect3 = nombres5.stream().collect(Collectors.toMap(Function.identity(), String::length));
+        System.out.println(collect3);
     }
 }

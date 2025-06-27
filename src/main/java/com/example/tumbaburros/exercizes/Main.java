@@ -117,11 +117,97 @@ public class Main {
         System.out.println(longest);
     }
 
+    //reverse
+    public static void reverse(String word ){
+        int length = word.length();
+        char[] array = word.toCharArray();
+
+        for(int i=0; i<length/2; i++){
+            char temp = array[i];
+            array[i] = array[length-1-i];
+            array[length-1-i] = temp;
+        }
+
+        System.out.println(new String(array));
+    }
+
+    public static boolean palindrome(String word){
+
+        int length = word.length();
+
+        for(int i=0; i< length/2; i++){
+            if(word.charAt(i)!=word.charAt(length-1-i)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void secondLargest(List<Integer> list){
+        list.stream().sorted(Comparator.reverseOrder()).skip(1).limit(1).forEach(System.out::println);
+    }
+
+    public static int countVowels(String word){
+        Set<Character> set = new HashSet<>(){{add('a'); add('e'); add('i'); add('o'); add('u');}};
+        int count =0;
+        word = word.toLowerCase();
+        for(int i=0; i<word.length(); i++){
+            if(set.contains(word.charAt(i))){
+                count++;
+            }
+        }
+        return count;
+    }
+
+    //boxed to convert from int[] to Integer
+    public static void removeDuplicates(int[] array){
+
+        Set<Integer> set =Arrays.stream(array).boxed().collect(Collectors.toCollection(LinkedHashSet::new));
+        System.out.println(set);
+    }
+
+    public static boolean anagram(String a, String b){
+        char[] aArray = a.toCharArray();
+        char[] bArray = b.toCharArray();
+
+        Arrays.sort(aArray);
+        Arrays.sort(bArray);
+
+        return Arrays.equals(aArray, bArray);
+    }
+
+    public static void countOcurrences(String word){
+        char[] array = word.toCharArray();
+
+        Map<Character, Long> collect = word.chars().mapToObj(c -> (char) c).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        System.out.println(collect);
+    }
+
+    private static boolean arrayHasDuplicates(int[] ints) {
+        Set<Integer> set = new HashSet<>();
+       for(int i : ints){
+           if(!set.add(i)){
+               return true;
+           }
+       }
+       return false;
+    }
 
     public static void main(String[] args) {
         groupAnagram();line();
         moreFrequentWord(Stream.of("apple", "banana", "apple", "orange", "banana", "apple"), 2);line();
         longestSequence(Set.of(100, 4, 200, 1, 3, 2,5,6,7));line();
+        reverse("hola mundo");
+        System.out.println(palindrome("fereef"));
+        secondLargest(List.of(7,9,8,4,2,5,10));
+        System.out.println(countVowels("FernAndoaaaauu"));
+        removeDuplicates(new int[]{1,2,2,3,4,4,5});
+        System.out.println(anagram("fernnn","nnafer"));
+        countOcurrences("programa");
+        System.out.println(arrayHasDuplicates(new int[]{1,2,3,4}));
+
     }
+
+
 
 }
