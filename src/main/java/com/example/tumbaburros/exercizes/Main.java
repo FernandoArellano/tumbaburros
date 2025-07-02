@@ -193,6 +193,83 @@ public class Main {
        return false;
     }
 
+    //revert words
+    private static void revertWords(String[] array){
+        Stack<String> stack = new Stack<>();
+
+        Stream.of(array).forEach(s-> stack.push(s));
+
+        while(!stack.isEmpty()){
+            System.out.print(stack.pop() + " ");
+        }
+    }
+
+    //Validar palíndromo ignorando espacios y mayúsculas
+    private static boolean customPalindrome(String s){
+        String formatted = s.trim().replaceAll(" ", "").toLowerCase();
+        return formatted.equals(new StringBuilder(formatted).reverse().toString());
+    }
+
+    //extract only numbers
+    private static String extractNumbers(String s){
+        char[] array = s.toCharArray();
+        StringBuilder sb = new StringBuilder();
+
+        for(char c : array){
+            if(Character.isDigit(c)){
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    public static void countOcurrences2(String s){
+
+        System.out.println(s.chars().mapToObj(c -> (char)c).collect(Collectors.groupingBy(Function.identity(), Collectors.counting())));
+
+    }
+
+    public static boolean onlyLetters(String s){
+        char[] array = s.toCharArray();
+
+        for(char c: array){
+            if(!Character.isLetter(c)){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static void capWords(String s){
+        String[] array = s.split(" ");
+        StringBuilder sb = new StringBuilder();
+        List<String> result = Stream.of(array).map(ss->Character.toUpperCase(ss.charAt(0))+ss.substring(1)).collect(Collectors.toList());
+        result.forEach(System.out::println);
+    }
+
+    public static void compressWord(String s){
+        int counter=1;
+        StringBuilder sb = new StringBuilder();
+        char[] array = s.toCharArray();
+        char before = array[0];
+
+        for(int i=1; i<s.length();i++){
+            char current = array[i];
+            if(before==current){
+                counter++;
+                if(i+1==s.length()){
+                    sb.append(before).append(counter);
+                }
+            } else{
+                sb.append(before).append(counter);
+                counter=1;
+                before = current;
+            }
+        }
+        System.out.println(sb);
+    }
+
     public static void main(String[] args) {
         groupAnagram();line();
         moreFrequentWord(Stream.of("apple", "banana", "apple", "orange", "banana", "apple"), 2);line();
@@ -205,7 +282,14 @@ public class Main {
         System.out.println(anagram("fernnn","nnafer"));
         countOcurrences("programa");
         System.out.println(arrayHasDuplicates(new int[]{1,2,3,4}));
-
+        revertWords("Java es poderoso".split(" "));
+        System.out.println();
+        System.out.println(customPalindrome("Anita lava la tina"));
+        System.out.println(extractNumbers("Pedido #12345 entregado el 20-06-2025"));
+        countOcurrences2("entrevista");
+        System.out.println(onlyLetters("JavaStream1"));
+        capWords("java streams son poderosos");
+        compressWord("aaabbcddd");
     }
 
 
