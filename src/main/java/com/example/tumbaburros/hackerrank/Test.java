@@ -59,7 +59,7 @@ public class Test {
       Output: "AB"
    */
     public static String gcdOfStrings(String str1, String str2) {
-        if(!(str1+str2).equals(str2+str1)) return "";
+        if((str1+str2).equals(str2+str1)) return "";
         int gcd = getGcd(str1.length(), str2.length());
         return str1.substring(0, gcd);
     }
@@ -73,7 +73,8 @@ public class Test {
     /*
         There are n kids with candies. You are given an integer array candies, where each candies[i] represents the number of candies the
         ith kid has, and an integer extraCandies, denoting the number of extra candies that you have.
-        Return a boolean array result of length n, where result[i] is true if, after giving the ith kid all the extraCandies, they will have the greatest number of candies among all the kids, or false otherwise.
+        Return a boolean array result of length n, where result[i] is true if, after giving the ith kid all the extraCandies,
+        they will have the greatest number of candies among all the kids, or false otherwise.
 
         Note that multiple kids can have the greatest number of candies.
 
@@ -445,6 +446,8 @@ Return the maximum amount of water a container can store.
             }
             used.add(key);
             used.add(toLook);
+
+            
         }
 
         return operations;
@@ -6122,12 +6125,17 @@ Update If they initially set counter to , Richard wins. Louise cannot make a mov
 
         System.out.println(gamingArray(List.of(2,3,5,4,1)));
 
-        spiral(3,4);
+        //spiral(3,4);
 
-        System.out.println(superDigit2("9875",4));
+  //      System.out.println(superDigit2("9875",4));
 
         line();
 
+        System.out.println(gcdOfStrings("abce", "abcdef"));
+
+        line();
+
+        System.out.println(maxArea(new int[]{1,8,6,2,5,4,8,3,7}));
 
     }
 
