@@ -57,6 +57,10 @@ public class Test {
       ex: System.out.println(gcdOfStrings("ABABAB", "ABAB"));
       Input: str1 = "ABABAB", str2 = "ABAB"
       Output: "AB"
+
+      no puede ser abab dividiendo a abab por q s debe ser igual a t+t...+t any times, (i.e., t is concatenated with itself one or more times)
+      el mas grande q concatenando puede dividir ABAB as AB+AB. solo considera los length de las cadenas realmente no valida q si sean subcadenas
+      esta evaluando maximo divisor q en numero de caracteres permita concatenar al menos 1 vez al menor
    */
     public static String gcdOfStrings(String str1, String str2) {
         if((str1+str2).equals(str2+str1)) return "";
@@ -1172,7 +1176,8 @@ public static List<String> letterCombinations(String digits) {
         int n= cost.length;
         int[] temp = new int[n+1];
         Arrays.fill(temp,-1);
-        return minCost(cost,n,temp);
+        int result = minCost(cost,n,temp);
+        return result;
     }
 
     public static int minCost(int[] cost, int n, int[] temp){
@@ -1844,7 +1849,8 @@ then the span of today is 3 because starting from today, the price of the stock 
     Suppose every senator is smart enough and will play the best strategy for his own party.
     Predict which party will finally announce the victory and change the Dota2 game. The output should be "Radiant" or "Dire".
 
-    One strategy that would pass the judge (although not the most efficient) to think about the problem is for the first character in the string to move to the back and eliminate the first "opposing" character in the string. So in the case of "DDRRR":
+    One strategy that would pass the judge (although not the most efficient) to think about the problem is for the first character in the string
+    to move to the back and eliminate the first "opposing" character in the string. So in the case of "DDRRR":
 
     DDRRR - the first D moves to the back and takes out the first R
     DRRD - the first D moves to the back and takes out the first R
@@ -2643,9 +2649,11 @@ times node value is greater or equal to max value
 
     /*
     We hire 3 workers in total. The total cost is initially 0.
-    - In the first hiring round we choose the worker from [17,12,10,2,7,2,11,20,8]. The lowest cost is 2, and we break the tie by the smallest index, which is 3. The total cost = 0 + 2 = 2.
+    - In the first hiring round we choose the worker from [17,12,10,2,7,2,11,20,8]. The lowest cost is 2, and we break the tie by the smallest index, which is 3.
+    The total cost = 0 + 2 = 2.
     - In the second hiring round we choose the worker from [17,12,10,7,2,11,20,8]. The lowest cost is 2 (index 4). The total cost = 2 + 2 = 4.
-    - In the third hiring round we choose the worker from [17,12,10,7,11,20,8]. The lowest cost is 7 (index 3). The total cost = 4 + 7 = 11. Notice that the worker with index 3 was common in the first and last four workers.
+    - In the third hiring round we choose the worker from [17,12,10,7,11,20,8]. The lowest cost is 7 (index 3).
+    The total cost = 4 + 7 = 11. Notice that the worker with index 3 was common in the first and last four workers.
     The total hiring cost is 11.
     candidates is the size of the set starting or ending
     starting set of 4 candidates for from example = first 4 elements [17,12,10,2]
@@ -5931,10 +5939,10 @@ Update If they initially set counter to , Richard wins. Louise cannot make a mov
 
     static class ListNode {
         int val;
-        QuickTest.ListNode next;
+        ListNode next;
         ListNode() {}
         ListNode(int val) { this.val = val; }
-        ListNode(int val, QuickTest.ListNode next) { this.val = val; this.next = next; }
+        ListNode(int val, ListNode next) { this.val = val; this.next = next; }
     }
 
 
@@ -6131,12 +6139,28 @@ Update If they initially set counter to , Richard wins. Louise cannot make a mov
 
         line();
 
-        System.out.println(gcdOfStrings("abce", "abcdef"));
+        System.out.println(gcdOfStrings("abce", "defghi"));
 
         line();
 
         System.out.println(maxArea(new int[]{1,8,6,2,5,4,8,3,7}));
 
+        System.out.println(rob(new int[]{2,7,9,3,1}));
+
+        List<Integer> result6 = Arrays.stream(productExceptSelf(new int[]{1,2,3,4,5})).boxed().collect(Collectors.toList());
+        System.out.println(result6);
+
+        System.out.println(minEatingSpeed(new int[]{30,11,23,4,20},6));
+
+        System.out.println(maxProfit(new int[]{9,1,3,2,8,4}, 2));
+
+        dailyTemperatures(new int[]{73,74,75,71,69,72,76,73});
+
+        System.out.println("removestars:" + removeStars("erasea*****"));
+
+        System.out.println(predictPartyVictory("DDRRR"));
+
+        System.out.println(maxScore(new int[] {1,3,3,2}, new int[]{2,1,3,4}, 3));
     }
 
 
