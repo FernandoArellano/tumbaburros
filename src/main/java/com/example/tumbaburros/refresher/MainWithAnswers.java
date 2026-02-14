@@ -144,7 +144,7 @@ public class MainWithAnswers {
                 ));
     }
 
-    // 13. Obtener la lista de nombres de usuarios que han comprado productos de más de 500.
+    // 13. Obtener la lista de nombres de usuarios que han comprado productos de más de 1000.
     public static List<String> getUsuariosConComprasCaras(List<Usuario> usuarios) {
         return usuarios.stream()
                 .filter(
