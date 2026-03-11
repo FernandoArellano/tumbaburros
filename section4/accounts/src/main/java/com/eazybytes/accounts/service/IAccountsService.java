@@ -1,6 +1,7 @@
 package com.eazybytes.accounts.service;
 
 import com.eazybytes.accounts.dto.CustomerDto;
+import com.eazybytes.accounts.entity.Accounts;
 
 public interface IAccountsService {
 
@@ -31,5 +32,10 @@ public interface IAccountsService {
      */
     boolean deleteAccount(String mobileNumber);
 
+    boolean transferFunds(Long from, Long to, double amount);
+
+    void deduceFunds(Accounts account, double amount);
+
+    void addFunds(Accounts account, double amount);
 
 }

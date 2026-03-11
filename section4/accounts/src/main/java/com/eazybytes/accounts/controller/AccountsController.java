@@ -20,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
  * @author Eazy Bytes
  */
@@ -160,6 +162,13 @@ public class AccountsController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDto(AccountsConstants.STATUS_417, AccountsConstants.MESSAGE_417_DELETE));
         }
+    }
+
+    @PostMapping("{from}/{to}")
+    public ResponseEntity<String> transferFunds(@PathVariable Long from, @PathVariable Long to, @RequestBody Map<String, Double> request){
+        double amount = request.get("amount");
+        boolean completed = iAccountsService.transferFunds(from, to, amount);
+        return ResponseEntity.status(HttpStatus.OK).body("ok");
     }
 
 

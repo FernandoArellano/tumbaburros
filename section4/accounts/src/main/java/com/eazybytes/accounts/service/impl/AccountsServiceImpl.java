@@ -12,6 +12,7 @@ import com.eazybytes.accounts.mapper.CustomerMapper;
 import com.eazybytes.accounts.repository.AccountsRepository;
 import com.eazybytes.accounts.repository.CustomerRepository;
 import com.eazybytes.accounts.service.IAccountsService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +54,7 @@ public class AccountsServiceImpl  implements IAccountsService {
         newAccount.setAccountNumber(randomAccNumber);
         newAccount.setAccountType(AccountsConstants.SAVINGS);
         newAccount.setBranchAddress(AccountsConstants.ADDRESS);
+        newAccount.setBalance(customer.getBalance());
         return newAccount;
     }
 
@@ -113,5 +115,41 @@ public class AccountsServiceImpl  implements IAccountsService {
         return true;
     }
 
+
+    @Transactional
+    public boolean transferFunds(Long from, Long to, double amount){
+
+        Accounts fromAccount = accountsRepository.findById(from).orElseThrow(
+                () -> new ResourceNotFoundException("Account", "AccountNumber", from.toString())
+        );
+
+        this.deduceFunds(fromAccount, amount);
+
+
+        Accounts toAccount = accountsRepository.findById(to).orElseThrow(
+                () -> new ResourceNotFoundException("Account", "AccountNumber", to.toString())
+        );
+
+        addFunds(toAccount, amount);
+
+        return true;
+    }
+
+    public void deduceFunds(Accounts account, double amount){
+        if(account.getBalance()>=amount){
+            account.setBalance(account.getBalance()-amount);
+            accountsRepository.save(account);
+        } else {
+            throw new RuntimeException("amount not enough");
+        }
+    }
+
+    public void addFunds(Accounts account, double amount){
+        if(account.getBalance()<1){
+            throw new RuntimeException("To account is frozen");
+        }
+        account.setBalance(account.getBalance()+amount);
+        accountsRepository.save(account);
+    }
 
 }

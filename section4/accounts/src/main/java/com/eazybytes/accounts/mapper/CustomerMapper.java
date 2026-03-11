@@ -9,6 +9,7 @@ public class CustomerMapper {
         customerDto.setName(customer.getName());
         customerDto.setEmail(customer.getEmail());
         customerDto.setMobileNumber(customer.getMobileNumber());
+        customerDto.setBalance(customer.getBalance());
         return customerDto;
     }
 
@@ -16,6 +17,7 @@ public class CustomerMapper {
         customer.setName(customerDto.getName());
         customer.setEmail(customerDto.getEmail());
         customer.setMobileNumber(customerDto.getMobileNumber());
+        customer.setBalance(customerDto.getBalance());
         return customer;
     }
 
