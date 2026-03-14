@@ -5,6 +5,7 @@ import com.eazybytes.cards.dto.CardsDto;
 import com.eazybytes.cards.dto.ErrorResponseDto;
 import com.eazybytes.cards.dto.ResponseDto;
 import com.eazybytes.cards.service.ICardsService;
+import com.eazybytes.cards.service.impl.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Random;
+
 /**
  * @author Eazy Bytes
  */
@@ -34,7 +37,12 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class CardsController {
 
+    private final DolarService dolarService;
     private ICardsService iCardsService;
+    private RandomService randomService;
+    private final ServiceA serviceA;
+    private final ServiceB serviceB;
+    private final EmailService emailService;
 
     @Operation(
             summary = "Create Card REST API",
@@ -159,6 +167,32 @@ public class CardsController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDto(CardsConstants.STATUS_417, CardsConstants.MESSAGE_417_DELETE));
         }
+    }
+
+    @GetMapping("random")
+    public ResponseEntity<Integer> getRandom(){
+        return ResponseEntity.status(HttpStatus.OK).body(randomService.getNumber());
+    }
+
+    @GetMapping("circular")
+    public ResponseEntity<String> circular(){
+        serviceA.methodA();
+        serviceB.methodB();
+        return ResponseEntity.status(HttpStatus.OK).body("ok");
+    }
+
+    @GetMapping("async")
+    public ResponseEntity<String> async(){
+        System.out.println("entered controller");
+        emailService.sendEmail("hola fer", 1L);
+        System.out.println("sali del controller");
+        return ResponseEntity.status(200).body("ok");
+    }
+
+    @GetMapping("dolar")
+    public ResponseEntity<String> dolar(){
+        double price = dolarService.getDolarPrice(1L);
+        return ResponseEntity.status(200).body(String.valueOf(price));
     }
 
 }

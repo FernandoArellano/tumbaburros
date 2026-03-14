@@ -1,11 +1,13 @@
 package com.example.tumbaburros.refresher;
 
+import com.example.tumbaburros.java8.Student;
 import com.example.tumbaburros.streams.DataSource;
 import com.example.tumbaburros.streams.Pedido;
 import com.example.tumbaburros.streams.Producto;
 import com.example.tumbaburros.streams.Usuario;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -14,35 +16,86 @@ public class Main {
 
     public static void main(String[] args) {
 
+        List<Student> students = Util.getStudents();
+
+        //Collectors.toCollection(TreeSet::new)
+        Set<Integer> grades= students.stream().map(s->s.getGrade()).collect(Collectors.toCollection(TreeSet::new));
+        System.out.println(grades);
+
+
+        //collectors comparingandthen   Encontrar el mejor grade por escuela
+        Map<String, Student> collect2 = students.stream().collect(Collectors.groupingBy(
+                Student::getSchool,
+                Collectors.collectingAndThen(
+                        Collectors.maxBy(Comparator.comparing(Student::getGrade)), optional -> optional.orElse(null)
+                )
+        ));
+        System.out.println(collect2);
+
+
+        //collectors.filtering get school and list of students with grade 5 or above
+        Map<String, List<Student>> collect1 = students.stream().collect(Collectors.groupingBy(
+                Student::getSchool,
+                Collectors.filtering(s -> s.getGrade() >= 5, Collectors.toList())
+        ));
+        System.out.println(collect1);
+
+
+        //collectors partitioning by from a list return alumns with grade above 5 and below or equal to 5
+
+        Map<Boolean, List<Student>> collect = students.stream().collect(Collectors.partitioningBy(s -> s.getGrade() >= 6));
+        System.out.println(collect);
+
+
         //from a list of strings, join all words separated by space with , considering that each element in the list might have more than 1 word
+        //arrays.stream
         List<String> sentences = Arrays.asList("hello world", "java is awesome");
         System.out.println(sentences);
-
+        String collect3 = sentences.stream().flatMap(s -> Arrays.stream(s.split(" "))).collect(Collectors.joining(","));
+        System.out.println(collect3);
+        Stream<String> stream = Arrays.stream(new String[]{"fer", "adf"});
+        Set<String> collect4 = stream.collect(Collectors.toSet());
 
         //get 10 random numbers from 0 to 999 and add 10 to each one of them, then print the list
-
+        List<Integer> integers = Stream.generate(() -> new Random().nextInt(999)).limit(10).map(i -> i + 10).toList();
+        System.out.println(integers);
 
 
         //from a list of emails get a map of the dominion (.com) as kwy and the elements which have that dominion as value
         List<String> correos = List.of("foo@bar.com", "baz@bar.com", "foo@baz.com");
+        Map<String, List<String>> collect5 = correos.stream().collect(Collectors.groupingBy(
+                s -> s.split("@")[0], Collectors.toList()
+        ));
+        System.out.println(collect5);
 
 
         //get the longest word from a list of strings
         List<String> palabras = List.of("stream", "java", "colecciones", "api");
-
+        String longest = palabras.stream().max(Comparator.comparing(String::length)).orElse("error");
+        System.out.println(longest);
 
 
         //from a list of names, group them into initial letter as key and the and the longest word with that initial as value
         List<String> nombres3 = List.of("Ana", "Alberto", "Bruno", "Benito");
+        Map<Character, String> collect6 = nombres3.stream().collect(Collectors.groupingBy(
+                s -> s.charAt(0),
+                Collectors.collectingAndThen(
+                        Collectors.maxBy(Comparator.comparing(s -> s.length())), optional -> optional.get()
+                )
+        ));
+        System.out.println(collect6);
 
 
         //convert list of numbers into sorted set using treeset
         List<Integer> nums = List.of(3, 1, 4, 2, 3);
+        TreeSet<Integer> collect7 = nums.stream().collect(Collectors.toCollection(TreeSet::new));
+        System.out.println(collect7);
 
 
         //get sum of cuadratic values from list (2*2)+(3*3...
         List<Integer> nums2 = List.of(2, 3, 4);
-
+        Integer i3 = nums2.stream().map(i -> i * 2).reduce((i1, i2) -> i1 + i2).orElse(-1);
+        System.out.println(i3);
 
 
         List<Usuario> usuarios = DataSource.getUsuarios();
@@ -73,78 +126,125 @@ public class Main {
 
     // 4. Listar todos los pedidos realizados (sin duplicados).
     public static List<Pedido> getTodosLosPedidos(List<Usuario> usuarios) {
-        return null;
+
+        return usuarios.stream().flatMap(u->u.getPedidos().stream()).distinct().toList();
     }
 
     // 5. Obtener la suma total gastada por un usuario específico (por nombre).
     public static double getTotalGastadoPorUsuario(List<Usuario> usuarios, String nombre) {
-        return 0;
+        return usuarios.stream().filter(u->u.getNombre().equals(nombre))
+                .flatMap(u->u.getPedidos().stream())
+                .flatMap(p->p.getProductos().stream())
+                .mapToDouble(Producto::getPrecio).sum();
 
     }
 
     // 6. Listar todos los productos comprados de la categoría "Tecnología".
     public static List<Producto> getProductosTecnologia(List<Usuario> usuarios) {
-        return null;
+        return usuarios.stream()
+                .flatMap(u->u.getPedidos().stream())
+                .flatMap(p->p.getProductos().stream())
+                .filter(p->p.getCategoria().equals("Tecnologia"))
+                .toList();
     }
 
     // 7. Obtener el promedio de edad de los usuarios.
     public static double getPromedioEdad(List<Usuario> usuarios) {
-        return 0;
+
+        return usuarios.stream().mapToDouble(Usuario::getEdad).average().getAsDouble();
     }
 
 
     // 10. Contar cuántos usuarios tienen más de 1 pedido.
     public static long contarUsuariosConMasDeUnPedido(List<Usuario> usuarios) {
-        return 0;
+        return usuarios.stream()
+                .filter(u->u.getPedidos().stream().count()>1)
+                .count();
     }
 
     // 11. Obtener el producto más barato comprado.
     public static Optional<Producto> getProductoMasBarato(List<Usuario> usuarios) {
-        return null;
+        return usuarios.stream()
+                .flatMap(u->u.getPedidos().stream())
+                .flatMap(p->p.getProductos().stream())
+                .min(Comparator.comparing(Producto::getPrecio));
     }
 
     // 12. Crear un mapa usuario->total gastado.
     public static Map<String, Double> getTotalPorUsuario(List<Usuario> usuarios) {
-        return null;
+
+        return usuarios.stream().collect(
+                Collectors.toMap(Usuario::getNombre,
+                      u->u.getPedidos().stream().flatMap(p->p.getProductos().stream())
+                              .mapToDouble(Producto::getPrecio).sum()
+                )
+        );
+
     }
 
     // 13. Obtener la lista de nombres de usuarios que han comprado productos de más de 500.
     public static List<String> getUsuariosConComprasCaras(List<Usuario> usuarios) {
-        return null;
+
+        return usuarios.stream()
+                .filter(u->u.getPedidos().stream()
+                        .flatMap(p->p.getProductos().stream()).anyMatch(p->p.getPrecio()>500))
+                .map(u->u.getNombre()).toList();
     }
 
 
 
     // 16. Calcular el pedido más antiguo realizado.
     public static Optional<Pedido> getPedidoMasAntiguo(List<Usuario> usuarios) {
-        return null;
+
+        return usuarios.stream()
+                .flatMap(u->u.getPedidos().stream())
+                .min(Comparator.comparing(Pedido::getFecha));
     }
 
 
     // 19. Contar cuántos productos ha comprado en total el sistema.
     public static long contarProductosTotales(List<Usuario> usuarios) {
-        return 0;
+
+        return usuarios.stream()
+                .flatMap(u->u.getPedidos().stream())
+                .flatMap(p->p.getProductos().stream())
+                .count();
     }
 
 
     // 21. Obtener el promedio de precio de productos por categoría.
     public static Map<String, Double> getPromedioPrecioPorCategoria(List<Usuario> usuarios) {
-        return null;
+        return usuarios.stream()
+                .flatMap(u->u.getPedidos().stream())
+                .flatMap(p->p.getProductos().stream())
+                .collect(Collectors.groupingBy(
+                        Producto::getCategoria,
+                        Collectors.averagingDouble(Producto::getPrecio)
+                ));
     }
 
     // 25. Obtener el gasto total de todos los pedidos.
     public static double getGastoTotalSistema(List<Usuario> usuarios) {
-        return 0;
+        return usuarios.stream()
+                .flatMap(u->u.getPedidos().stream())
+                .flatMap(p->p.getProductos().stream())
+                .mapToDouble(Producto::getPrecio)
+                .sum();
     }
 
     // 27. Verificar si todos los usuarios tienen al menos un pedido.
     public static boolean todosTienenPedidos(List<Usuario> usuarios) {
-        return false;
+        return usuarios.stream()
+                .allMatch(u->u.getPedidos().size()>0);
     }
 
     // 28. Encontrar el usuario con más gasto total.
     public static Optional<Usuario> getUsuarioConMasGasto(List<Usuario> usuarios) {
-        return null;
+        return usuarios.stream().max(Comparator.comparing(
+                u->u.getPedidos().stream()
+                        .flatMap(p->p.getProductos().stream())
+                        .mapToDouble(Producto::getPrecio).sum()
+        ));
     }
 
 
@@ -154,7 +254,27 @@ public class Main {
          Return the merged string.
      */
     public static String mergeAlternately(String word1, String word2) {
-        return null;
+
+        int size = word1.length() + word2.length();
+        int counter= 0;
+        int position =0;
+        StringBuilder sb = new StringBuilder();
+
+        while(counter<size){
+            if(position<word1.length()){
+                sb.append(word1.charAt(position));
+                counter++;
+            }
+
+            if(position<word2.length()){
+                sb.append(word2.charAt(position));
+                counter++;
+            }
+
+            position++;
+        }
+
+        return sb.toString();
     }
 
     /*

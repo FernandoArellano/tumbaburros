@@ -1,10 +1,9 @@
 package com.eazybytes.cards.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -29,5 +28,8 @@ public class Cards extends BaseEntity {
     private int amountUsed;
 
     private int availableAmount;
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
+    private List<Plastic> plastics;
 
 }
