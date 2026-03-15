@@ -1,5 +1,6 @@
 package com.example.tumbaburros.refresher;
 
+import com.example.tumbaburros.java8.Person;
 import com.example.tumbaburros.java8.Student;
 import com.example.tumbaburros.streams.DataSource;
 import com.example.tumbaburros.streams.Pedido;
@@ -627,4 +628,26 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
                         LinkedHashMap::new
                 ));
     }
+
+    //mapping inside a grouping does the map
+//    Map<String,List<String>> result =
+//            people.stream()
+//                    .collect(Collectors.groupingBy(
+//                            Person::city,
+//                            Collectors.mapping(Person::name, Collectors.toList())
+//                    ));
+
+
+    //multilevelgrouping
+//    Map<String, Map<Integer, List<Person>>> result =
+//            people.stream()
+//                    .collect(Collectors.groupingBy(
+//                            Person::city,
+//                            Collectors.groupingBy(Person::age)
+//                    ));
+
+    //summirizing use
+//    DoubleSummaryStatistics stats =
+//            people.stream()
+//                    .collect(Collectors.summarizingDouble(Person::salary));
 }
