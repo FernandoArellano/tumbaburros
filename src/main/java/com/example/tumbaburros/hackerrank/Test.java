@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -360,23 +361,17 @@ public class Test {
  */
     public static boolean isSubsequence(String s, String t) {
         Queue<Character> queue = new LinkedList<>();
-
+//
         for(char c: s.toCharArray()){
             queue.add(c);
         }
 
         for(char c: t.toCharArray()){
-            if(s.contains(String.valueOf(c))){
-                if(!queue.isEmpty() && c== queue.peek()){
-                    queue.poll();
-                }
+            if(queue.contains(c)&& queue.peek()==c){
+                queue.poll();
             }
         }
-
-        if(!queue.isEmpty()){
-            return false;
-        }
-        return true;
+        return queue.isEmpty();
     }
 
 
@@ -393,25 +388,30 @@ public class Test {
 Return the maximum amount of water a container can store.
    */
     public static int maxArea(int[] height) {
-        int maxArea = 0;
-        int left=0;
-        int right = height.length-1;
+       int length = height.length;
+       int left = 0;
+       int right = length-1;
+       int max = Integer.MIN_VALUE;
+       int amount=0;
 
-        while(left<right){
-            int total = getTotal(height, left, right);
-            if(total>maxArea){
-                maxArea = total;
-            }
+       while(left<right){
+           if(height[left]<height[right]){
+               amount = height[left] * (right-left);
+               left++;
+           } else if(height[left]>height[right]){
+               amount = height[right] * (right-left);
+               right--;
+           } else {
+               right--;
+           }
+           if(amount>max){
+               max = amount;
+           }
+       }
 
-            if(height[left]<height[right]){
-                left++;
-            } else {
-                right--;
-            }
-
-        }
-        return maxArea;
+        return max;
     }
+
     private static int getTotal(int[] height, int left, int right) {
         int multiplier = right - left;
         int minValue = Math.min(height[left], height[right]);
@@ -435,26 +435,25 @@ Return the maximum amount of water a container can store.
       System.out.println(maxOperations(new int[]{1,2,3,4},5));
    */
     public static int maxOperations(int[] nums, int k) {
-        int operations =0;
+        int countOperations = 0;
+        Arrays.sort(nums);
+        Map<Integer, Integer> collect = IntStream.of(nums).boxed().collect(Collectors.groupingBy(
+                Function.identity(), Collectors
+                        .collectingAndThen(Collectors.counting(), Long::intValue)));
+        Set<Integer> set = new HashSet<>();
 
-        Map<Integer, Long> map = IntStream.of(nums).boxed().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-        Set<Integer> used = new HashSet<>();
-
-        for(Map.Entry<Integer, Long> entry : map.entrySet()){
-            int key = entry.getKey();
-            int toLook = k-key;
-            if(key == toLook){
-                operations += entry.getValue()/2;
-            } else if(map.containsKey(toLook) && !used.contains(toLook)) {
-                operations+= Math.min(entry.getValue(),map.get(toLook));
+        for(Integer i: collect.keySet()) {
+            if(!set.contains(i)){
+                if(collect.containsKey(k-i)) {
+                    int min = Math.min(collect.get(i), collect.get(k - i));
+                    countOperations += min;
+                    set.add(i);
+                    set.add(k - i);
+                }
             }
-            used.add(key);
-            used.add(toLook);
-
-            
         }
 
-        return operations;
+        return countOperations;
     }
 
     //END 2 POINTERS
@@ -470,31 +469,35 @@ Return the maximum amount of water a container can store.
    */
 
     public static double findMaxAverage(int[] nums, int k) {
-        int max = Integer.MIN_VALUE;
-        int index=0;
-        java.math.BigDecimal result= new java.math.BigDecimal(0);
+        int maxOperations = (nums.length-k);
+        int counter = 0;
+        int starting = 0;
+        int ending = k;
+        int sum=0;
+        float maxAverage = Float.MIN_VALUE;
 
-        if(nums.length>=k){
-            while(index+k<=nums.length){
-                int tempMax =0;
-                for(int i=index, counter=0; counter<k; i++,counter++){
-                    tempMax+=nums[i];
-                }
-                if(tempMax>max){
-                    max=tempMax;
-                }
-                index++;
+        if(nums.length<k || nums.length==k){
+            for(int i=0; i<k; i++){
+                sum += nums[i];
             }
-            result = new java.math.BigDecimal(max).divide(new java.math.BigDecimal(k),5,java.math.BigDecimal.ROUND_HALF_UP);
-        } else if(nums.length>0){
-            for(int i=0; i<nums.length;i++){
-                max+= nums[i];
-            }
-            result = new java.math.BigDecimal(max).divide(new java.math.BigDecimal(nums.length),5,java.math.BigDecimal.ROUND_HALF_UP);
+            return sum/k;
         }
 
+        for(int i=0; i<k; i++){
+            sum += nums[i];
+        }
 
-        return result.doubleValue();
+        maxAverage = sum/k;
+
+        while(counter<maxOperations){
+            sum-= nums[starting];
+            sum+= nums[ending];
+            starting++;
+            ending++;
+            maxAverage = Math.max(maxAverage, sum/k);
+            counter++;
+        }
+        return maxAverage;
     }
 
     /*
@@ -508,37 +511,31 @@ Return the maximum amount of water a container can store.
 
  */
     public static int maxVowels(String s, int k) {
+        Set<Character>vowels = Set.of('a', 'e', 'i', 'o','u');
 
-        String vowels = "aeiou";
+        s= s.toLowerCase();
+        int countToK = 0;
+        int vowelsCount = 0;
+        int maxVowels =Integer.MIN_VALUE;
 
-        int maxVowelCount = 0;
-        int currentVowelCount = 0;
-
-        //vowels before k
-        for (int i = 0; i < k; i++) {
-            if (vowels.indexOf(s.charAt(i)) != -1) {
-                currentVowelCount++;
+        for(int i=0; i<s.length();i++){
+            if(countToK < k){
+                if(vowels.contains(s.charAt(i))){
+                    vowelsCount++;
+                }
+                countToK++;
+                maxVowels = Math.max(maxVowels, vowelsCount);
+            } else {
+                if(vowels.contains(s.charAt(i-k))){
+                    vowelsCount--;
+                }
+                if(vowels.contains(s.charAt(i))){
+                    vowelsCount++;
+                }
+                maxVowels = Math.max(maxVowels, vowelsCount);
             }
         }
-
-        maxVowelCount = Math.max(maxVowelCount, currentVowelCount);
-
-
-        for (int i = k; i < s.length(); i++) {
-
-            //after counting before k vowels, rest 1 if before starting character was a vowel
-            if (vowels.indexOf(s.charAt(i - k)) != -1) {
-                currentVowelCount--;
-            }
-
-            //add vowel count if current character is vowel
-            if (vowels.indexOf(s.charAt(i)) != -1) {
-                currentVowelCount++;
-            }
-
-            maxVowelCount = Math.max(maxVowelCount, currentVowelCount);
-        }
-        return maxVowelCount;
+       return maxVowels;
     }
 
     /*
@@ -546,24 +543,38 @@ Return the maximum amount of water a container can store.
 
         keep track of biggest, start only changes when there is a need to remove a 0 from the consecutive used
         to know number of elements current iteration i-start +1 due to index 0
-
+        System.out.println("Longest Ones: " + longestOnes( new int[]{1,1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1}, 3)
      */
     public static int longestOnes(int[] nums, int k) {
-        int start=0;
-        int biggest=0;
-        int zeros=0;
+       //1 1 1 1 0 1 1 1 0 0 1 1 0 0 0 1 1 1 1 1 1 1 0 1
+        Map<Integer, Integer> zerosMap = new LinkedHashMap<>();
+        int onesBeforeZero =0;
+        int countUsedK = 0;
+        int totalOnes = 0;
+        int maxOnes = Integer.MIN_VALUE;
 
         for(int i=0; i<nums.length;i++){
-            zeros+= nums[i]==0 ? 1 : 0;
-
-            while(zeros>k){
-                zeros -= nums[start]==1 ? 0 :1;
-                start++;
+            if(nums[i]==1){
+                onesBeforeZero++;
+                totalOnes++;
+                maxOnes = Math.max(maxOnes, totalOnes);
+            }else {
+                zerosMap.put(i, onesBeforeZero);
+                onesBeforeZero =0;
+                if(countUsedK<k){
+                    countUsedK++;
+                    totalOnes++;
+                } else {
+                    int zeroIndexToRemove = zerosMap.keySet().stream().findFirst().get();
+                    int onesToRemove = zerosMap.get(zeroIndexToRemove) + 1;
+                    totalOnes -= onesToRemove;
+                    zerosMap.remove(zeroIndexToRemove);
+                    totalOnes++;
+                }
+                maxOnes = Math.max(maxOnes, totalOnes);
             }
-
-            biggest = Math.max(biggest, ((i-start)+1));
         }
-        return biggest;
+        return maxOnes;
     }
 
     /*
@@ -5948,6 +5959,10 @@ Update If they initially set counter to , Richard wins. Louise cannot make a mov
 
     public static void main(String[] args) throws ParseException {
        // ranks();
+        System.out.println("Longest Ones: " + longestOnes( new int[]{1,1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1}, 3));
+        System.out.println(maxVowels("abciiidef",3));
+        System.out.println(findMaxAverage(new int[]{1,12,-5,-6,50,3},4));
+        System.out.println(maxOperations(new int[]{1,1,2,3,4,2,3,4},5));
         List<Integer> result = climbingLeaderboard(new ArrayList<Integer>(Arrays.asList(100,100,90,90,80)), new ArrayList<Integer>(Arrays.asList(30,60,80,90,101)));
         System.out.println(result);line();
 

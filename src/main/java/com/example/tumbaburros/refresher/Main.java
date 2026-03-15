@@ -292,7 +292,14 @@ public class Main {
     public static List<Boolean> kidsWithCandies(int[] candies, int extraCandies) {
         List<Boolean> result = new LinkedList<>();
 
-
+        int max = IntStream.of(candies).boxed().max(Comparator.naturalOrder()).orElse(-1);
+        for(int i: candies){
+            if(i+extraCandies>=max){
+                result.add(true);
+            } else{
+                result.add(false);
+            }
+        }
 
         return result;
     }
@@ -306,7 +313,25 @@ public class Main {
           ex: System.out.println(reverseVowels("hello"));
        */
     public static String reverseVowels(String s) {
-        return null;
+
+        Set<Character> set = Set.of('a','e','i','o','u');
+        Stack<Character> stack = new Stack<>();
+        StringBuilder sb= new StringBuilder();
+
+        for(int i=0; i<s.length(); i++){
+            if(set.contains(s.charAt(i))){
+                stack.push(s.charAt(i));
+            }
+        }
+
+        for(int i=0; i<s.length();i++){
+            if(set.contains(s.charAt(i))){
+                sb.append(stack.pop());
+            } else {
+                sb.append(s.charAt(i));
+            }
+        }
+        return sb.toString();
     }
 
     /*
@@ -323,7 +348,21 @@ public class Main {
    */
     public static String reverseWords(String s) {
 
-        return null;
+        s= s.replaceAll(" +", " ");
+        String[] array = s.split(" ");
+        Stack<String>stack = new Stack<>();
+        for(String ss: array){
+            stack.push(ss);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while(!stack.isEmpty()){
+            sb.append(stack.pop());
+            if(!stack.isEmpty()){
+                sb.append(" ");
+            }
+        }
+        return sb.toString();
     }
 
     /*
@@ -339,6 +378,18 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
 */
     public static boolean increasingTriplet(int[] nums) {
 
+        int medium = Integer.MAX_VALUE;
+        int small = Integer.MAX_VALUE;
+
+        for(int big:nums){
+            if(big<small){
+                small= big;
+            } else if(big<medium){
+                medium = big;
+            } else{
+                return true;
+            }
+        }
 
         return false;
     }
@@ -359,7 +410,31 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     */
     public static int compress(char[] chars) {
 
-        return 0;
+        if(chars.length<=1) return chars.length;
+
+        char previous = chars[0];
+        int counter=1;
+        StringBuilder sb = new StringBuilder();
+
+        for(int i =1; i<chars.length; i++){
+            if(chars[i]== previous){
+                counter++;
+            } else {
+                sb.append(previous).append(counter);
+                counter=1;
+                previous = chars[i];
+                if(i+1 == chars.length){
+                    sb.append(previous).append(counter);
+                }
+            }
+        }
+
+        if(counter>1){
+            sb.append(previous).append(counter);
+        }
+
+        System.out.println(sb);
+        return sb.length();
     }
 
     /*
@@ -370,17 +445,46 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
 */
     public static void moveZeroes(int[] nums) {
 
+        int zeros = 0;
+        int index=0;
+
+        for(int i=0; i<nums.length;i++){
+            if(nums[i]==0){
+                zeros++;
+            } else {
+                nums[index] = nums[i];
+                index++;
+            }
+        }
+        for(int i=0; i<zeros;i++){
+            nums[index]=0;
+            index++;
+        }
     }
 
 
     //check anagram (if 2 words have the same characters)
     public static boolean isAnagram(String a, String b) {
-        return false;
+        char[] a1 = a.toCharArray();
+        char[] b1 = b.toCharArray();
+
+        Arrays.sort(a1);
+        Arrays.sort(b1);
+        return Arrays.equals(a1,b1);
     }
 
     //Implement Stack Using Array
     static class ArrayStack {
         private int[] arr = new int[10];
+        int top=-1;
+
+        public void push(int x){
+             arr[++top] = x;
+        }
+
+        public int pop(){
+            return arr[top--];
+        }
 
     }
 
@@ -392,11 +496,135 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
 
     // reverse nodes
     public static Node reverse(Node head) {
+
+
         return null;
     }
 
     //create a cache class
     class LRUCache extends LinkedHashMap<Integer, Integer> {
 
+        int capacity;
+
+        LRUCache(int capacity){
+            super(capacity, 0.75f, true);
+            this.capacity=capacity;
+        }
+
+        public boolean removeEldestEntry(Map.Entry<Integer,Integer> eldest) {
+            return this.size()>capacity;
+        }
+
+
+    }
+    //balanced {[()]}
+    public boolean isValid(String s) {
+        Stack<Character> stack = new Stack<>();
+        for (char ch : s.toCharArray()) {
+            if (ch == '(' || ch == '[' || ch == '{') {
+                stack.push(ch);
+            } else {
+                if (stack.isEmpty()) {
+                    return false;
+                }
+                char top = stack.pop();
+                if (ch == ')' && top != '(') {
+                    return false;
+                }
+                if (ch == ']' && top != '[') {
+                    return false;
+                }
+                if (ch == '}' && top != '{') {
+                    return false;
+                }
+            }
+        }
+        return stack.isEmpty();
+    }
+
+    //merge 2 sorted arrays adding them to still be sorted without sorting after
+    public static int[] merge(int[] a, int[] b) {
+
+        int[] result = new int[a.length + b.length];
+        int i=0,j=0,k=0;
+
+        while(i<a.length && j<b.length){
+
+            if(a[i] < b[j])
+                result[k++] = a[i++];
+            else
+                result[k++] = b[j++];
+        }
+
+        while(i<a.length) result[k++] = a[i++];
+        while(j<b.length) result[k++] = b[j++];
+
+        return result;
+    }
+
+    //detect cycle (circular list with linkedlist
+    public static boolean hasCycle(Node head) {
+
+        Node slow = head;
+        Node fast = head;
+
+        while(fast != null && fast.next != null){
+
+            slow = slow.next;
+            fast = fast.next.next;
+
+            if(slow == fast)
+                return true;
+        }
+
+        return false;
+    }
+
+    //find intersection, elements in a which also exist in b
+    public static Set<Integer> intersection(int[] a, int[] b) {
+
+        Set<Integer> set = Arrays.stream(a)
+                .boxed()
+                .collect(Collectors.toSet());
+
+        return Arrays.stream(b)
+                .filter(set::contains)
+                .boxed()
+                .collect(Collectors.toSet());
+    }
+
+    //singleton double validation if its null
+     static class Singleton {
+
+        private static volatile Singleton instance;
+
+        private Singleton(){}
+
+        public static Singleton getInstance(){
+
+            if(instance == null){
+                synchronized(Singleton.class){
+                    if(instance == null){
+                        instance = new Singleton();
+                    }
+                }
+            }
+
+            return instance;
+        }
+    }
+
+    //sort from a map to a map with map value
+    public static Map<String,Integer> sortByValue(Map<String,Integer> map){
+
+        return map.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a,b)->a,
+                        LinkedHashMap::new
+                ));
     }
 }
