@@ -1,19 +1,31 @@
 package com.example.tumbaburros.refresher;
 
-import com.example.tumbaburros.java8.Person;
+
 import com.example.tumbaburros.java8.Student;
 import com.example.tumbaburros.streams.DataSource;
 import com.example.tumbaburros.streams.Pedido;
 import com.example.tumbaburros.streams.Producto;
 import com.example.tumbaburros.streams.Usuario;
 
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Main {
+
+    public static void toUse(){
+
+    }
 
     public static void main(String[] args) {
 
@@ -650,4 +662,258 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
 //    DoubleSummaryStatistics stats =
 //            people.stream()
 //                    .collect(Collectors.summarizingDouble(Person::salary));
+
+    class SimpleThreadPool {
+
+        private final BlockingQueue<Runnable> queue;
+        private final List<Worker> workers;
+
+        public SimpleThreadPool(int threads) {
+
+            queue = new LinkedBlockingQueue<>();
+            workers = new ArrayList<>();
+
+            for(int i=0;i<threads;i++){
+                Worker worker = new Worker();
+                workers.add(worker);
+                worker.start();
+            }
+        }
+
+        public void submit(Runnable task){
+            queue.offer(task);
+        }
+
+        class Worker extends Thread {
+
+            public void run(){
+
+                while(true){
+
+                    try {
+                        Runnable task = queue.take();
+                        task.run();
+                    }
+                    catch(Exception e){}
+                }
+            }
+        }
+    }
+
+    //deep copy of list of objects, clone list, but also the objects inside it
+    public List<Person> deepCopy(List<Person> list){
+
+        return list.stream()
+                .map(p -> new Person(p.getName(), p.getAge()))
+                .toList();
+    }
+
+    class Person{
+        String name;
+        int age;
+
+        public Person(String name, int age) {
+            this.name = name;
+            this.age = age;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+    }
+
+    //Implement Rate Limiter (token bucket to see if allow the request based in if
+    //there are tokens available
+    class RateLimiter {
+
+        private final int capacity;
+        private int tokens;
+        private long lastRefill;
+
+        public RateLimiter(int capacity){
+            this.capacity = capacity;
+            this.tokens = capacity;
+            this.lastRefill = System.currentTimeMillis();
+        }
+
+        synchronized boolean allowRequest(){
+
+            refill();
+
+            if(tokens > 0){
+                tokens--;
+                return true;
+            }
+
+            return false;
+        }
+
+        private void refill(){
+
+            long now = System.currentTimeMillis();
+
+            if(now - lastRefill > 1000){
+                tokens = capacity;
+                lastRefill = now;
+            }
+        }
+    }
+
+    //Find Longest Substring Without Repeating Characters
+    //using slidingWindow
+    public int longestUniqueSubstring(String s) {
+        int left = 0, maxLength = 0;
+        HashSet<Character> set = new HashSet<>();
+
+        for (int right = 0; right < s.length(); right++) {
+            // Contraer la ventana si hay un duplicado
+            while (set.contains(s.charAt(right))) {
+                set.remove(s.charAt(left));
+                left++;
+            }
+            // Expandir la ventana
+            set.add(s.charAt(right));
+            maxLength = Math.max(maxLength, right - left + 1);
+        }
+        return maxLength;
+    }
+
+    public void detectDeadlock(){
+        //detect Deadlock with ManagementFactory
+        ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+
+        long[] ids = bean.findDeadlockedThreads();
+
+        if(ids != null){
+            ThreadInfo[] infos = bean.getThreadInfo(ids);
+
+            for(ThreadInfo info : infos){
+                System.out.println(info.getThreadName());
+            }
+        }
+    }
+
+
+
+        //copy 2 arrays into a merged array
+    // find median value after merged
+        public static double median(int[] a, int[] b){
+
+            int[] merged = new int[a.length + b.length];
+
+            System.arraycopy(a,0,merged,0,a.length);
+            System.arraycopy(b,0,merged,a.length,b.length);
+
+            Arrays.sort(merged);
+
+            int mid = merged.length/2;
+
+            if(merged.length%2==0)
+                return (merged[mid-1]+merged[mid])/2.0;
+
+            return merged[mid];
+        }
+
+        //word count of a file with parallel stream
+    public void wordCountingFromFile() throws IOException {
+        Map<String,Long> count = Files.lines(Path.of("file.txt"))
+                .parallel()
+                .flatMap(line -> Arrays.stream(line.split(" ")))
+                .collect(Collectors.groupingBy(
+                        Function.identity(),
+                        Collectors.counting()
+                ));
+    }
+
+    //ForkJoinPool
+
+    //build Map implementation
+    public static <T,R> List<R> map(
+            List<T> list,
+            Function<T,R> mapper){
+
+        List<R> result = new ArrayList<>();
+
+        for(T element : list){
+            result.add(mapper.apply(element));
+        }
+
+        return result;
+    }
+
+    //prefix sum to give the sum of an array from L (left) to R (right)
+    public static int[] buildPrefixSum(int[] nums) {
+        int n = nums.length;
+        int[] prefixSum = new int[n];
+
+        if (n == 0) return prefixSum;
+
+        prefixSum[0] = nums[0];
+        for (int i = 1; i < n; i++) {
+            prefixSum[i] = prefixSum[i - 1] + nums[i]; // Accumulate the sum
+        }
+
+        return prefixSum;
+    }
+
+    // Query sum from index 1 to 3 (elements 2, 3, 4)
+    // Function to calculate the sum of a subarray from index L to R
+//    int[] arr = {1, 2, 3, 4, 5};
+//    // Build the prefix sum array
+//    int[] prefix = buildPrefixSum(arr);
+//    // Output: [1, 3, 6, 10, 15]
+
+
+    public static int rangeSum(int[] prefixSum, int L, int R) {
+        if (L == 0) {
+            return prefixSum[R];
+        } else {
+            return prefixSum[R] - prefixSum[L - 1]; // Constant time subtraction
+        }
+    }
+
+
+    //backtracking
+    //all combinacions from letters in a word
+    /**
+     * @param pasoActual Lo que hemos construido hasta ahora
+     * @param restantes  Lo que nos falta por usar
+     * @param lista      Donde guardamos los resultados finales
+     */
+    private static void permutar(String pasoActual, String restantes, List<String> lista) {
+        // CASO BASE: Si ya no quedan letras, hemos terminado una combinación
+        if (restantes.length() == 0) {
+            lista.add(pasoActual);
+            return;
+        }
+
+        for (int i = 0; i < restantes.length(); i++) {
+            // 1. ELEGIR: Tomamos una letra
+            char letra = restantes.charAt(i);
+
+            // 2. EXPLORAR: Llamada recursiva con el resto de las letras
+            // Quitamos la letra elegida de 'restantes'
+            String nuevoResto = restantes.substring(0, i) + restantes.substring(i + 1);
+
+            permutar(pasoActual + letra, nuevoResto, lista);
+
+            // 3. BACKTRACKING: En este caso es implícito.
+            // Al volver de la recursión, 'pasoActual' y 'restantes'
+            // conservan sus valores originales del ciclo anterior.
+        }
+    }
 }
+
+
