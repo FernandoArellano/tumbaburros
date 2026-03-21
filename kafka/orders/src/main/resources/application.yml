@@ -1,0 +1,34 @@
+server:
+  port: 9100
+spring:
+  data:
+    mongodb:
+      uri=mongodb://localhost:27017/notificationsms
+  cloud:
+    function:
+      definition: produceOrder
+    stream:
+      default-binder: kafka
+      kafka:
+        binder:
+          brokers: localhost:9092,localhost:9094
+          configuration:
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+      bindings:
+        # ? Producer binding
+        produceOrder-out-0:
+          destination: notificationTopic
+          content-type: text/plain
+
+        # ? Consumer binding
+        produceOrder-in-0:
+          destination: my-topic
+          group: my-order-group
+          content-type: text/plain
+
+logging:
+  level:
+    org.springframework.cloud.stream: DEBUG
+    org.springframework.kafka: DEBUG

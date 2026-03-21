@@ -1,0 +1,58 @@
+server:
+  port: 8080
+spring:
+  cloud:
+    function:
+      definition: produceMessage;consumeMessage
+    stream:
+      poller:
+        fixed-delay: 0
+      default-binder: kafka
+
+      bindings:
+        # ✅ Producer binding
+        produceMessage-out-0:
+          destination: my-topic
+          content-type: text/plain
+          producer:
+            use-native-encoding: true
+
+        # ✅ Consumer binding
+        consumeMessage-in-0:
+          destination: my-topic
+          group: my-consumer-group
+          content-type: text/plain
+        consumeMessage-out-0:
+          destination: testTopic
+          producer:
+            use-native-encoding: true
+
+      kafka:
+        binder:
+          brokers: localhost:9092,localhost:9094
+
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+  kafka:
+    bootstrap-servers: "localhost:9092,localhost:9094"
+    producer:
+      key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+      value-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+    consumer:
+      group-id: "my-consumer-group"
+      key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+      value-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"

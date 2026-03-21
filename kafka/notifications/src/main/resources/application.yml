@@ -1,0 +1,27 @@
+server:
+  port: 9200
+spring:
+  cloud:
+    function:
+      definition: notificationOrder
+    stream:
+      default-binder: kafka
+      kafka:
+        binder:
+          brokers: localhost:9092,localhost:9094
+          configuration:
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+      bindings:
+        notificationOrder-in-0:
+          destination: notificationTopic
+          group: my-notification-group
+          content-type: text/plain
+  mongodb:
+    uri: mongodb://localhost:27017/notificationsms
+
+logging:
+  level:
+    org.springframework.cloud.stream: DEBUG
+    org.springframework.kafka: DEBUG
