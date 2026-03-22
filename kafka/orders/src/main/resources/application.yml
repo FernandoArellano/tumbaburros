@@ -1,9 +1,6 @@
 server:
   port: 9100
 spring:
-  data:
-    mongodb:
-      uri=mongodb://localhost:27017/notificationsms
   cloud:
     function:
       definition: produceOrder
@@ -27,6 +24,8 @@ spring:
           destination: my-topic
           group: my-order-group
           content-type: text/plain
+  mongodb:
+    uri: mongodb://localhost:27017/ordersms
 
 logging:
   level:
