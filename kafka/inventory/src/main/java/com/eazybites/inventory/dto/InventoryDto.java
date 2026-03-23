@@ -1,4 +1,4 @@
-package com.eazybytes.orders.dto;
+package com.eazybites.inventory.dto;
 
 import lombok.*;
 
@@ -7,10 +7,9 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class OrderItemDto {
+public class InventoryDto {
+    private String id;
     private String productId;
     private String productName;
-    private float price;
-    private int quantity;
-    private String status;
+    private double quantityAvailable;
 }

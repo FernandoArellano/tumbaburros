@@ -18,4 +18,5 @@ public class Order {
     private String id;
     private List<OrderItemDto> orderItemDtos;
     private float total;
+    private String status;
 }

@@ -1,4 +1,4 @@
-package com.eazybytes.orders.dto;
+package com.eazybites.inventory.dto;
 
 
 import lombok.*;

@@ -12,4 +12,5 @@ public class OrderItemDto {
     private String productName;
     private float price;
     private int quantity;
+    private String status;
 }

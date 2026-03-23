@@ -1,0 +1,29 @@
+server:
+  port: 9300
+spring:
+  cloud:
+    function:
+      definition: inventoryOrder
+    stream:
+      default-binder: kafka
+      kafka:
+        binder:
+          brokers: localhost:9092,localhost:9094
+
+      bindings:
+        inventoryOrder-in-0:
+          destination: notificationTopic
+          group: my-inventory-group
+          content-type: application/json
+          consumer:
+            use-native-decoding: false
+        inventoryOrder-out-0:
+          destination: processedOrdersTopic
+          content-type: application/json
+  mongodb:
+    uri: mongodb://localhost:27017/inventoryms
+
+logging:
+  level:
+    org.springframework.cloud.stream: DEBUG
+    org.springframework.kafka: DEBUG
