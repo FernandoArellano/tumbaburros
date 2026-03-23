@@ -9,15 +9,14 @@ spring:
       kafka:
         binder:
           brokers: localhost:9092,localhost:9094
-          configuration:
-            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
       bindings:
         notificationOrder-in-0:
           destination: notificationTopic
           group: my-notification-group
-          content-type: text/plain
+          content-type: application/json
+          consumer:
+            use-native-decoding: false
   mongodb:
     uri: mongodb://localhost:27017/notificationsms
 

@@ -1,4 +1,4 @@
-package com.eazybytes.orders.dto;
+package com.eazybytes.notifications.dto;
 
 import lombok.*;
 

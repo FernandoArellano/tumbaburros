@@ -1,5 +1,7 @@
 package com.eazybytes.notifications.entity;
 
+import com.eazybytes.notifications.dto.OrderDto;
+import com.eazybytes.notifications.model.NotificationEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,16 +16,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class NotificationEntity {
 
-    public NotificationEntity(long date, String customer, int amount) {
-        this.date = date;
-        this.customer = customer;
-        this.amount = amount;
-    }
 
     @Id
     private String id;
-
+    private OrderDto orderDto;
+    private NotificationEnum notificationType;
     private long date;
-    private String customer;
-    private int amount;
+
 }

@@ -9,21 +9,21 @@ spring:
       kafka:
         binder:
           brokers: localhost:9092,localhost:9094
-          configuration:
-            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#          configuration:
+#            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
       bindings:
         # ? Producer binding
         produceOrder-out-0:
           destination: notificationTopic
-          content-type: text/plain
+          content-type: application/json
 
-        # ? Consumer binding
-        produceOrder-in-0:
-          destination: my-topic
-          group: my-order-group
-          content-type: text/plain
+#        # ? Consumer binding
+#        produceOrder-in-0:
+#          destination: my-topic
+#          group: my-order-group
+#          content-type: text/plain
   mongodb:
     uri: mongodb://localhost:27017/ordersms
 
