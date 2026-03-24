@@ -101,6 +101,14 @@
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter</artifactId>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -108,7 +116,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2025.1.0</version> <!-- Use the appropriate Oakwood version -->
+                <version>2025.1.1</version> <!-- Use the appropriate Oakwood version -->
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

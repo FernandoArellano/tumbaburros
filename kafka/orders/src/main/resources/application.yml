@@ -1,6 +1,9 @@
 server:
-  port: 9100
+#  #port: 9100
+  port: 0
 spring:
+  application:
+    name: orders-service
   cloud:
     function:
       definition: produceOrder
@@ -31,3 +34,10 @@ logging:
   level:
     org.springframework.cloud.stream: DEBUG
     org.springframework.kafka: DEBUG
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
