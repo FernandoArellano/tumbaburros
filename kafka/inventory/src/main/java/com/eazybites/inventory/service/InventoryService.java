@@ -46,6 +46,11 @@ public class InventoryService {
     }
 
     public double getAvailabilityForProduct(String productId){
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         Optional<InventoryEntity> optionalInventoryEntity = inventoryRepository.findByProductId(productId);
 
         return optionalInventoryEntity.map(InventoryEntity::getQuantityAvailable).orElse(0.0);

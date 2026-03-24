@@ -5,6 +5,14 @@ spring:
   application:
     name: orders-service
   cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: false
+      client:
+        config:
+          inventory-service:
+            connectTimeout: 2000
+            readTimeout: 2000
     function:
       definition: produceOrder
     stream:
@@ -41,3 +49,23 @@ eureka:
       defaultZone: http://localhost:8761/eureka
   instance:
     prefer-ip-address: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      inventoryService:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,circuitbreakers,circuitbreakerevents" # Include relevant endpoints
+  endpoint:
+    health:
+      show-details: "always"
