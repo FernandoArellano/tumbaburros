@@ -44,4 +44,10 @@ public class InventoryService {
 
         return orderDto;
     }
+
+    public double getAvailabilityForProduct(String productId){
+        Optional<InventoryEntity> optionalInventoryEntity = inventoryRepository.findByProductId(productId);
+
+        return optionalInventoryEntity.map(InventoryEntity::getQuantityAvailable).orElse(0.0);
+    }
 }

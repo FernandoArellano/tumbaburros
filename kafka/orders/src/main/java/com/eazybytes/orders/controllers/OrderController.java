@@ -30,6 +30,18 @@ public class OrderController {
         return new ResponseEntity<>(savedOrderDto, HttpStatus.CREATED);
     }
 
+    @PostMapping("/safeOrder")
+    public ResponseEntity<OrderDto> createSafeOrder(@RequestBody List<OrderItemDto> orderItemDtoList){
+        float total = orderItemDtoList.stream().map(o-> o.getPrice()*o.getQuantity()).mapToLong(Float::longValue).sum();
+        OrderDto orderDto = new OrderDto();
+        orderDto.setOrderItemDtos(orderItemDtoList);
+        orderDto.setTotal(total);
+
+        OrderDto savedOrderDto = orderService.saveSafeOrder(orderDto);
+
+        return new ResponseEntity<>(savedOrderDto, HttpStatus.CREATED);
+    }
+
     @GetMapping("health")
     public ResponseEntity<String> health(){
         return new ResponseEntity<>("ok", HttpStatus.OK);

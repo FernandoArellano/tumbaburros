@@ -26,6 +26,10 @@ spring:
             uri: lb://loans-service
             predicates:
               - Path=/api/loans/**
+          - id: inventory-service
+            uri: lb://inventory-service
+            predicates:
+              - Path=/api/inventory/**
 
 eureka:
   client:
