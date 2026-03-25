@@ -51,6 +51,11 @@ eureka:
     prefer-ip-address: true
 
 resilience4j:
+  retry:
+    instances:
+      inventoryRetry:
+        maxAttempts: 2
+        waitDuration: 1s
   circuitbreaker:
     instances:
       inventoryService:
