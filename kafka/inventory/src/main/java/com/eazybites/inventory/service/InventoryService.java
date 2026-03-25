@@ -2,12 +2,16 @@ package com.eazybites.inventory.service;
 
 import com.eazybites.inventory.dto.OrderDto;
 import com.eazybites.inventory.dto.OrderItemDto;
+import com.eazybites.inventory.entity.FailedOrder;
 import com.eazybites.inventory.entity.InventoryEntity;
+import com.eazybites.inventory.repository.FailedOrderRepository;
 import com.eazybites.inventory.repository.InventoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -15,6 +19,7 @@ import java.util.Optional;
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
+    private final FailedOrderRepository failedOrderRepository;
 
     public OrderDto updateInventory(OrderDto orderDto){
 
@@ -54,5 +59,15 @@ public class InventoryService {
         Optional<InventoryEntity> optionalInventoryEntity = inventoryRepository.findByProductId(productId);
 
         return optionalInventoryEntity.map(InventoryEntity::getQuantityAvailable).orElse(0.0);
+    }
+
+
+    public void saveFailedOrder(OrderDto orderDto, String errorMessage){
+        FailedOrder failedOrder = new FailedOrder();
+        failedOrder.setOrderDto(orderDto);
+        failedOrder.setFailedAt(LocalDateTime.now());
+        failedOrder.setErrorMessage(errorMessage);
+
+        failedOrderRepository.save(failedOrder);
     }
 }

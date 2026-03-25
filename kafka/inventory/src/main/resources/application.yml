@@ -6,12 +6,17 @@ spring:
     name: inventory-service
   cloud:
     function:
-      definition: inventoryOrder
+      definition: inventoryOrder;dlqConsumer
     stream:
       default-binder: kafka
       kafka:
         binder:
           brokers: localhost:9092,localhost:9094
+        bindings:
+          inventoryOrder-in-0:
+            consumer:
+              enableDlq: true
+              dlqName: notificationTopic.DLT
 
       bindings:
         inventoryOrder-in-0:
@@ -20,9 +25,19 @@ spring:
           content-type: application/json
           consumer:
             use-native-decoding: false
+            max-attempts: 3
+            back-off-initial-interval: 2000
+            back-off-max-interval: 5000
+            back-off-multiplier: 2.0
+
         inventoryOrder-out-0:
           destination: processedOrdersTopic
           content-type: application/json
+
+        dlqConsumer-in-0:
+          destination: notificationTopic.DLT
+          group: dlq-group
+
   mongodb:
     uri: mongodb://localhost:27017/inventoryms
 
