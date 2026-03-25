@@ -18,6 +18,7 @@ spring:
               enableDlq: true
               dlqName: notificationTopic.DLT
 
+
       bindings:
         inventoryOrder-in-0:
           destination: notificationTopic
@@ -29,6 +30,10 @@ spring:
             back-off-initial-interval: 2000
             back-off-max-interval: 5000
             back-off-multiplier: 2.0
+            retryableExceptions:
+              com.eazybites.inventory.exceptions.NonRetryableException: false
+              com.eazybites.inventory.exceptions.RetryableException: true
+              java.lang.IllegalArgumentException: false
 
         inventoryOrder-out-0:
           destination: processedOrdersTopic

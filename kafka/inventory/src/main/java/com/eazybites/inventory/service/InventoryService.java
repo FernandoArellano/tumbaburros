@@ -4,15 +4,16 @@ import com.eazybites.inventory.dto.OrderDto;
 import com.eazybites.inventory.dto.OrderItemDto;
 import com.eazybites.inventory.entity.FailedOrder;
 import com.eazybites.inventory.entity.InventoryEntity;
+import com.eazybites.inventory.exceptions.NonRetryableException;
+import com.eazybites.inventory.exceptions.RetryableException;
 import com.eazybites.inventory.repository.FailedOrderRepository;
 import com.eazybites.inventory.repository.InventoryRepository;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.concurrent.TimeoutException;
 
 @Service
 @AllArgsConstructor
@@ -26,21 +27,26 @@ public class InventoryService {
         boolean fullfilledOrder = true;
 
         for(OrderItemDto item : orderDto.getOrderItemDtos()){
-            Optional<InventoryEntity> optionalInventory = inventoryRepository.findByProductId(item.getProductId());
+            try{
 
-            InventoryEntity inventoryEntity = optionalInventory.orElse(null);
+                Optional<InventoryEntity> optionalInventory = inventoryRepository.findByProductId(item.getProductId());
 
-            if(inventoryEntity == null){
-                item.setStatus("product_not_found");
-                fullfilledOrder = false;
-            }
-            else if(inventoryEntity.getQuantityAvailable()>= item.getQuantity()){
-                inventoryEntity.setQuantityAvailable(inventoryEntity.getQuantityAvailable()- item.getQuantity());
-                item.setStatus("success");
-                inventoryRepository.save(inventoryEntity);
-            } else {
-                item.setStatus("insufficient");
-                fullfilledOrder = false;
+                InventoryEntity inventoryEntity = optionalInventory.orElse(null);
+
+                if(inventoryEntity == null){
+                    item.setStatus("product_not_found");
+                    fullfilledOrder = false;
+                }
+                else if(inventoryEntity.getQuantityAvailable()>= item.getQuantity()){
+                    inventoryEntity.setQuantityAvailable(inventoryEntity.getQuantityAvailable()- item.getQuantity());
+                    item.setStatus("success");
+                    inventoryRepository.save(inventoryEntity);
+                } else {
+                    item.setStatus("insufficient");
+                    fullfilledOrder = false;
+                }
+            }catch (Exception e){
+                handleException(e);
             }
 
         }
@@ -48,6 +54,16 @@ public class InventoryService {
         orderDto.setStatus(fullfilledOrder ? "success": "failure");
 
         return orderDto;
+    }
+
+    private void handleException(Exception e) {
+        if(e instanceof IllegalArgumentException){
+            throw new NonRetryableException("Invalid input: " +e.getMessage());
+        } else if(e instanceof TimeoutException || e instanceof java.net.SocketTimeoutException){
+            throw new RetryableException("Timeout occurred: " +e.getMessage());
+        }
+
+        throw new RetryableException("Generic Failure: " + e.getMessage());
     }
 
     public double getAvailabilityForProduct(String productId){
