@@ -1,5 +1,6 @@
 package com.eazybites.inventory.functions;
 
+import com.eazybites.inventory.dto.InventoryResultEvent;
 import com.eazybites.inventory.dto.OrderDto;
 import com.eazybites.inventory.service.InventoryService;
 import lombok.AllArgsConstructor;
@@ -31,5 +32,10 @@ public class InventoryFunctionConfig {
 
             inventoryService.saveFailedOrder(orderDto, new String(bytemessage));
         };
+    }
+
+    @Bean
+    public Function<OrderDto, InventoryResultEvent> sagaInventoryOrder(){
+        return inventoryService::sagaUpdateInventory;
     }
 }

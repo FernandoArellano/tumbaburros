@@ -6,7 +6,7 @@ spring:
     name: inventory-service
   cloud:
     function:
-      definition: inventoryOrder;dlqConsumer
+      definition: inventoryOrder;dlqConsumer;sagaInventoryOrder
     stream:
       default-binder: kafka
       kafka:
@@ -37,6 +37,25 @@ spring:
 
         inventoryOrder-out-0:
           destination: processedOrdersTopic
+          content-type: application/json
+
+        sagaInventoryOrder-in-0:
+          destination: inventoryTopic
+          group: my-inventory-group
+          content-type: application/json
+          consumer:
+            use-native-decoding: false
+            max-attempts: 3
+            back-off-initial-interval: 2000
+            back-off-max-interval: 5000
+            back-off-multiplier: 2.0
+            retryableExceptions:
+              com.eazybites.inventory.exceptions.NonRetryableException: false
+              com.eazybites.inventory.exceptions.RetryableException: true
+              java.lang.IllegalArgumentException: false
+
+        sagaInventoryOrder-out-0:
+          destination: inventory-result-topic
           content-type: application/json
 
         dlqConsumer-in-0:

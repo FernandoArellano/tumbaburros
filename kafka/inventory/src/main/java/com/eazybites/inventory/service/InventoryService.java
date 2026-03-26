@@ -1,5 +1,6 @@
 package com.eazybites.inventory.service;
 
+import com.eazybites.inventory.dto.InventoryResultEvent;
 import com.eazybites.inventory.dto.OrderDto;
 import com.eazybites.inventory.dto.OrderItemDto;
 import com.eazybites.inventory.entity.FailedOrder;
@@ -55,6 +56,47 @@ public class InventoryService {
 
         return orderDto;
     }
+
+    public InventoryResultEvent sagaUpdateInventory(OrderDto orderDto){
+
+        boolean fullfilledOrder = true;
+        InventoryResultEvent result = new InventoryResultEvent();
+
+        for(OrderItemDto item : orderDto.getOrderItemDtos()){
+            try{
+
+                Optional<InventoryEntity> optionalInventory = inventoryRepository.findByProductId(item.getProductId());
+
+                InventoryEntity inventoryEntity = optionalInventory.orElse(null);
+
+                if(inventoryEntity != null && inventoryEntity.getQuantityAvailable()>= item.getQuantity()){
+                    //ya lo estoy descontando y aun no se si debo descontarlo
+                    //podria incrementar escuchando otra topic
+                    inventoryEntity.setQuantityAvailable(inventoryEntity.getQuantityAvailable()- item.getQuantity());
+                    item.setStatus("RESERVED");
+                    inventoryRepository.save(inventoryEntity);
+                } else {
+                    item.setStatus("FAILED");
+                    fullfilledOrder = false;
+                }
+
+            }catch (Exception e){
+                handleException(e);
+            }
+
+        }
+
+        result.setOrderId(orderDto.getId());
+        result.setItems(orderDto.getOrderItemDtos());
+        result.setSuccess(fullfilledOrder);
+
+        if (!fullfilledOrder) {
+            result.setReason("Insufficient stock");
+        }
+
+        return result;
+    }
+
 
     private void handleException(Exception e) {
         if(e instanceof IllegalArgumentException){

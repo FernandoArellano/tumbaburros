@@ -53,6 +53,20 @@ public class OrderService {
         }
     }
 
+    public OrderDto saveSagaOrder(OrderDto orderDto){
+        Order order = OrderToOrderDtoMapper.orderDtoToOrder(orderDto);
+        OrderDto savedOrderDto = OrderToOrderDtoMapper.orderToOrderDto(orderRepository.save(order));
+
+        streamBridge.send("orderCreated-out-0",
+                MessageBuilder
+                        .withPayload(savedOrderDto)
+                        .setHeader("content-type", "application/json")
+                        .build()
+        );
+
+        return savedOrderDto;
+    }
+
 
 
 

@@ -14,7 +14,7 @@ spring:
             connectTimeout: 2000
             readTimeout: 2000
     function:
-      definition: produceOrder
+      definition: produceOrder;inventoryResultConsumer
     stream:
       default-binder: kafka
       kafka:
@@ -30,11 +30,16 @@ spring:
           destination: notificationTopic
           content-type: application/json
 
-#        # ? Consumer binding
-#        produceOrder-in-0:
-#          destination: my-topic
-#          group: my-order-group
-#          content-type: text/plain
+        # Saga pattern producer binding
+        orderCreated-out-0:
+          destination: inventoryTopic
+          content-type: application/json
+
+#       Saga Consumer binding
+        inventoryResultConsumer-in-0:
+          destination: inventory-result-topic
+          group: my-order-group
+          content-type: application/json
   mongodb:
     uri: mongodb://localhost:27017/ordersms
 
