@@ -22,12 +22,14 @@ public class OrderService {
         Order order = OrderToOrderDtoMapper.orderDtoToOrder(orderDto);
         OrderDto savedOrderDto = OrderToOrderDtoMapper.orderToOrderDto(orderRepository.save(order));
 
-        streamBridge.send("produceOrder-out-0",
-                MessageBuilder
-                        .withPayload(savedOrderDto)
-                        .setHeader("content-type", "application/json")
-                        .build()
-                );
+//        streamBridge.send("produceOrder-out-0",
+//                MessageBuilder
+//                        .withPayload(savedOrderDto)
+//                        .setHeader("content-type", "application/json")
+//                        .build()
+//                );
+
+        streamBridge.send("produceOrder-out-0",savedOrderDto);
 
         return savedOrderDto;
     }
@@ -57,12 +59,14 @@ public class OrderService {
         Order order = OrderToOrderDtoMapper.orderDtoToOrder(orderDto);
         OrderDto savedOrderDto = OrderToOrderDtoMapper.orderToOrderDto(orderRepository.save(order));
 
-        streamBridge.send("orderCreated-out-0",
-                MessageBuilder
-                        .withPayload(savedOrderDto)
-                        .setHeader("content-type", "application/json")
-                        .build()
-        );
+//        streamBridge.send("orderCreated-out-0",
+//                MessageBuilder
+//                        .withPayload(savedOrderDto)
+//                        .setHeader("content-type", "application/json")
+//                        .build()
+//        );
+
+        streamBridge.send("orderCreated-out-0",savedOrderDto);
 
         return savedOrderDto;
     }
