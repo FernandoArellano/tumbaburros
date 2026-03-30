@@ -31,6 +31,7 @@ public class GatewayApplication {
 
 					authorizeExchangeSpec
 							.pathMatchers("/auth/**").permitAll()
+                            .pathMatchers("/api/inventory/tests/**").permitAll()
 							.pathMatchers("/eureka/**").permitAll()
 							.anyExchange().authenticated();
 				})

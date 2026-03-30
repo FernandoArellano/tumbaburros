@@ -1,8 +1,10 @@
 package com.eazybites.inventory;
 
+import com.eazybites.inventory.dto.ConfigurationPropertiesTest;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -19,6 +21,7 @@ import javax.crypto.SecretKey;
 @EnableDiscoveryClient
 @EnableScheduling
 @EnableWebSecurity
+@EnableConfigurationProperties(ConfigurationPropertiesTest.class)
 public class InventoryApplication {
 
 	public static void main(String[] args) {
@@ -32,7 +35,8 @@ public class InventoryApplication {
 
 			return http.csrf(csrfSpec -> csrfSpec.disable())
 				.authorizeHttpRequests(auth ->
-						auth.anyRequest().authenticated())
+						auth.requestMatchers("/api/inventory/tests/**").permitAll()
+						.anyRequest().authenticated())
 					.oauth2ResourceServer(oauth -> oauth
 							.jwt(jwt -> jwt.decoder(jwtDecoder()))
 					)
