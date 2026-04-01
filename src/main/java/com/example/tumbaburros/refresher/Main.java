@@ -13,6 +13,7 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -134,6 +135,10 @@ public class Main {
         System.out.println("compress"+ compress("aabbbccccccddbbddd".toCharArray()));
         moveZeroes(new int[]{0,1,0,3,12});
         System.out.println("is anagram:" + isAnagram("aabbbaa", "bbbaaaa"));
+
+        lengetizar("2[bd]3[jk]");
+        lengetizar("d2[bd]z3a[jk]e");
+        lengetizar("abcde");
     }
 
 
@@ -913,6 +918,63 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
             // Al volver de la recursión, 'pasoActual' y 'restantes'
             // conservan sus valores originales del ciclo anterior.
         }
+    }
+
+//    lengetizar("2[bd]3[jk]");
+//    lengetizar("d2[bd]z3a[jk]e");
+//    lengetizar("abcde");
+
+    public static void lengetizar(String s){
+
+        char[] array = s.toCharArray();
+        StringBuilder result = new StringBuilder();
+        StringBuilder sb = new StringBuilder();  //
+        int multiplier = 0;
+        boolean inside=false;
+
+        for(char c : array){
+            if(c =='['){
+                multiplier = Integer.parseInt(sb.toString());
+                sb = new StringBuilder();
+                inside = true;
+            } else if(c== ']'){
+                result.append(sb.toString().repeat(multiplier));
+                sb=new StringBuilder();
+                inside=false;
+            } else if(Character.isLetter(c) && !inside){
+                result.append(c);
+            }else {
+                sb.append(c);
+            }
+        }
+        System.out.println(result);
+    }
+
+    //Find kth largest element
+    public int findKthLargest(List<Integer> list, int k){
+        return list.stream().sorted(Comparator.reverseOrder()).skip(k-1).findFirst().get();
+    }
+
+
+    public boolean basicRateLimiter(String user){
+        Map<String, Long> map = new HashMap<>();
+
+        if(!map.containsKey(user) || System.currentTimeMillis() - map.get(user) > 1000){
+            map.put(user, System.currentTimeMillis());
+            return true;
+        }
+
+        return false;
+    }
+
+    public void topKFrequentElement(List<Integer> list, int k){
+
+        Map<Integer, Long> map = list.stream().collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
+
+        long value = map.values().stream().sorted(Comparator.reverseOrder()).skip(k-1).findFirst().get();
+
+        System.out.println(value);
+
     }
 }
 
