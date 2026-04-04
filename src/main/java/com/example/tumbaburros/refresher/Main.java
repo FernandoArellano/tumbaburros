@@ -30,6 +30,19 @@ public class Main {
 
     public static void main(String[] args) {
 
+        List<Integer> hubs1 = Arrays.asList(1, 3, 3, 2);
+        List<Integer> time = Arrays.asList(3, 2, 1);
+
+        System.out.println(minTime(hubs1, time)); // ✅ 4
+
+        List<Integer> hubs2 = Arrays.asList(2, 3, 3, 1);
+        System.out.println("Amazon min Time: " +minTime(hubs2, time));
+
+
+        System.out.println(findMissingSum(new int[]{1,3,4,5,6,7,8,9},9));
+
+        System.out.println(getMinSwaps(new int[] {0, 1, 0, 1, 0}));
+
         List<Student> students = Util.getStudents();
 
         //Collectors.toCollection(TreeSet::new)
@@ -975,6 +988,126 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
 
         System.out.println(value);
 
+    }
+
+    //find missing number from an array
+    //suma de gauss para no usar tanta memoria adicional
+    public static int findMissingSum(int[] nums, int n) {
+        int expectedSum = n * (n + 1) / 2;
+        int actualSum = 0;
+        for (int num : nums) {
+            actualSum += num;
+        }
+        return expectedSum - actualSum;
+    }
+
+    public static String removeLeadingZeros(String number){
+
+        IntStream.range(1,5).forEach(i-> {
+            System.out.println(i + " - " + i*i);
+        });
+
+        int zeroCount = 0;
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<number.length();i++){
+            if(number.charAt(i)=='0'){
+                zeroCount++;
+            }
+            else {
+                sb.append(number.charAt(i));
+            }
+        }
+        for(int i=0;i<zeroCount;i++){
+            sb.append(0);
+        }
+        return sb.toString();
+    }
+
+    //swift 0s or 1s and get min swaps (they dont interchange places, need yo be moved
+    // 1 position at a time ant that counts as a swap for the counter
+    public static long getMinSwaps(int[] arr) {
+        long swapsToLeft = 0;
+        long swapsToRight = 0;
+        int countZeros = 0;
+        int countOnes = 0;
+
+        for (int num : arr) {
+            if (num == 0) {
+                // Para llevar ceros a la izquierda, saltamos sobre los 1s acumulados
+                swapsToLeft += countOnes;
+                countZeros++;
+            } else {
+                // Para llevar unos a la izquierda, saltamos sobre los 0s acumulados
+                swapsToRight += countZeros;
+                countOnes++;
+            }
+        }
+
+        //{0, 1, 0, 1, 0} result 3
+        // el segundo 0 se mueve 1 a la izq (1), el tercer cero se mueve 2 (2) a la izq
+        //dando los 3, con contar cuantos del inverso hubo antes de encontrar el 0 queda
+
+        // Retornamos el menor de ambos escenarios
+        return Math.min(swapsToLeft, swapsToRight);
+
+
+    }
+
+
+    /*
+        Amazon receives a list of prority delivery requests, where packages must be picked up or
+         delivered to specific hubs in a given sequence, represented by the array requestedHubs of size n.
+          Starting from Hub 1, your task is to calculate the minimum total travel time required for the
+           drone to fullfill all delivery requests. Note use 1 based indexing. example:
+           transition time= 3,2,1
+            requestedHubs= 1,3,3,2
+            The drone begin its journey at Hub 1. The first hub to visit is Hub 1 itself,
+             so it takes 0 seconds to complete this step.
+             To move from hub 1 to hub 3, the drone has 2 possible
+              routes: clockwise: 1,2,3 which takes transitionTime[1]+transitionTime[2]= 3+2= 5 seconds
+              Counterclockwise: 1,3 which takes transition time[1] = 3 seconds The shorter route is the
+              counterclockwise path, so the drone reaches hub 3 in 3 seconds.
+              The drone is already at hub 3,
+              so it takes 0 seconds to complete this step.
+              To move from hub 3 to hub 2 the drone has
+              2 possible routes: clockwise: 3,2 which takes transitiontimes[3] = 1 second.
+              counterclockwise 3,1,2 which takes transitiontime[3]+transitionTime[1] = 4 seconds the shorter
+              route is the clockwise path, so the drone reaches hub 2 in 1 second Hence the total minimum possible
+              time to visit all the required servers is 4 seconds. Complete the function to get this minimum possible time.
+               ex: requestedHubs= [2,3,3,1] transitiontime = [3,2,1] output expected 6
+     */
+    public static int minTime(List<Integer> requestedHubs, List<Integer> transitionTime) {
+        int n = transitionTime.size();
+
+        // Build prefix sum for clockwise distances
+        int[] prefix = new int[n + 1];
+        for (int i = 0; i < n; i++) {
+            prefix[i + 1] = prefix[i] + transitionTime.get(i);
+        }
+
+        int totalSum = prefix[n];
+
+        // Function to get clockwise distance
+        java.util.function.BiFunction<Integer, Integer, Integer> clockwise = (a, b) -> {
+            if (a <= b) {
+                return prefix[b - 1] - prefix[a - 1];
+            } else {
+                return totalSum - (prefix[a - 1] - prefix[b - 1]);
+            }
+        };
+
+        int totalTime = 0;
+        int current = 1; // starts at hub 1
+
+        for (int next : requestedHubs) {
+            int cw = clockwise.apply(current, next);
+            int ccw = totalSum - cw;
+
+            totalTime += Math.min(cw, ccw);
+            current = next;
+        }
+
+        return totalTime;
     }
 }
 
