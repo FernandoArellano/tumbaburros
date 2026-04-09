@@ -206,8 +206,8 @@ public class Main {
 
         return usuarios.stream().collect(
                 Collectors.toMap(Usuario::getNombre,
-                      u->u.getPedidos().stream().flatMap(p->p.getProductos().stream())
-                              .mapToDouble(Producto::getPrecio).sum()
+                        u->u.getPedidos().stream().flatMap(p->p.getProductos().stream())
+                                .mapToDouble(Producto::getPrecio).sum()
                 )
         );
 
@@ -510,7 +510,7 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
         int top=-1;
 
         public void push(int x){
-             arr[++top] = x;
+            arr[++top] = x;
         }
 
         public int pop(){
@@ -619,13 +619,13 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
                 .collect(Collectors.toSet());
 
         return Arrays.stream(b)
-                .filter(set::contains)
                 .boxed()
+                .filter(set::contains)
                 .collect(Collectors.toSet());
     }
 
     //singleton double validation if its null
-     static class Singleton {
+    static class Singleton {
 
         private static volatile Singleton instance;
 
@@ -825,26 +825,26 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
 
 
 
-        //copy 2 arrays into a merged array
+    //copy 2 arrays into a merged array
     // find median value after merged
-        public static double median(int[] a, int[] b){
+    public static double median(int[] a, int[] b){
 
-            int[] merged = new int[a.length + b.length];
+        int[] merged = new int[a.length + b.length];
 
-            System.arraycopy(a,0,merged,0,a.length);
-            System.arraycopy(b,0,merged,a.length,b.length);
+        System.arraycopy(a,0,merged,0,a.length);
+        System.arraycopy(b,0,merged,a.length,b.length);
 
-            Arrays.sort(merged);
+        Arrays.sort(merged);
 
-            int mid = merged.length/2;
+        int mid = merged.length/2;
 
-            if(merged.length%2==0)
-                return (merged[mid-1]+merged[mid])/2.0;
+        if(merged.length%2==0)
+            return (merged[mid-1]+merged[mid])/2.0;
 
-            return merged[mid];
-        }
+        return merged[mid];
+    }
 
-        //word count of a file with parallel stream
+    //word count of a file with parallel stream
     public void wordCountingFromFile() throws IOException {
         Map<String,Long> count = Files.lines(Path.of("file.txt"))
                 .parallel()
@@ -1109,6 +1109,20 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
 
         return totalTime;
     }
+
+    //merge 2 maps, keeping old if collision
+    public static void merge2Maps(Map<Integer, Integer>m1,Map<Integer, Integer> m2){
+        m1.forEach((k,v) -> m2.merge(k,v,(oldv, newv) ->oldv));
+    }
+
+    //Find common elements in 3 arrays
+    public static void retainAll(List<Integer> l1, List<Integer> l2,List<Integer> l3){
+        Set<Integer> s1 = new HashSet<>(l1);
+        s1.retainAll(l2);
+        s1.retainAll(l3);
+        System.out.println(s1);
+    }
+
 }
 
 
