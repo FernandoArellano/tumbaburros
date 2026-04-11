@@ -29,7 +29,10 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
+        System.out.println(segmentsAfterRemoval(new int[]{3,5,1,2,4}));
+        System.out.println(numberOfSegments(new int[]{2,4,3,1}));
+        System.out.println(findHouses(new int[]{10,2,5,4,3,7,9,1}));
+        System.out.println(findMaxConnectedHouses(new int[]{1,2,4,5,3,6}));
         List<Integer> hubs1 = Arrays.asList(1, 3, 3, 2);
         List<Integer> time = Arrays.asList(3, 2, 1);
 
@@ -1121,6 +1124,117 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
         s1.retainAll(l2);
         s1.retainAll(l3);
         System.out.println(s1);
+    }
+
+    //find houses which are together on each step ( number of houses connected after adding that house considering this house as root only
+    //not what is the longest number of connected houses in total
+    public static List<Integer> findHouses(int[] toBuild){
+
+        if(toBuild.length==0) return Collections.emptyList();
+
+        List<Integer> list = new LinkedList<>();
+        Map<Integer, Integer> visited = new HashMap<>();
+
+        for(int x:toBuild){
+            //2,4,3,7
+            if(visited.containsKey(x)){
+                continue;
+            }
+
+            int left = visited.getOrDefault(x-1,0); //0
+            int right = visited.getOrDefault(x+1,0); //0
+            int total = left + right + 1; //1
+
+            list.add(total); //1,1,3,1
+
+            visited.put(x, total);  // 2,3 4,3, 3,3,7,1
+            visited.put(x-left, total);
+            visited.put(x+right, total);
+
+        }
+        return list;
+    }
+
+    //find houses which are together on each step ( number of houses connected after adding that house considering this house as root only
+    //not what is the longest number of connected houses in total
+    public static List<Integer> findMaxConnectedHouses(int[] toBuild){
+
+        List<Integer> result = new LinkedList<>();
+        Map<Integer, Integer> map = new HashMap<>();
+        int max =0;
+
+        for(int x: toBuild){
+            if(map.containsKey(x)){
+                result.add(max);
+                continue;
+            }
+
+            int left = map.getOrDefault(x-1,0);
+            int right = map.getOrDefault(x+1,0);
+            int total = left+right+1;
+            result.add(Math.max(total, max));
+            if(total>max){
+                max=total;
+            }
+
+            map.put(x, total);
+            map.put(x-left, total);
+            map.put(x+right, total);
+        }
+
+        return result;
+    }
+
+    //number of segments Return how many separate groups of houses exist after each build.
+    public static List<Integer> numberOfSegments(int[] toBuild){
+        int segments=0;
+        Map<Integer, Integer> map = new HashMap<>();
+        List<Integer> list = new LinkedList<>();
+
+        for(int x: toBuild){
+            if(map.containsKey(x)){
+                continue;
+            }
+
+            map.put(x, 1);
+            if(map.getOrDefault(x-1,0)==0 && map.getOrDefault(x+1,0)==0){
+                segments++;
+            }else if(map.getOrDefault(x-1,0)!=0 && map.getOrDefault(x+1,0)!=0) {
+                segments--;
+            }
+
+            list.add(segments);
+        }
+
+        return list;
+    }
+
+    //remove houses
+    public static List<Integer> segmentsAfterRemoval(int[] toRemove){
+        List<Integer> list = new LinkedList<>();
+        Map<Integer, Integer> existingHouses= new HashMap<>();
+        int segments=1;
+
+        for(int x:toRemove){
+            existingHouses.put(x,x);
+        }
+
+        for(int x: toRemove){
+            if(!existingHouses.containsKey(x)){
+                continue;
+            }
+
+            existingHouses.remove(x);
+            if(existingHouses.containsKey(x-1) && existingHouses.containsKey(x+1)){
+                segments++;
+            } else if(existingHouses.getOrDefault(x+1,0)==0
+                    && (existingHouses.getOrDefault(x-1,0)==0)){
+                segments--;
+            }
+
+            list.add(segments);
+        }
+        return list;
     }
 
 }
