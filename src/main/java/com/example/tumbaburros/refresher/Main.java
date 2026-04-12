@@ -29,6 +29,13 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        int [][] array = new int[][]{
+                {1,2,3},
+                {4,5,6},
+                {7,8,9}
+        };
+        rotate90(array);
+        largestSegmentAfterRemoval(new int[]{3,5,1,2,4});
         System.out.println(segmentsAfterRemoval(new int[]{3,5,1,2,4}));
         System.out.println(numberOfSegments(new int[]{2,4,3,1}));
         System.out.println(findHouses(new int[]{10,2,5,4,3,7,9,1}));
@@ -1235,6 +1242,88 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
             list.add(segments);
         }
         return list;
+    }
+
+    //remove and keep looking segments is hard and inneficient, insted we will build
+    //in reverse order which would be like removing in the original order
+    public static void largestSegmentAfterRemoval(int[] toRemove){
+
+        //3,5,1,2,4
+        //reverse adding 4,2,1,5,3
+        int max =0;
+        Map<Integer, Integer> map = new HashMap<>();
+        int n=toRemove.length;
+        boolean[] active = new boolean[n+2];
+        int[] result= new int[n];
+
+        for(int i=n-1;i>=0;i--){
+            result[i]= max;
+            int x=toRemove[i];
+            active[x] = true;
+
+            int left = active[x-1] ? map.get(x-1):0;
+            int right = active[x+1] ? map.get(x+1):0;
+            int total = left+right+1;
+
+            max = Math.max(max, total);
+
+            map.put(x,total);
+            map.put(x-left, total);
+            map.put(x+right, total);
+        }
+
+        for(int i = 0; i<result.length; i++){
+            System.out.print(result[i]+" ");
+        }
+        System.out.println();
+    }
+
+    //You are given an n x n 2D matrix representing an image, rotate the image by 90 degrees (clockwise).
+    //
+    //You have to rotate the image in-place, which means you have to modify the input 2D matrix directly. DO NOT allocate another 2D matrix and do the rotation
+    //Input: matrix = [[1,2,3],[4,5,6],[7,8,9]]
+    //Output:         [[7,4,1],[8,5,2],[9,6,3]]
+    public static void rotate90(int [][] m){
+
+        for(int i=0; i<m.length; i++){
+            for(int j=0;j<m.length;j++){
+                System.out.print(m[i][j] + " ");
+            }
+            System.out.println();
+        }
+
+
+        for(int i=0; i<m.length; i++){
+            for(int j=i;j<m.length;j++){
+                int temp = m[j][i];
+                m[j][i]=m[i][j];
+                m[i][j]= temp;
+            }
+        }
+
+        for(int i=0; i<m.length; i++){
+            for(int j=0;j<m.length;j++){
+                System.out.print(m[i][j] + " ");
+            }
+            System.out.println();
+        }
+
+        for(int i=0; i<m.length;i++){
+            for(int j=0; j<m.length/2;j++){
+                int temp=m[i][j];
+                m[i][j] = m[i][m.length-1-j];
+                m[i][m.length-1-j]= temp;
+            }
+        }
+
+        for(int i=0; i<m.length; i++){
+            for(int j=0;j<m.length;j++){
+                System.out.print(m[i][j] + " ");
+            }
+            System.out.println();
+        }
+
+
     }
 
 }
