@@ -29,6 +29,9 @@ public class Main {
     }
 
     public static void main(String[] args) {
+
+        spiralGridTraversal(5,6,1,4);
+
         int [][] array = new int[][]{
                 {1,2,3},
                 {4,5,6},
@@ -1283,6 +1286,9 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     //You have to rotate the image in-place, which means you have to modify the input 2D matrix directly. DO NOT allocate another 2D matrix and do the rotation
     //Input: matrix = [[1,2,3],[4,5,6],[7,8,9]]
     //Output:         [[7,4,1],[8,5,2],[9,6,3]]
+    //Step 1: Transpose
+    //Swap matrix[i][j] with matrix[j][i]
+     //Step 2: Reverse each row
     public static void rotate90(int [][] m){
 
         for(int i=0; i<m.length; i++){
@@ -1324,6 +1330,62 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
         }
 
 
+    }
+
+    //You are not “spiraling inside the grid”.
+    //
+    //👉 You are walking in an infinite spiral path, and only recording positions when they fall inside the grid
+    //→ (east)
+    //↓ (south)
+    //← (west)
+    //↑ (north)
+    //(repeat...)
+    //But the step size grows like this: (each 2 directions grow 1
+    //
+    //1 step →
+    //1 step ↓
+    //2 steps ←
+    //2 steps ↑
+    //3 steps →
+    //3 steps ↓
+    //4 steps ←
+    //4 steps ↑
+    //the size of the grid is m*n, so the total of visited valid coordinates is m*n
+    public static void spiralGridTraversal(int rows, int cols, int rStart, int cStart){
+        int directions[][]= {
+                {0,1},   //dirs 1
+                {1,0},    //dirs 2
+                {0,-1},  //dirs 3
+                {-1,0}}; //dirs 4
+        int count=0;
+        int totalGrids = rows*cols;
+        int[][] coordinates = new int[totalGrids][2];
+        int steps=1;
+        int dir=0;
+        int r=rStart;
+        int c=cStart;
+
+        coordinates[count++] = new int[]{r,c};
+        while(count<totalGrids){
+            for(int i=0; i<2; i++){  //each 2 movements steps increase
+                for(int j=0; j<steps;j++){
+                    r += directions[dir][0];   //increase row?
+                    c += directions[dir][1];   //increase column? only 1 will increase per direction
+                    if(r<rows && c<cols &&r>=0 && c>=0){
+                        coordinates[count++] = new int[]{r,c};
+                    }
+                }
+                dir = (dir+1) %4;
+            }
+            steps++;
+        }
+
+        for(int i=0; i<rows*cols; i++){
+            for(int j=0; j<2;j++){
+                System.out.print(coordinates[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 
 }
