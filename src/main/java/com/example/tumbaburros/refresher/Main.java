@@ -29,7 +29,20 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
+        System.out.println(minWindow("ADOBECODEBANC", "ABC"));
+        System.out.println(maxSubArray(new int[]{-2,1,-3,4,-1,2,1,-5,4}));
+        System.out.println(reverseStr("abcdefg",2));
+        int[]result = twoSum(new int[]{2,7,11,15}, 9);
+        System.out.println(result[0] + " " + result[1]);
+        System.out.println(trap(new int[]{0,1,0,2,1,0,1,3,2,1,2,1}));
+        runningSum(new int[]{1,2,3,4});
+        System.out.println(numIslands(new char[][]{
+                {'1', '1', '1', '1', '0'},
+                {'1', '1', '0', '1', '0'},
+                {'1', '1', '0', '0', '0'},
+                {'0', '0', '0', '0', '0'}
+        }));
+        System.out.println(numEnclaves(new int[][]{{0,1,1,0},{0,0,1,0},{0,0,1,0},{0,0,0,0}}));
         spiralGridTraversal(5,6,1,4);
 
         int [][] array = new int[][]{
@@ -1387,6 +1400,426 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
             System.out.println();
         }
     }
+
+    /*
+        instead of checking each land cell individually (which is expensive), we flip the perspective:
+        👉 Find all land cells that CAN reach the boundary, and remove them.
+        👉 The remaining land cells are the answer.
+        Start from boundary land cells traverse throug edges only (start and end position of row and column)
+        if there is a 1 dfs all the directions and update them to be 0
+        count the remaining 1s
+     */
+    public static int numEnclaves(int[][] grid){
+        int count=0;
+        int n = grid[0].length;
+        int m = grid.length;
+
+        for(int i=0;i<n;i++){
+            dfs(grid, i, 0);
+            dfs(grid, i, n-1);
+        }
+
+        for(int j=0; j<m;j++){
+            dfs(grid, 0, j);
+            dfs(grid, m-1,j);
+        }
+
+        for(int i=0; i<n;i++){
+            for(int j=0; j<m;j++){
+                if(grid[i][j]==1)
+                    count++;
+            }
+        }
+
+
+        return count;
+    }
+
+    public static void dfs(int[][] grid, int i,int j){
+        int n= grid[0].length;
+        int m= grid.length;
+
+        if(i<0 || j<0 || i>=n || j>=m || grid[i][j]==0){
+            return;
+        }
+
+        grid[i][j]=0;
+        dfs(grid,i+1,j);
+        dfs(grid,i-1,j);
+        dfs(grid,i,j+1);
+        dfs(grid,i,j-1);
+    }
+
+    /*
+        How many connected groups of '1' exist
+        We scan the grid:
+        When we find a '1', we:
+        Found a new island
+        Increment the counter
+        Then we “sink” the island using DFS:
+        Visit all connected '1'
+        Mark them as '0' (visited)
+        👉 This ensures we don’t count the same island twice
+     */
+    public static int numIslands(char[][] grid){
+        if(grid==null||grid.length==0) return 0;
+
+        int m = grid.length;
+        int n = grid[0].length;
+        int count=0;
+
+        for(int i=0; i<m; i++){
+            for(int j=0; j<n;j++){
+                if(grid[i][j]=='1'){
+                    count++;
+                    markTo0WithDfs(grid, i,j);
+                }
+            }
+        }
+        return count;
+    }
+    public static void markTo0WithDfs(char[][] grid, int i,int j){
+        int m= grid.length;
+        int n= grid[0].length;
+
+        if(i<0||j<0||i>=m||j>=n|| grid[i][j]!='1'){
+            return;
+        }
+
+        grid[i][j]='0';
+        markTo0WithDfs(grid, i+1,j);
+        markTo0WithDfs(grid, i-1,j);
+        markTo0WithDfs(grid, i,j+1);
+        markTo0WithDfs(grid, i,j-1);
+    }
+
+    public static void runningSum(int[] nums) {
+        if(nums.length==0) return;
+
+        int[] result = new int[nums.length];
+
+        result[0] = nums[0];
+        for(int i=1; i<nums.length; i++){
+            result[i]=result[i-1]+nums[i];
+        }
+
+        for(int i=0; i<result.length;i++){
+            System.out.print(result[i]+ " ");
+        }
+        System.out.println();
+    }
+
+    /*
+        1. Two pointers
+        left = 0
+        right = n - 1
+
+        We process from both ends inward.
+        Track max walls
+        leftMax: highest wall seen from the left
+        rightMax: highest wall seen from the right
+        if (height[left] < height[right])
+        👉 Why this matters:
+        The smaller side limits the water
+        If left is smaller → water depends on leftMax
+        If right is smaller → water depends on rightMax
+        if (height[left] >= leftMax)
+            leftMax = height[left];
+        else
+            water += leftMax - height[left];
+
+        👉 Meaning:
+
+        If current bar is taller → update max
+        If smaller → water gets trapped
+     */
+    public static int trap(int[] height) {
+        int left = 0;
+        int right = height.length-1;
+        int maxleft =0;
+        int maxright = 0;
+        int water =0;
+
+        while(left<right){
+            if(height[left]<height[right]){
+                if(height[left]>=maxleft){
+                    maxleft = height[left];
+                }else{
+                    water += maxleft-height[left];
+                }
+                left++;
+            }else {
+                if(height[right]>=maxright){
+                    maxright= height[right];
+                } else {
+                    water += maxright-height[right];
+                }
+                right--;
+            }
+        }
+
+        return water;
+    }
+
+    /*
+        This is a classic Two Pointers problem, and the key constraint is:
+        ✅ The array is sorted
+     */
+    public static int[] twoSum(int[] numbers, int target) {
+        int l= 0;
+        int r = numbers.length-1;
+
+        while(l<r){
+            if(numbers[l]+numbers[r]<target){
+                l++;
+            } else if(numbers[l]+numbers[r]>target){
+                r--;
+            } else{
+                return new int[]{l+1,r+1};
+            }
+        }
+        return new int[]{};
+    }
+
+    /*
+        This is another Two Pointers (in-place array modification) problem, but with a twist:
+        Each number can appear at most twice, not once.
+        Since the array is sorted, duplicates are grouped together.
+        We don’t need to count explicitly—we can control how many times we write a number into the array.
+     */
+    public static int removeDuplicates(int[] nums) {
+            int k=0;
+        for(int i=0; i<nums.length;i++){
+
+            if(k<2 || nums[i]!=nums[k-2]){
+                nums[k]=nums[i];
+                k++;
+            }
+        }
+        return k;
+    }
+
+    /*
+        careful exceding the s length
+     */
+    public static String reverseStr(String s, int k) {
+
+        if(s.length()<=k) return new StringBuilder(s).reverse().toString();
+
+        StringBuilder result = new StringBuilder();
+        for(int i=0; i<s.length(); i= i + (k*2)){
+
+            int left = 0;
+
+            StringBuilder sb = new StringBuilder();
+            while(left<k && left+i<s.length()){
+                sb.append(s.charAt(left+i));
+                left++;
+            }
+            result.append(sb.reverse());
+
+            left =0;
+            while(left<k && i+left+k<s.length()){
+                result.append(s.charAt(left+i+k));
+                left++;
+            }
+        }
+        return result.toString();
+    }
+
+    /*
+        We want the maximum sum of a contiguous subarray.
+        “At each position, is it better to extend the previous subarray or start fresh?”
+        Either:
+        Start new subarray at i
+        OR extend previous one
+     */
+    public static int maxSubArray(int[] nums) {
+        int max = Integer.MIN_VALUE;
+        int actualSum =0;
+
+        for(int i:nums){
+            actualSum = Math.max(actualSum+i, i);
+            if(max<actualSum){
+                max = actualSum;
+            }
+        }
+        return max;
+    }
+
+    /*
+        We want the smallest substring of s that contains all characters of t (including duplicates).
+        👉 This is a variable-size sliding window problem:
+        Expand the window → until it's valid
+        Shrink the window → to make it minimal
+     */
+    public static String minWindow(String s, String t) {
+
+        Map<Character, Long> lookedMap = t.chars().mapToObj(i -> (char) i).toList()
+                .stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+
+        Map<Character, Long> ocurrencesFound = new LinkedHashMap<>();
+
+        Long left=0L;
+        Long right=0L;
+        int min=Integer.MAX_VALUE;
+        int minLeft=0;
+        int minRight=0;
+        boolean isValid= false;
+
+        while(right<=s.length() || isValid){
+
+
+            isValid= testValidFrequency(lookedMap, ocurrencesFound);
+
+            if(!isValid&& right<s.length()){
+                ocurrencesFound.put(s.charAt(right.intValue()),ocurrencesFound.getOrDefault(s.charAt(right.intValue()),0L)+1);
+                right++;
+            } else if(isValid){
+                while(isValid){
+                    if(min>right-left){
+                        min=right.intValue()-left.intValue();
+                        minLeft = left.intValue();
+                        minRight= right.intValue();
+                    }
+
+                    removeCharacter(ocurrencesFound, s.charAt(left.intValue()));
+                    isValid= testValidFrequency(lookedMap, ocurrencesFound);
+                    left++;
+                }
+
+
+            } else break;
+        }
+        return s.substring(minLeft, minRight);
+    }
+
+    private static void removeCharacter(Map<Character, Long> ocurrencesFound, char c) {
+        if(ocurrencesFound.containsKey(c)){
+            if(ocurrencesFound.get(c)==1){
+                ocurrencesFound.remove(c);
+            } else {
+                ocurrencesFound.put(c, ocurrencesFound.get(c)-1);
+            }
+        }
+    }
+
+    private static boolean testValidFrequency(Map<Character, Long> lookedMap, Map<Character, Long> ocurrencesFound) {
+        for(Map.Entry<Character, Long> entry: lookedMap.entrySet()){
+            if(!ocurrencesFound.containsKey(entry.getKey()) || ocurrencesFound.get(entry.getKey())< lookedMap.get(entry.getKey())){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /*TODO
+        need to run from starting each letter to the right 1 by 1
+        inside it starting from current index plus word length
+        look for words to be found, if that is 1 looked word, then
+        keep it, continue searching from the end of this word plus the
+        before validating if all words are found, validate the frequency
+        is correct, if not need to shrink words from the left
+        when the frequency and number of words are correct, save tha index
+        then shrink the left 1 word and continue the search
+     */
+    public static List<Integer> findSubstring(String s, String[] words) {
+        List<Integer> result = new ArrayList<>();
+
+        if (s == null || words == null || words.length == 0) {
+            return result;
+        }
+
+        int wordLen = words[0].length();
+        int wordCount = words.length;
+        int totalLen = wordLen * wordCount;
+
+        Map<String, Integer> map = new HashMap<>();
+        for (String w : words) {
+            map.put(w, map.getOrDefault(w, 0) + 1);
+        }
+
+        // Try all offsets
+        for (int i = 0; i < wordLen; i++) {
+            int left = i;
+            int count = 0;
+            Map<String, Integer> window = new HashMap<>();
+
+            for (int right = i; right + wordLen <= s.length(); right += wordLen) {
+
+                String word = s.substring(right, right + wordLen);
+
+                if (map.containsKey(word)) {
+                    window.put(word, window.getOrDefault(word, 0) + 1);
+                    count++;
+
+                    // If too many occurrences → shrink
+                    while (window.get(word) > map.get(word)) {
+                        String leftWord = s.substring(left, left + wordLen);
+                        window.put(leftWord, window.get(leftWord) - 1);
+                        left += wordLen;
+                        count--;
+                    }
+
+                    // If valid window found
+                    if (count == wordCount) {
+                        result.add(left);
+
+                        // shrink to continue searching
+                        String leftWord = s.substring(left, left + wordLen);
+                        window.put(leftWord, window.get(leftWord) - 1);
+                        left += wordLen;
+                        count--;
+                    }
+
+                } else {
+                    // reset window
+                    window.clear();
+                    count = 0;
+                    left = right + wordLen;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /* TODO
+        sorting para juntar los duplicados
+        del lado izq necesitamos 2 numeros y 2 numeros despues
+        empezamos en index 0
+        i starts with 0, for following i's confirm it is not same than previous i's if it is skip
+        j starts with i+1, but if it is not on the j's starting point then validate its current position is not equal than j-1
+        if it is skip. we have 2 unique numbers now, now from the rest starting in the next av index from the left and the right
+        from the las element, sum i, j, left and right, if the sum is equal to the target, keep it, if sum is < than target move left
+        if it is bigger move right
+     */
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        return null;
+    }
+
+    /*  TODO
+        Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence.
+        You must write an algorithm that runs in O(n) time.
+
+        O(n) time, so sorting not available
+        add set for constanting time and validate if set has value -1 update counter and max
+     */
+    public int longestConsecutive(int[] nums) {
+        return 0;
+    }
+
+    //TODO
+    //[2,3,1,1,4]  (initial, im at index 0 and the value is 2, so i can go to 2 places, [1,2]
+    //[1] [2,3,4] if i go 1, there is a 3 with this 3, i can now go to 3 places, [2,3,4] step 1 from 0 to 1, step 2 from 1 to 4
+    //[2] [3]   if instead i go 2, there is a 1, so i could get to 3
+    //combining the available next options [2,3,4], but 2 already in step 1 so remove [3,4] and if 4 we got to the end
+    public int jump(int[] nums) {
+        return 0;
+    }
+
 
 }
 
