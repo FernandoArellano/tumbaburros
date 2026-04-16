@@ -29,6 +29,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        insert(new int[][]{{1,2},{3,5},{6,7},{8,10},{12,16}}, new int[]{4,8});
         System.out.println(minWindow("ADOBECODEBANC", "ABC"));
         System.out.println(maxSubArray(new int[]{-2,1,-3,4,-1,2,1,-5,4}));
         System.out.println(reverseStr("abcdefg",2));
@@ -1294,8 +1295,10 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
         System.out.println();
     }
 
+    //https://leetcode.com/problems/rotate-image/description/
+
     //You are given an n x n 2D matrix representing an image, rotate the image by 90 degrees (clockwise).
-    //
+
     //You have to rotate the image in-place, which means you have to modify the input 2D matrix directly. DO NOT allocate another 2D matrix and do the rotation
     //Input: matrix = [[1,2,3],[4,5,6],[7,8,9]]
     //Output:         [[7,4,1],[8,5,2],[9,6,3]]
@@ -1345,6 +1348,17 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
 
     }
 
+    /*
+        https://leetcode.com/problems/spiral-matrix-iii/description/
+
+        You start at the cell (rStart, cStart) of an rows x cols grid facing east. The northwest corner is at the first row and column in the grid,
+        and the southeast corner is at the last row and column.
+        You will walk in a clockwise spiral shape to visit every position in this grid. Whenever you move outside the grid's boundary,
+        we continue our walk outside the grid (but may return to the grid boundary later.). Eventually, we reach all rows * cols spaces of the grid.
+        Return an array of coordinates representing the positions of the grid in the order you visited them.
+        Input: rows = 1, cols = 4, rStart = 0, cStart = 0
+        Output: [[0,0],[0,1],[0,2],[0,3]]
+     */
     //You are not “spiraling inside the grid”.
     //
     //👉 You are walking in an infinite spiral path, and only recording positions when they fall inside the grid
@@ -1402,6 +1416,15 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     }
 
     /*
+        https://leetcode.com/problems/number-of-enclaves/description/
+
+        You are given an m x n binary matrix grid, where 0 represents a sea cell and 1 represents a land cell.
+        A move consists of walking from one land cell to another adjacent (4-directionally) land cell or walking off the boundary of the grid.
+        Return the number of land cells in grid for which we cannot walk off the boundary of the grid in any number of moves.
+        Input: grid = [[0,0,0,0],[1,0,1,0],[0,1,1,0],[0,0,0,0]]
+        Output: 3
+        Explanation: There are three 1s that are enclosed by 0s, and one 1 that is not enclosed because its on the boundary.
+
         instead of checking each land cell individually (which is expensive), we flip the perspective:
         👉 Find all land cells that CAN reach the boundary, and remove them.
         👉 The remaining land cells are the answer.
@@ -1451,6 +1474,11 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     }
 
     /*
+        https://leetcode.com/problems/number-of-islands/description/
+
+        Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands.
+        An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.
+        You may assume all four edges of the grid are all surrounded by water.
         How many connected groups of '1' exist
         We scan the grid:
         When we find a '1', we:
@@ -1493,6 +1521,14 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
         markTo0WithDfs(grid, i,j-1);
     }
 
+    /*
+        https://leetcode.com/problems/running-sum-of-1d-array/description/
+        Given an array nums. We define a running sum of an array as runningSum[i] = sum(nums[0]…nums[i]).
+        Return the running sum of nums.
+        Input: nums = [1,2,3,4]
+        Output: [1,3,6,10]
+        Explanation: Running sum is obtained as follows: [1, 1+2, 1+2+3, 1+2+3+4].
+     */
     public static void runningSum(int[] nums) {
         if(nums.length==0) return;
 
@@ -1510,6 +1546,10 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     }
 
     /*
+        https://leetcode.com/problems/trapping-rain-water/description/
+        Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.
+
+
         1. Two pointers
         left = 0
         right = n - 1
@@ -1562,6 +1602,18 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     }
 
     /*
+        https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/description/
+        Given a 1-indexed array of integers numbers that is already sorted in non-decreasing order,
+        find two numbers such that they add up to a specific target number. Let these two numbers be numbers[index1] and numbers[index2]
+        where 1 <= index1 < index2 <= numbers.length.
+        Return the indices of the two numbers index1 and index2, each incremented by one, as an integer array [index1, index2] of length 2.
+        The tests are generated such that there is exactly one solution. You may not use the same element twice.
+
+        Your solution must use only constant extra space.
+
+        Input: numbers = [2,7,11,15], target = 9
+        Output: [1,2]
+        Explanation: The sum of 2 and 7 is 9. Therefore, index1 = 1, index2 = 2. We return [1, 2].
         This is a classic Two Pointers problem, and the key constraint is:
         ✅ The array is sorted
      */
@@ -1582,6 +1634,16 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     }
 
     /*
+        https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/description/
+
+        Given an integer array nums sorted in non-decreasing order, remove some duplicates in-place such that each unique element appears at most twice.
+        The relative order of the elements should be kept the same.
+        Since it is impossible to change the length of the array in some languages, you must instead have the result be placed in
+        the first part of the array nums. More formally, if there are k elements after removing the duplicates, then the first k elements
+        of nums should hold the final result. It does not matter what you leave beyond the first k elements.
+        Return k after placing the final result in the first k slots of nums.
+        Do not allocate extra space for another array. You must do this by modifying the input array in-place with O(1) extra memory.
+
         This is another Two Pointers (in-place array modification) problem, but with a twist:
         Each number can appear at most twice, not once.
         Since the array is sorted, duplicates are grouped together.
@@ -1600,6 +1662,13 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     }
 
     /*
+        https://leetcode.com/problems/reverse-string-ii/description/?envType=problem-list-v2&envId=string
+        Given a string s and an integer k, reverse the first k characters for every 2k characters counting from the start of the string.
+        If there are fewer than k characters left, reverse all of them. If there are less than 2k but greater than or equal to k characters,
+        then reverse the first k characters and leave the other as original.
+
+        Input: s = "abcdefg", k = 2
+        Output: "bacdfeg"
         careful exceding the s length
      */
     public static String reverseStr(String s, int k) {
@@ -1628,6 +1697,13 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     }
 
     /*
+        https://leetcode.com/problems/maximum-subarray/description/
+
+        Given an integer array nums, find the subarray with the largest sum, and return its sum.
+        Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
+        Output: 6
+        Explanation: The subarray [4,-1,2,1] has the largest sum 6.
+
         We want the maximum sum of a contiguous subarray.
         “At each position, is it better to extend the previous subarray or start fresh?”
         Either:
@@ -1648,6 +1724,15 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     }
 
     /*
+        https://leetcode.com/problems/minimum-window-substring/description/
+
+        Given two strings s and t of lengths m and n respectively, return the minimum window substring of s such that
+         every character in t (including duplicates) is included in the window. If there is no such substring, return the empty string "".
+        The testcases will be generated such that the answer is unique.
+        Input: s = "ADOBECODEBANC", t = "ABC"
+        Output: "BANC"
+        Explanation: The minimum window substring "BANC" includes 'A', 'B', and 'C' from string t.
+
         We want the smallest substring of s that contains all characters of t (including duplicates).
         👉 This is a variable-size sliding window problem:
         Expand the window → until it's valid
@@ -1716,6 +1801,17 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     }
 
     /*TODO
+        https://leetcode.com/problems/substring-with-concatenation-of-all-words/description/
+
+        You are given a string s and an array of strings words. All the strings of words are of the same length.
+        A concatenated string is a string that exactly contains all the strings of any permutation of words concatenated.
+        For example, if words = ["ab","cd","ef"], then "abcdef", "abefcd", "cdabef", "cdefab", "efabcd", and "efcdab"
+        are all concatenated strings. "acdbef" is not a concatenated string because it is not the concatenation of any permutation of words.
+        Return an array of the starting indices of all the concatenated substrings in s. You can return the answer in any order.
+        Input: s = "barfoothefoobarman", words = ["foo","bar"]
+        Output: [0,9]
+        The substring starting at 0 is "barfoo". It is the concatenation of ["bar","foo"] which is a permutation of words.
+        The substring starting at 9 is "foobar". It is the concatenation of ["foo","bar"] which is a permutation of words.
         need to run from starting each letter to the right 1 by 1
         inside it starting from current index plus word length
         look for words to be found, if that is 1 looked word, then
@@ -1787,6 +1883,16 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     }
 
     /* TODO
+        https://leetcode.com/problems/4sum/description/
+
+        Given an array nums of n integers, return an array of all the unique quadruplets [nums[a], nums[b], nums[c], nums[d]] such that:
+        0 <= a, b, c, d < n
+        a, b, c, and d are distinct.
+        nums[a] + nums[b] + nums[c] + nums[d] == target
+        You may return the answer in any order.
+        Input: nums = [1,0,-1,0,-2,2], target = 0
+        Output: [[-2,-1,1,2],[-2,0,0,2],[-1,0,0,1]]
+
         sorting para juntar los duplicados
         del lado izq necesitamos 2 numeros y 2 numeros despues
         empezamos en index 0
@@ -1801,6 +1907,7 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     }
 
     /*  TODO
+        https://leetcode.com/problems/longest-consecutive-sequence/description/
         Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence.
         You must write an algorithm that runs in O(n) time.
 
@@ -1812,6 +1919,20 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
     }
 
     //TODO
+    //https://leetcode.com/problems/jump-game-ii/description/
+
+    /*
+        You are given a 0-indexed array of integers nums of length n. You are initially positioned at index 0.
+        Each element nums[i] represents the maximum length of a forward jump from index i. In other words, if you are at index i,
+        you can jump to any index (i + j) where:
+        0 <= j <= nums[i] and
+        i + j < n
+        Return the minimum number of jumps to reach index n - 1. The test cases are generated such that you can reach index n - 1.
+        Input: nums = [2,3,1,1,4]
+        Output: 2
+        Explanation: The minimum number of jumps to reach the last index is 2. Jump 1 step from index 0 to 1, then 3 steps to the last index.
+     */
+
     //[2,3,1,1,4]  (initial, im at index 0 and the value is 2, so i can go to 2 places, [1,2]
     //[1] [2,3,4] if i go 1, there is a 3 with this 3, i can now go to 3 places, [2,3,4] step 1 from 0 to 1, step 2 from 1 to 4
     //[2] [3]   if instead i go 2, there is a 1, so i could get to 3
@@ -1820,6 +1941,149 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
         return 0;
     }
 
+    /*
+    https://leetcode.com/problems/gas-station/description/
+
+        There are n gas stations along a circular route, where the amount of gas at the ith station is gas[i].
+        You have a car with an unlimited gas tank and it costs cost[i] of gas to travel from the ith station to its next (i + 1)th station.
+        You begin the journey with an empty tank at one of the gas stations.
+        Given two integer arrays gas and cost, return the starting gas station's index if you can travel around the circuit
+        once in the clockwise direction, otherwise return -1. If there exists a solution, it is guaranteed to be unique.
+         Input: gas = [1,2,3,4,5], cost = [3,4,5,1,2]
+        Output: 3
+        Explanation:
+        Start at station 3 (index 3) and fill up with 4 unit of gas. Your tank = 0 + 4 = 4
+        Travel to station 4. Your tank = 4 - 1 + 5 = 8
+        Travel to station 0. Your tank = 8 - 2 + 1 = 7
+        Travel to station 1. Your tank = 7 - 3 + 2 = 6
+        Travel to station 2. Your tank = 6 - 4 + 3 = 5
+        Travel to station 3. The cost is 5. Your gas is just enough to travel back to station 3.
+        Therefore, return 3 as the starting index.
+
+    At each station, define:
+    net[i] = gas[i] - cost[i]
+    This represents how much gas you gain (or lose) when moving from station i to i+1.
+    Total gas vs total cost
+    If sum(gas) < sum(cost) → impossible to complete the circuit → return -1.
+    If sum(gas) >= sum(cost) → a solution must exist (and it's unique).
+    If you start at station start and at some point your tank becomes negative at station i, then:
+
+👉 None of the stations between start and i can be a valid starting point.
+    Why?
+    Because:
+    You already accumulated gas from start to i
+    If that total failed, starting later (with less gas accumulated) will fail even sooner
+    So we skip all those candidates at once.
+    Iterate through all stations
+    Add gas[i] - cost[i] to both totalTank and currentTank
+    If currentTank < 0:
+    We cannot reach station i+1 from current start
+    So:
+    Set start = i + 1
+    Reset currentTank = 0
+     */
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+        int currentTank=0;
+        int totalTank=0;
+        int start=0;
+
+        for(int i=0; i<gas.length;i++){
+            int leftGas = gas[i]-cost[i];
+
+            totalTank+=leftGas;
+            currentTank+=leftGas;
+
+            if(currentTank<0){
+                start = i+1;
+                currentTank=0;
+            }
+
+        }
+        return totalTank>=0 ? start: -1;
+
+    }
+
+    /*
+            https://leetcode.com/problems/insert-interval/description/
+            you are giving an array intervals and and array overlaps, need to merge overlaps into intervals
+            Input: intervals = [[1,3],[6,9]], newInterval = [2,5]
+            Output: [[1,5],[6,9]]
+
+            it will be only one new interval, with its starting and ending interval which should fin into the
+            array of intervals where corresponds
+            1,5 has the original interval plus the merge of the new interval
+            (arrays already sorted) existing internals dont overlap
+
+            👉 You can solve everything in one pass by splitting the intervals into 3 groups:
+
+            Step 1: Add all intervals that end before newInterval starts
+            Step 2: Merge all overlapping intervals  (starting should be the min and ending the max of the merged values)
+            Step 3: Add the merged interval
+            Step 4: Add remaining intervals
+
+     */
+    public static int[][] insert(int[][] intervals, int[] newInterval) {
+
+        int i=0;
+        int n=intervals.length;
+        List<int[]> result = new LinkedList<>();
+
+        while(i<n && intervals[i][1]<newInterval[0]){
+            result.add(intervals[i]);
+            i++;
+        }
+
+        while(i<n && intervals[i][0]<=newInterval[1]){
+            newInterval[0]= Math.min(intervals[i][0], newInterval[0]);
+            newInterval[1] =Math.max(intervals[i][1], newInterval[1]);
+            i++;
+        }
+        result.add(newInterval);
+
+
+        while(i<n && intervals[i][0]>newInterval[newInterval.length-1]){
+                result.add(intervals[i]);
+            i++;
+        }
+        return result.toArray(new int[result.size()][]);
+    }
+    /*
+        https://leetcode.com/problems/non-overlapping-intervals/
+
+        Given an array of intervals intervals where intervals[i] = [starti, endi], return the minimum number of intervals you need
+         to remove to make the rest of the intervals non-overlapping.
+        Note that intervals which only touch at a point are non-overlapping. For example, [1, 2] and [2, 3] are non-overlapping.
+        Input: intervals = [[1,2],[2,3],[3,4],[1,3]]
+        Output: 1
+        Explanation: [1,3] can be removed and the rest of the intervals are non-overlapping.
+
+        ordernalo, recorre ordenado, si el segundo numero del anterior arreglo (ending interval)> starting interval del siguiente
+        entonces hay overlapped, + 1 a la cuenta de eliminados y considera ese arreglo eliminado, continua al siguiente
+
+        When you detect overlap:
+        if (intervals[i][0] < prevEnd)
+        You remove the current interval, not the previous one.
+        Why?
+        Because:
+        Previous interval ends earlier (due to sorting)
+        Keeping it is always better (greedy choice)
+     */
+    public int eraseOverlapIntervals(int[][] intervals) {
+
+        Arrays.sort(intervals, (a,b)-> Integer.compare(a[1], b[1]));
+
+        int prevEnding = intervals[0][1];
+        int count= 0;
+
+        for(int i=1; i<intervals.length;i++){
+            if(intervals[i][0]<prevEnding){
+                count++;
+            }else {
+                prevEnding = intervals[i][1];
+            }
+        }
+        return count;
+    }
 
 }
 
