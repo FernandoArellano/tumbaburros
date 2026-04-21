@@ -29,6 +29,14 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        System.out.println(longestConsecutive(new int[]{1,2,6,7,8}));
+        System.out.println(fourSum(new int[]{1,0,-1,0,-2,2}, 0));
+        System.out.println(threeSum(new int[]{-1,0,1,2,-1,-4}));
+        System.out.println(reverse(-123));
+        longestPalindrome("babad");
+        stringPatternMatching("amazingamazing", "010");
+        arrayManipulation(new int[]{4, 0, 1, -2, 3});
+        System.out.println(search(new int[]{-1,0,3,5,9,12}, 2));
         insert(new int[][]{{1,2},{3,5},{6,7},{8,10},{12,16}}, new int[]{4,8});
         System.out.println(minWindow("ADOBECODEBANC", "ABC"));
         System.out.println(maxSubArray(new int[]{-2,1,-3,4,-1,2,1,-5,4}));
@@ -1800,7 +1808,7 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
         return true;
     }
 
-    /*TODO
+    /*
         https://leetcode.com/problems/substring-with-concatenation-of-all-words/description/
 
         You are given a string s and an array of strings words. All the strings of words are of the same length.
@@ -1902,21 +1910,83 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
         from the las element, sum i, j, left and right, if the sum is equal to the target, keep it, if sum is < than target move left
         if it is bigger move right
      */
-    public List<List<Integer>> fourSum(int[] nums, int target) {
-        return null;
+    public static List<List<Integer>> fourSum(int[] nums, int target) {
+
+        Arrays.sort(nums);
+        List<List<Integer>> result = new ArrayList<>();
+
+        for(int i=0; i<nums.length-3;i++){
+
+            if(i>0){
+                if(nums[i]==nums[i-1]) continue;
+            }
+
+            for(int j=i+1; j<nums.length-2;j++){
+                if(j>i+1){
+                    if(nums[j]==nums[j-1]) continue;
+                }
+
+                int left=j+1;
+                int right = nums.length-1;
+
+                while(left<right){
+                    long actualSum= (long)nums[i] +nums[j]+nums[left]+nums[right];
+                    if(actualSum==target){
+                        result.add(List.of(nums[i],nums[j],nums[left],nums[right]));
+                        left++;
+                        right--;
+                        while(left<right && nums[left]==nums[left-1]) left++;
+                        while(left < right && nums[right]==nums[right+1]) right--;
+
+                    }else if(actualSum<target){
+                        left++;
+                    } else {
+                        right--;
+                    }
+                }
+
+            }
+        }
+
+        return result;
     }
 
-    /*  TODO
+    /*
         https://leetcode.com/problems/longest-consecutive-sequence/description/
         Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence.
         You must write an algorithm that runs in O(n) time.
 
         O(n) time, so sorting not available
         add set for constanting time and validate if set has value -1 update counter and max
+
+        key // Only start if it's the beginning of a sequence (if there is not a value -1 then start counting there
      */
-    public int longestConsecutive(int[] nums) {
-        return 0;
+    public static int longestConsecutive(int[] nums) {
+        HashSet<Integer> set = new HashSet<>();
+        int max=0;
+
+        for(int i:nums){
+            set.add(i);
+        }
+
+        for(int i:set){  //iterate set will remove the computation on duplicates not needed
+            if(!set.contains(i-1)){
+                int count=1;
+                int increment=1;
+
+                while(set.contains(i+increment)){
+                    count++;
+                    increment++;
+                }
+                if(count>max)
+                    max =count;
+            }
+        }
+
+        return max;
     }
+
+
 
     //TODO
     //https://leetcode.com/problems/jump-game-ii/description/
@@ -2083,6 +2153,263 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
             }
         }
         return count;
+    }
+    /*
+        need to be sorted, if found result will be 0 or greater, if not found it will not return -1 always, could return -3, etc, 0>= found if not return -1
+     */
+    public static int search(int[] nums, int target) {
+        int i = Arrays.binarySearch(nums, target);
+        return i>=0 ? i:-1;
+    }
+    /*
+        https://leetcode.com/problems/search-in-rotated-sorted-array-ii/
+        There is an integer array nums sorted in non-decreasing order (not necessarily with distinct values).
+        Before being passed to your function, nums is rotated at an unknown pivot index k (0 <= k < nums.length) such that
+        the resulting array is [nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]] (0-indexed).
+        For example, [0,1,2,4,4,4,5,6,6,7] might be rotated at pivot index 5 and become [4,5,6,6,7,0,1,2,4,4].
+        Given the array nums after the rotation and an integer target, return true if target is in nums, or false if it is not in nums.
+        You must decrease the overall operation steps as much as possible.
+
+        IMPORTANT mid is checked already at the beginning so when comparing target with nums[mid] no need to <= or >=, only < or > will
+        suffice. on the other hand for nums[left], nums[right]. it does need to validate <= or >= when comparing to target
+
+     */
+    public boolean searcha(int[] nums, int target) {
+        int n = nums.length;
+        int left =0;
+        int right=n-1;
+
+        while(left<=right){
+            int mid = left + (right-left)/2;
+
+            if(nums[mid]== target){return true; }
+
+            if(nums[left]==nums[mid] && nums[right]==nums[mid]){
+                left++;
+                right--;
+            }
+
+            else if(nums[left]<=nums[mid]){
+                if(nums[left]<=target && target <nums[mid]){
+                    right= mid-1;
+                }else{
+                    left=mid+1;
+                }
+            }
+            else {
+                if(nums[mid]<target && target<=nums[right]){
+                    left=mid+1;
+                } else {
+                    right=mid-1;
+                }
+            }
+        }
+        return false;
+    }
+
+    /*
+        Given an array a, your task is to output an array b of the same length by applying the following transformation:
+        – For each i from 0 to a.length - 1 inclusive, b[i] = a[i - 1] + a[i] + a[i + 1]
+        – If an element in the sum a[i - 1] + a[i] + a[i + 1] does not exist, use 0 in its place
+        – For instance, b[0] = 0 + a[0] + a[1]
+
+        For a = [4, 0, 1, -2, 3]:
+        – b[0] = 0 + a[0] + a[1] = 0 + 4 + 0 = 4
+        – b[1] = a[0] + a[1] + a[2] = 4 + 0 + 1 = 5
+        – b[2] = a[1] + a[2] + a[3] = 0 + 1 + (-2) = -1
+        – b[3] = a[2] + a[3] + a[4] = 1 + (-2) + 3 = 2
+        – b[4] = a[3] + a[4] + 0 = (-2) + 3 + 0 = 1
+        So, the output should be solution(a) = [4, 5, -1, 2, 1]
+     */
+    public static void arrayManipulation(int[] a){
+        int[] b = new int[a.length];
+        for(int i=0; i<a.length;i++){
+            int sum=0;
+            if(i>0){
+                sum+=a[i-1];
+            }
+            sum+=a[i];
+
+            if(i<a.length-1){
+                sum+=a[i+1];
+            }
+            b[i]=sum;
+        }
+
+        for(int i=0; i<b.length;i++){
+            System.out.print(b[i] +" ");
+        }
+        System.out.println();
+    }
+
+    /**
+     * https://codesignal.com/blog/example-codesignal-questions/
+     *Question 2: String Pattern Matching
+     * You are given two strings: pattern and source. The first string pattern contains only the symbols 0 and 1, and the second string source contains only lowercase English letters.
+     *
+     * Your task is to calculate the number of substrings of source that match pattern.
+     *
+     * We’ll say that a substring source[l..r] matches pattern if the following three conditions are met:
+     * – The pattern and substring are equal in length.
+     * – Where there is a 0 in the pattern, there is a vowel in the substring.
+     * – Where there is a 1 in the pattern, there is a consonant in the substring.
+     *
+     * Vowels are ‘a‘, ‘e‘, ‘i‘, ‘o‘, ‘u‘, and ‘y‘. All other letters are consonants.
+     *
+     * Example
+     *
+     * For pattern = "010" and source = "amazing", the output should be solution(pattern, source) = 2.
+     * – “010” matches source[0..2] = "ama". The pattern specifies “vowel, consonant, vowel”. “ama” matches this pattern: 0 matches a, 1 matches m, and 0 matches a.
+     * – “010” doesn’t match source[1..3] = "maz"
+     * – “010” matches source[2..4] = "azi"
+     * – “010” doesn’t match source[3..5] = "zin"
+     * – “010” doesn’t match source[4..6] = "ing"
+     *
+     * So, there are 2 matches.
+     */
+    public static void stringPatternMatching(String s, String pattern){
+        int vowelsCount=0;
+        Set<Character> vowels = new HashSet<>(){{add('a');add('e');add('i');add('o');add('u');}};
+        int start=0;
+        int vowelsInPattern =(int) pattern.chars().mapToObj(i->(char)i).filter(c->c=='0').count();
+        int matches = 0;
+
+        for(int i=0; i<s.length();i++){
+            if(i>=pattern.length()){
+                if(vowelsCount==vowelsInPattern){
+                    matches++;
+                }
+
+                if(vowels.contains(s.charAt(start))){
+                    vowelsCount--;
+                }
+                if(vowels.contains(s.charAt(i))){
+                    vowelsCount++;
+                }
+                start++;
+
+            }else{
+                if(vowels.contains(s.charAt(i))){
+                    vowelsCount++;
+                }
+            }
+
+        }
+        System.out.println("Matches: " +matches);
+
+    }
+
+    /*
+        https://leetcode.com/problems/longest-palindromic-substring/
+        Given a string s, return the longest palindromic substring in s.
+
+        Input: s = "babad"
+        Output: "bab"
+        Explanation: "aba" is also a valid answer.
+
+        Optimal idea: Expand Around Center
+
+        Every palindrome is centered around:
+
+        one character (odd length, like "aba")
+        between two characters (even length, like "abba")
+
+        So instead of generating substrings, you expand from centers.
+        Core intuition
+
+        For each index i, try:
+
+        Expand from (i, i) → odd length
+        Expand from (i, i+1) → even length
+
+        Keep track of the longest palindrome found.
+     */
+    public static String longestPalindrome(String s) {
+
+        int start=0;
+        int end=0;
+        for(int i=0; i<s.length();i++){
+            int lenOdd=checkLength(s,i,i); //odd case
+            int lenEven=checkLength(s,i,i+1); //even case
+            int len= Math.max(lenOdd,lenEven);
+
+            //queremos ir desce el centro (lo controla i) hacia atras la mitad y hacia adelante la mitad
+            //-1 por q el substring si incluye el primer punto pero el end es excluyente
+            if(len>end-start){
+                start= i - (len-1)/2;
+                end = i+(len/2);
+            }
+
+        }
+
+        return s.substring(start,end+1);
+    }
+
+    private static int checkLength(String s, int left, int right){
+
+        //si son iguales ve expandiendo desde el centro 1 a cada lado
+        while(left<=right && left>=0 && right <s.length() && s.charAt(left)==s.charAt(right)){
+            left--;
+            right++;
+        }
+        //right esta 1 posicion de mas a la derecha y left 1 de mas a la izquierda para salir del while
+        return right-left -1;
+    }
+
+    /*
+        Given a signed 32-bit integer x, return x with its digits reversed.
+        If reversing x causes the value to go outside the signed 32-bit integer range [-231, 231 - 1], then return 0.
+        Assume the environment does not allow you to store 64-bit integers (signed or unsigned).
+     */
+    public static int reverse(int x){
+        String value = String.valueOf(x);
+        if(value.charAt(0)=='-') value=value.substring(1);
+        String reversedValue = new StringBuilder(value).reverse().toString();
+
+        int len=value.length();
+        int result=0;
+        try{
+            int fit= Integer.parseInt(reversedValue);
+            for(int i=0; i<len;i++){
+                result = (result*10) + x%10;
+                x=x/10;
+            }
+        }catch(Exception e){
+
+        }
+
+
+
+        return result;
+    }
+
+    public static List<List<Integer>> threeSum(int[] nums) {
+
+        List<List<Integer>> result = new ArrayList<>();
+        Integer[] distinct = Arrays.stream(nums).boxed().distinct().toArray(Integer[]::new);
+        Arrays.sort(distinct);
+        Set<Integer> set = Arrays.stream(distinct).collect(Collectors.toSet());
+        Set<int[]> validateDuplicates = new HashSet<>();
+
+        for(int i=0; i<distinct.length;i++){
+            for(int j=i+1; j<distinct.length;j++){
+                if((-(distinct[i]+distinct[j])) != distinct[i] &&
+                        (-(distinct[i]+distinct[j])) != distinct[j] &&
+                        set.contains(-(distinct[i]+distinct[j]))){
+                    int[] found = new int[]{distinct[i],distinct[j],-(distinct[i]+distinct[j])};
+                    Arrays.sort(found);
+                    if(!validateDuplicates.contains(found)){
+                        List<Integer> toAdd = new ArrayList<>();
+                        toAdd.add(distinct[i]);
+                        toAdd.add(distinct[j]);
+                        toAdd.add(-(distinct[i]+distinct[j]));
+                        result.add(toAdd);
+                    }
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
 }
