@@ -2,8 +2,7 @@ package com.example.tumbaburros.refresher;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
@@ -13,6 +12,80 @@ import java.util.stream.IntStream;
 public class ThreadsExercises {
 
     AtomicInteger count = new AtomicInteger(0);
+
+    static class Printer{
+        int x=0;
+        int max;
+
+        Printer(int max){
+            this.max = max;
+        }
+
+        public synchronized void printEven(){
+            while(x<=max){
+                if(x%2==0){
+                    System.out.println(x);
+                    x++;
+                    notify();
+                }else{
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+
+        public synchronized void printOdd(){
+            while(x<=max){
+                if(x%2!=0){
+                    System.out.println(x);
+                    x++;
+                    notify();
+                } else {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+    }
+
+
+    static class Buffer{
+        public Queue<Integer> queue = new LinkedList<>();
+        private final int capacity =5;
+
+        public synchronized void consume(){
+            while(queue.size()==0){
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            System.out.println("consumed" +queue.poll());
+            notifyAll();
+        }
+
+        public synchronized void produce(){
+            while(queue.size()==capacity){
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            int x = new Random().nextInt(9);
+            System.out.println("produced "+x);
+            queue.add(x);
+            notifyAll();
+        }
+    }
 
     public int raceCondition(int start, int end){
 
@@ -53,5 +126,45 @@ public class ThreadsExercises {
 
         service.shutdown();
         return result;
+    }
+
+    public static void main(String[] args) {
+
+//        Buffer buffer = new Buffer();
+//
+//        Thread consumer = new Thread(()->{
+//            while (true) {
+//                buffer.consume();
+//                try {
+//                    Thread.sleep(800);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        });
+//
+//        Thread producer = new Thread(()->{
+//            while (true) {
+//                buffer.produce();
+//                try {
+//                    Thread.sleep(700);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        });
+//
+//        producer.start();
+//        consumer.start();
+        ThreadsExercises solution = new ThreadsExercises();
+        int result = solution.executorsMultiply();
+
+        System.out.println("Result: " + result);
+
+        // Expected:
+        // i = 0..4 → (0*2 + 1*2 + 2*2 + 3*2 + 4*2)
+        // = 0 + 2 + 4 + 6 + 8 = 20
+        System.out.println("Expected: 20");
+
     }
 }
