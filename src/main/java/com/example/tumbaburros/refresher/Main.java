@@ -29,6 +29,10 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        System.out.println(generateParenthesis(3));
+        System.out.println(intToRoman(4941));
+        System.out.println(convert("AB",1));
+        printPermutations("abc");
         System.out.println(groupAnagrams(List.of("eat", "tea", "tan","ate","nat","bat")));
         System.out.println(longestConsecutive(new int[]{1,2,6,7,8}));
         System.out.println(fourSum(new int[]{1,0,-1,0,-2,2}, 0));
@@ -2384,7 +2388,6 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
         return result;
     }
     /*
-        TODO
         https://leetcode.com/problems/3sum/description/
 
 
@@ -2405,31 +2408,34 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
      */
     public static List<List<Integer>> threeSum(int[] nums) {
 
-        List<List<Integer>> result = new ArrayList<>();
-        Integer[] distinct = Arrays.stream(nums).boxed().distinct().toArray(Integer[]::new);
-        Arrays.sort(distinct);
-        Set<Integer> set = Arrays.stream(distinct).collect(Collectors.toSet());
-        Set<int[]> validateDuplicates = new HashSet<>();
+       Arrays.sort(nums);
+       List<List<Integer>> result = new ArrayList<>();
 
-        for(int i=0; i<distinct.length;i++){
-            for(int j=i+1; j<distinct.length;j++){
-                if((-(distinct[i]+distinct[j])) != distinct[i] &&
-                        (-(distinct[i]+distinct[j])) != distinct[j] &&
-                        set.contains(-(distinct[i]+distinct[j]))){
-                    int[] found = new int[]{distinct[i],distinct[j],-(distinct[i]+distinct[j])};
-                    Arrays.sort(found);
-                    if(!validateDuplicates.contains(found)){
-                        List<Integer> toAdd = new ArrayList<>();
-                        toAdd.add(distinct[i]);
-                        toAdd.add(distinct[j]);
-                        toAdd.add(-(distinct[i]+distinct[j]));
-                        result.add(toAdd);
-                    }
-                    break;
-                }
-            }
-        }
-        return result;
+       for(int i=0; i<nums.length; i++){
+
+           if(i>0 && nums[i]==nums[i-1]) continue;
+
+           int left = i+1;
+           int right = nums.length-1;
+
+           while(left<right){
+               int sum= nums[i]+nums[left]+nums[right];
+               if(sum==0){
+                   result.add(new ArrayList<>(List.of(nums[i],nums[left],nums[right])));
+
+                   left++;
+                   right--;
+
+                   while(left<right && nums[left]==nums[left-1]) left++;
+                   while(right>left && nums[right]==nums[right+1]) right--;
+               }else if(sum<0){
+                   left++;
+               } else {
+                   right--;
+               }
+           }
+       }
+       return result;
     }
 
     /*
@@ -2461,6 +2467,172 @@ System.out.println(increasingTriplet(new int[]{2,1,5,0,4,6}));
 
         return map;
     }
+
+    /*
+        Write a program to print all the permutations of a given string.
+        A String of n characters can have !n (factorial of n) permutations.
+        For example a String of 3 characters like "xyz" has 6 possible permutations xyz, xzy, yxz, yzx, zxy, zyx.
+        Note: The results have to be one word per line and they should be in a sorted order alphabetically.
+        Example input:  ok   Output: ko, ok
+     */
+
+    public static void printPermutations(String s){
+
+        char [] array = s.toCharArray();
+        Arrays.sort(array);
+
+        permute(array, 0);
+
+    }
+
+    private static void permute(char[] array, int index){
+            if(array.length==index){
+                System.out.println(new String(array));
+                return;
+            }
+
+            for(int i=index; i<array.length;i++){
+
+                swap(array, index,i);
+                permute(array, index+1);
+                swap(array, index,i);
+            }
+    }
+
+    private static void swap(char[] array, int start, int end){
+        char temp= array[start];
+        array[start] = array[end];
+        array[end] = temp;
+    }
+
+    /*
+        The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this:
+        (you may want to display this pattern in a fixed font for better legibility)
+        P   A   H   N
+        A P L S I I G
+        Y   I   R
+        And then read line by line: "PAHNAPLSIIGYIR"
+
+        another way than implemented list of string builder
+        move rows up or down as needed when 0 going down when numrows-1 going up
+        appending has the column in order
+
+     */
+    public static String convert(String s, int numRows) {
+
+        if(s.length()<=numRows || numRows==1) return s;
+
+        char[] array = s.toCharArray();
+        char[][] result = new char[s.length()][s.length()];
+
+        for(int k=0; k<result.length;k++){
+            for(int l=0; l<result.length;l++){
+                result[k][l]=' ';
+            }
+
+        }
+
+        boolean reach = false;
+        int j=0;
+        int count=0;
+        int i=0;
+        while(count<s.length()){
+            result[i][j] = array[count++];
+            if(reach){
+                if(i<=0){
+                    reach=false;
+                    i++;
+                }else{
+                    j++;
+                    i--;
+                }
+            }else if(i==numRows-1){
+                reach=true;
+                j++;
+                i--;
+            }else {
+                i++;
+            }
+
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for(int k=0; k<numRows;k++){
+            for(int l=0; l<result.length;l++){
+                if(result[k][l]!=' '){
+                    sb.append(result[k][l]);
+                }
+            }
+
+        }
+        return sb.toString();
+    }
+
+    /*
+        Integer to Roman
+        Store values in descending order
+        Loop through them
+        While num >= value:
+        append symbol
+        subtract value
+     */
+    public static String intToRoman(int num) {
+        int[] values = new int[]{1000,900,500,400,100,90,50,40,10,9,5,4,1};
+        String[] symbol = new String[]{"M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"};
+        StringBuilder result = new StringBuilder();
+        for(int i=0;i<values.length;i++){
+
+            while(num>=values[i]){
+                result.append(symbol[i]);
+                num= num-values[i];
+            }
+        }
+        return result.toString();
+    }
+
+    /*
+        Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+        Example 1:
+        Input: n = 3
+        Output: ["((()))","(()())","(())()","()(())","()()()"]
+        Example 2:
+        Input: n = 1
+        Output: ["()"]
+
+        At any point, you can:
+        Add "(" → if you still have some left
+        Add ")" → only if it won’t break validity
+
+        Let:
+        open = number of ( used
+        close = number of ) used
+        We must ensure:
+        1. open <= n
+        2. close <= open   ← THIS is the key rule
+     */
+    public static List<String> generateParenthesis(int n) {
+        List<String> result = new ArrayList<>();
+
+        backtrackParenthesis(result, "", 0 ,0,n);
+        return result;
+    }
+
+    private static void backtrackParenthesis(List<String> result, String current, int open, int close, int n) {
+
+        if(current.length()==n*2){
+            result.add(current);
+            return;
+        }
+
+        if(open<n){
+            backtrackParenthesis(result, current+"(",open+1,close,n);
+        }
+
+        if(close<open){
+            backtrackParenthesis(result, current+")", open, close+1, n);
+        }
+    }
+
 
 }
 
