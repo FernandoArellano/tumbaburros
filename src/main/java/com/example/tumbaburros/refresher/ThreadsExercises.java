@@ -21,38 +21,46 @@ public class ThreadsExercises {
             this.max = max;
         }
 
-        public synchronized void printEven(){
-            while(x<=max){
-                if(x%2==0){
-                    System.out.println(x);
-                    x++;
-                    notify();
-                }else{
+        public synchronized void printEven() {
+
+            while (x <= max) {
+
+                while (x % 2 != 0) {
                     try {
                         wait();
                     } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        Thread.currentThread().interrupt();
                     }
+                }
+
+                if (x <= max) {
+                    System.out.println("Even: " + x);
+                    x++;
+                    notifyAll();
                 }
             }
         }
 
-        public synchronized void printOdd(){
-            while(x<=max){
-                if(x%2!=0){
-                    System.out.println(x);
-                    x++;
-                    notify();
-                } else {
+        public synchronized void printOdd() {
+
+            while (x <= max) {
+
+                while (x % 2 == 0) {
                     try {
                         wait();
                     } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        Thread.currentThread().interrupt();
                     }
+                }
+
+                if (x <= max) {
+                    System.out.println("Odd: " + x);
+                    x++;
+                    notifyAll();
                 }
             }
         }
-    }
+        }
 
 
     static class Buffer{
