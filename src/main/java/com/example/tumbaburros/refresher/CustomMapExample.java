@@ -9,35 +9,35 @@ public class CustomMapExample {
     //Build a hash map data structure for string keys and integer values,
     // without using util.HashMap, and the sort the Map based values.
 
-    static class CustomMap<K, V extends Comparable<V>> implements Comparable<CustomMap<K,V>> {
+    static class CustomMap implements Comparable<CustomMap> {
 
-        K key;
-        V value;
+        String key;
+        Integer value;
 
-        List<CustomMap<K, V>> list = new ArrayList<>();
+        List<CustomMap> list = new ArrayList<>();
 
         public CustomMap(){
 
         }
 
-        public CustomMap(K key, V value){
+        public CustomMap(String key, Integer value){
             this.key = key;
             this.value = value;
         }
 
-        public void save(K key, V val){
+        public void save(String key, Integer val){
             this.key = key;
             this.value = val;
-            list.add(new CustomMap<K, V>(key, value));
+            list.add(new CustomMap(key, value));
         }
 
-        public List<CustomMap<K, V>> sort(){
+        public List<CustomMap> sort(){
             return this.list.stream().sorted(CustomMap::compareTo).collect(Collectors.toList());
         }
 
 
         @Override
-        public int compareTo(CustomMap<K, V> o) {
+        public int compareTo(CustomMap o) {
             return this.value.compareTo(o.value);
         }
 
@@ -50,9 +50,9 @@ public class CustomMapExample {
 
     public static void main(String[] args) {
 
-        List<CustomMap<String,Integer>> list = new ArrayList<>();
+        List<CustomMap> list = new ArrayList<>();
 
-        CustomMap<String, Integer> m3 = new CustomMap<String, Integer>();
+        CustomMap m3 = new CustomMap();
 
         m3.save("s3",3);
         m3.save("s1",1);
